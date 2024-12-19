@@ -30,7 +30,7 @@
                 </a>
             </li>
             <li class="btn">
-                <a href="serchObj.php">
+                <a href="searchObj.php">
                     Chercher Objet
                 </a>
             </li>
@@ -42,7 +42,7 @@
             <li class="btn">
 
                 <!--                "Vous" sera affiché si l'utilisateur est connecté.-->
-                <a href="connexion.html">
+                <a href="connexion.php">
                     Connexion
                 </a>
             </li>

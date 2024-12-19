@@ -30,12 +30,12 @@
                 </a>
             </li>
             <li class="btn">
-                <a href="serchObj.php">
+                <a href="searchObj.php">
                     Chercher Objet
                 </a>
             </li>
             <li class="btn">
-                <a href="contact.html">
+                <a href="contact.php">
                     Nous Contacter
                 </a>
             </li>
