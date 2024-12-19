@@ -19,30 +19,30 @@
 </style>
 <body>
 <header>
-    <a href="./index.html">
+    <a href="index.php">
         <img src="./res/img/icon.png" alt="Logo Brocante">
     </a>
     <nav>
         <ul>
             <li class="btn">
-                <a href="">
+                <a href="searchBroc.php">
                     Chercher Brocanteur
                 </a>
             </li>
             <li class="btn">
-                <a href="">
+                <a href="serchObj.php">
                     Chercher Objet
                 </a>
             </li>
             <li class="btn">
-                <a href="contact.html">
+                <a href="contact.php">
                     Nous Contacter
                 </a>
             </li>
             <li class="btn">
 
 <!--                "Vous" sera affiché si l'utilisateur est connecté.-->
-                <a href="connexion.html">
+                <a href="connexion.php">
                     Connexion
                 </a>
             </li>
@@ -58,12 +58,12 @@
             <p>Frais d'inscription brocanteur : 20€</p>
             <ul class="container center column">
                 <li>
-                    <a class="btn" href="inscription.html">
+                    <a class="btn" href="inscription.php">
                         S'inscrire
                     </a>
                 </li>
                 <li>
-                    <a class="btn" href="contact.html">
+                    <a class="btn" href="contact.php">
                         Nous contacter
                     </a>
                 </li>

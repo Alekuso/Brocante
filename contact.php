@@ -12,25 +12,25 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <style>
-    /*    * {
-            box-sizing: border-box;
-            outline: 1px solid limegreen !important;
-        }*/
+/*    * {
+        box-sizing: border-box;
+        outline: 1px solid limegreen !important;
+    }*/
 </style>
 <body>
 <header>
-    <a href="./index.html">
+    <a href="index.php">
         <img src="./res/img/icon.png" alt="Logo Brocante">
     </a>
     <nav>
         <ul>
             <li class="btn">
-                <a href="">
+                <a href="searchBroc.php">
                     Chercher Brocanteur
                 </a>
             </li>
             <li class="btn">
-                <a href="">
+                <a href="serchObj.php">
                     Chercher Objet
                 </a>
             </li>
@@ -42,7 +42,7 @@
             <li class="btn">
 
                 <!--                "Vous" sera affiché si l'utilisateur est connecté.-->
-                <a href="connexion.html">
+                <a href="connexion.php">
                     Connexion
                 </a>
             </li>
@@ -50,25 +50,28 @@
     </nav>
 </header>
 <main>
+    <section class="center contactFirstImg">
+        <img class="contactFirstImg" src="https://oldschool.runescape.wiki/images/thumb/Here_be_penguins.png/800px-Here_be_penguins.png?6ac27" alt="Brocante rétro">
+    </section>
     <section id="presentation center">
         <article class="center">
-            <h1>Connexion</h1>
+            <h3>Vous avez une question ?</h3>
+            <h3>Remplissez ce formulaire et on vous répondra dans le plus bref délais !</h3>
         </article>
     </section>
-    <section class="contactFormContainer bg-blocky container">
+    <section class="contactFormContainer bg-fire container">
         <article class="contactForm">
             <form method="POST" action="LIEN A VOIR DANS LE FUTURE WAHOO">
+                <label for="nom">Nom</label>
+                <input type="text" id="nom" name="nom" required>
+                <label for="prenom">Prénom</label>
+                <input type="text" id="prenom" name="prenom" required>
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required>
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" name="password" required>
-                <button type="submit">Créer un compte</button>
+                <label for="message">Message</label>
+                <textarea id="message" name="message" required></textarea>
+                <button type="submit">Envoyer</button>
             </form>
-        </article>
-    </section>
-    <section>
-        <article class="center">
-            <p>Nouveau par ici ? <a class="underline" href="inscription.html">Inscrivez-vous</a></p>
         </article>
     </section>
 </main>
