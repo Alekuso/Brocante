@@ -17,10 +17,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress
-
-
     - name: PHP Compatibility
 
       uses: pantheon-systems/phpcompatibility-action@v1.0.2
