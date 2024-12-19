@@ -1,0 +1,24 @@
+name: PHP Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: PHP Compatibility
+
+      uses: pantheon-systems/phpcompatibility-action@v1.0.2
+      with:
+        test-versions: 8.0-
