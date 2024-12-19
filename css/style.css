@@ -1,0 +1,358 @@
+* {
+    text-decoration: none;
+    list-style-type: none;
+}
+
+body {
+    cursor: url('../res/img/cursor.png'), auto;
+    /*background: url("../res/img/background.png");*/
+    /*background: linear-gradient(to right, #ff0000, #0000ff);*/
+    background: url('https://www.shutterstock.com/image-photo/guy-playing-on-console-260nw-663218446.jpg');
+    background-size: cover;
+    color: white;
+    font-family: 'Rubik', sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+}
+
+a:link {
+    color: white;
+}
+
+a:visited {
+    color: white;
+}
+
+a:hover {
+    color: white;
+}
+
+a:active {
+    color: white;
+}
+
+.underline {
+    text-decoration: underline;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+}
+
+header nav ul {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    margin: 0;
+    gap: 15px;
+}
+
+header nav ul li {
+    align-content: center;
+    background-color: red;
+    border-radius: 1rem;
+    height: 50%;
+}
+
+header nav ul :hover {
+    background-color: fuchsia;
+    transform: rotate(380deg) scale(1.2);
+    transition: background-color 1s, transform 0.5s;
+}
+
+
+/*Beginning of a rewrite of the css*/
+img {
+    border-radius: 4px;
+}
+
+.zone :hover {
+    transform: rotate(380deg) scale(1.2);
+    transition: background-color 1s, transform 0.5s;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+}
+
+/*flex top to bottom*/
+.column {
+    flex-direction: column;
+}
+
+.center {
+    align-content: center;
+}
+
+.btn {
+    background-color: yellowgreen;
+    border-radius: 1rem;
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.5s, transform 0.5s;
+}
+
+.btn a {
+    border-radius: 1rem;
+    height: 100%;
+    width: 100%;
+}
+
+.btn a {
+    color: white;
+    position: relative;
+    padding: 1rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.center {
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+.pad-lr-1 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.pad-4 {
+    padding: 4rem;
+}
+
+/*End of the rewrite, please do the rest connasse*/
+
+#presentation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 70%;
+    height: 100%;
+    margin: auto;
+}
+
+
+#presentation img {
+    height: 20rem;
+}
+
+/*after as a background of the article, it should be 1rem bigger than the article tag*/
+#presentation .indexpresent {
+    background-color: green;
+    padding: 1rem;
+    margin: 1rem;
+    width: 50%;
+    height: 100%;
+    border-radius: 1rem;
+}
+
+#presentation ul {
+    display: flex;
+    justify-items: center;
+    align-content: center;
+    margin: 0;
+    padding: 0;
+    gap: 2rem;
+}
+
+#presentation ul li {
+    position: relative;
+    height: 1.5rem;
+    width: 100%;
+}
+
+/* the a tag should take the entire li tag */
+#presentation ul li a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: crimson;
+    border-radius: 1rem;
+    height: 100%;
+    width: 100%;
+}
+
+#presentation ul li :hover {
+    background-color: fuchsia;
+    transform: rotate(3deg) scale(1.2) translateY(-0.5rem);
+    transition: background-color 1s, transform 0.5s;
+}
+
+
+
+.articles {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    width: 70%;
+    height: 100%;
+    margin: auto;
+}
+
+.articles article {
+    background-color: darkmagenta;
+    padding: 1rem;
+    margin: 1rem;
+    width: 30%;
+    height: 100%;
+    border-radius: 1rem;
+}
+
+.articles > :hover {
+    background-color: rebeccapurple;
+    transform: scale(1.1) translateY(-1rem);
+    transition: background-color 1s, transform 0.5s;
+}
+
+.articles article ul {
+    display: flex;
+    justify-items: center;
+    align-content: center;
+    margin: 0;
+    padding: 0;
+    gap: 0.5rem;
+}
+
+.articles article ul li {
+    background-color: crimson;
+    border-radius: 1rem;
+    height: 1.5rem;
+}
+
+.articles article ul li p {
+    margin: 0;
+}
+
+.contactFirstImg {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 250px;
+    margin: auto;
+}
+
+
+.contactFirstImg::before {
+    content: "ZAMN!";
+    font-weight: bolder;
+    font-size: xx-large;
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+}
+
+.contactFirstImg::after {
+    content: "ZAMN!";
+    font-weight: bolder;
+    font-size: xx-large;
+    position: absolute;
+    opacity: 0;
+    z-index: -1;
+}
+
+.contactFirstImg:hover::before {
+    opacity: 1;
+    transform: translateX(20rem) translateY(1rem) rotate(720deg);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+.contactFirstImg:hover::after {
+    opacity: 1;
+    transform: translateX(-12rem) translateY(1rem) rotate(-720deg);
+    transition: opacity 0.5s, transform 0.5s;
+}
+
+
+.contactFirstImg :hover {
+    transform: rotate(380deg) scale(1.2);
+    transition: background-color 1s, transform 0.5s;
+}
+
+.bg-fire {
+    background: url("https://media.istockphoto.com/id/113494458/photo/fire-isolated-over-black-background.jpg?s=612x612&w=0&k=20&c=u6STGsSpJAyBN8kDeqnVUla4-0SnLpdaTsehFsey2p0=") no-repeat center center;
+    background-size: cover;
+}
+
+.bg-arena {
+    background: url('https://oldschool.runescape.wiki/images/thumb/The_Mage_Arena.png/640px-The_Mage_Arena.png?fa62e') no-repeat, center, center;
+    background-size: cover;
+}
+
+.bg-blocky {
+    background: url('https://minecraft.wiki/images/thumb/AMCM_Steve.png/1200px-AMCM_Steve.png?64d2d') no-repeat, center, center;
+    background-size: cover;
+}
+
+.bg-yum {
+    background: url('https://assets.foxdcg.com/dpp-uploaded/images/hells-kitchen/D_SER000853WTMX_chip_ENT_hell%27s_kitchen_S23_2024-keyart.jpg?fit=inside%7C*:575') no-repeat, center, center;
+    background-size: cover;
+}
+
+.contactFormContainer {
+    padding: 1rem;
+    display: flex;
+    margin: auto;
+    width: 40%;
+    height: 100%;
+    border-radius: 1rem;
+}
+
+.contactForm {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 70%;
+    height: 100%;
+    margin: auto;
+}
+
+.contactForm form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    gap: 2rem;
+}
+
+.contactForm form label {
+    margin-bottom: -2rem;
+}
+
+.contactForm form button {
+    background-color: firebrick;
+    border-radius: 0.25rem;
+    color: white;
+    height: 2rem;
+    width: 100%;
+    margin: 0.5rem;
+    border: none;
+}
+
+.contactForm form input {
+    border-radius: 0.25rem;
+    height: 2rem;
+    width: 100%;
+    margin: 0.5rem;
+    border: none;
+}
+
+.contactForm form textarea {
+    border-radius: 0.25rem;
+    height: 5rem;
+    width: 100%;
+    margin: 0.5rem;
+}
