@@ -21,4 +21,4 @@ jobs:
 
       uses: pantheon-systems/phpcompatibility-action@v1.0.2
       with:
-        test-versions: 8.0.30
+        test-versions: 8.0
