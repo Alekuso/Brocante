@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supra Brocante - Espace Administrateur</title>
+    <title>Supra Brocante - Attribution d'Emplacement</title>
     <link rel="icon" href="images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,47 +44,32 @@
     </nav>
 </header>
 <main>
-    <section class="presentation">
+    <section id="presentation center">
         <article class="center">
-            <h1>Bonjour, Philippe !</h1>
+            <h1>Attribuer une zone à un brocanteur</h1>
         </article>
     </section>
-    <section class="articles size-half presentation">
-        <article>
-            <img class="size-full" src="images/placeholder.png" alt="article" />
-            <a class="btn mar-2">Changer photo de profil</a>
-        </article>
-        <article>
-            <h1>Nom Prénom</h1>
-            <h3>Administrateur</h3>
-            <p class="mar-tb-1">Description</p>
-            <a class="btn mar-2">Modifier</a>
-        </article>
-    </section>
-    <section class="presentation center">
-        <h2 class="center">Inscriptions à valider</h2>
-    </section>
-    <section class="articles articles">
-        <a href="brocanteur.php">
-            <h4>Jean Philippe</h4>
-            <p>Valider</p>
-            <p>Définir Emplacement</p>
-            <p>Refuser</p>
-        </a>
+    <section class="contactFormContainer bg-darkgray container">
+        <article class="contactForm">
+            <form method="POST" action="todo" class="column">
+                <label for="nom">Nom</label>
+                <input class="size-full" type="text" id="nom" name="nom" required>
+                <label for="prenom">Prénom</label>
+                <input class="size-full" type="text" id="prenom" name="prenom" required>
 
-        <a href="brocanteur.php">
-            <h4>Benjamin Bonjour</h4>
-            <p>Valider</p>
-            <p>Définir Emplacement</p>
-            <p>Refuser</p>
-        </a>
+                <label for="zone">Zone</label>
+                <select class="size-full" id="zone" name="zone" required>
+                    <option value="">-- Sélectionnez une zone --</option>
+                    <option value="zone1">Zone A</option>
+                    <option value="zone2">Zone B</option>
+                    <option value="zone3">Zone C</option>
+                    <option value="zone3">Zone D</option>
+                </select>
 
-        <a href="brocanteur.php">
-            <h4>Andrea Rossi</h4>
-            <p>Valider</p>
-            <p>Définir Emplacement</p>
-            <p>Refuser</p>
-        </a>
+                <button type="submit" class="size-half">Envoyer</button>
+            </form>
+        </article>
+    </section>
 </main>
 <footer>
     <p>Brocante - 2024 ~ 2025</p>
