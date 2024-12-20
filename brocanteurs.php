@@ -52,7 +52,7 @@
     <section id="contactFormContainer container">
         <article class="contactForm">
 
-            <form action="todo" method="get" class="bg-darkgray pad-2 rounded-sm column">
+            <form action="todo" method="get" class="bg-darkgray desk-pad-2 rounded-sm column">
                 <label for="nom">Nom</label>
                 <input class="size-half" type="text" id="nom" name="nom" placeholder="Nom" required>
                 <label for="prenom">Prénom</label>
