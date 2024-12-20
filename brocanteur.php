@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supra Brocante</title>
+    <title>Supra Brocante - Brocanteur</title>
     <link rel="icon" href="images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
             </li>
             <li class="btn">
 
-<!--                "Vous" sera affiché si l'utilisateur est connecté.-->
+                <!--                "Vous" sera affiché si l'utilisateur est connecté.-->
                 <a href="connexion.php">
                     Connexion
                 </a>
@@ -44,34 +44,21 @@
     </nav>
 </header>
 <main>
-    <section id="presentation">
-        <article class="indexpresent">
-            <p>Votre brocante annuelle porte sur le thème du rétro !</p>
-            <p>Du 10 au 12 mars</p>
-            <p>Lieu : Rue Grand Pré, Flémalle 4400</p>
-            <p>Frais d'inscription brocanteur : 20€</p>
-            <ul class="container center column">
-                <li>
-                    <a class="btn" href="inscription.php">
-                        S'inscrire
-                    </a>
-                </li>
-                <li>
-                    <a class="btn" href="contact.php">
-                        Nous contacter
-                    </a>
-                </li>
-            </ul>
+    <section class="articles size-half presentation">
+        <article>
+            <img class="size-full" src="images/placeholder.png" alt="article" />
         </article>
-        <img class="zone" src="images/zone_A.png" alt="Photo représentative de l'endroit où se trouve la zone A de la brocante" />
+        <article>
+            <h1>Jean Philippe</h1>
+            <h3>Zone A</h3>
+            <p class="mar-tb-1">Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
+            J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
+        </article>
     </section>
-    <section id="brocanteurs">
-        <article class="center">
-            <h1>Objets aléatoires</h1>
-        </article>
+    <section class="presentation center">
+        <h2 class="center">Articles de Jean Philippe</h2>
     </section>
     <section class="articles articles-grow">
-
         <a href="objet.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 1</h4>

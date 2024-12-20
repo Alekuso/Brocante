@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supra Brocante - Contact</title>
+    <title>Supra Brocante - Brocanteurs</title>
     <link rel="icon" href="images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,29 +44,47 @@
     </nav>
 </header>
 <main>
-    <section class="center contactFirstImg">
-        <img class="contactFirstImg" src="https://oldschool.runescape.wiki/images/thumb/Here_be_penguins.png/800px-Here_be_penguins.png?6ac27" alt="Brocante rétro">
-    </section>
     <section id="presentation center">
         <article class="center">
-            <h3>Vous avez une question ?</h3>
-            <h3>Remplissez ce formulaire et on vous répondra dans le plus bref délais !</h3>
+            <h1>Brocanteurs</h1>
         </article>
     </section>
-    <section class="contactFormContainer bg-fire container">
+    <section id="contactFormContainer bg-fire container">
         <article class="contactForm">
-            <form method="POST" action="todo" class="column">
+
+            <form action="todo" method="get" class="bg-yum pad-2 rounded-sm column">
                 <label for="nom">Nom</label>
-                <input class="size-full" type="text" id="nom" name="nom" required>
+                <input class="size-half" type="text" id="nom" name="nom" placeholder="Nom" required>
                 <label for="prenom">Prénom</label>
-                <input class="size-full" type="text" id="prenom" name="prenom" required>
-                <label for="email">Email</label>
-                <input class="size-full" type="email" id="email" name="email" required>
-                <label for="message">Message</label>
-                <textarea id="message" name="message" required></textarea>
-                <button type="submit" class="size-half">Envoyer</button>
+                <input class="size-half" type="text" id="prenom" name="prenom" placeholder="Prénom" required>
+                <button type="submit" class="size-half">Rechercher</button>
             </form>
         </article>
+    </section>
+
+    <section class="articles articles-grow">
+        <a href="brocanteur.php">
+            <img src="images/placeholder.png" alt="article" />
+            <h4>Jean Philippe</h4>
+            <p>Zone A</p>
+            <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
+                J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
+        </a>
+        <a href="brocanteur.php">
+            <img src="images/placeholder.png" alt="article" />
+            <h4>Jean Philippe</h4>
+            <p>Zone A</p>
+            <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
+                J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
+        </a>
+        <a href="brocanteur.php">
+            <img src="images/placeholder.png" alt="article" />
+            <h4>Jean Philippe</h4>
+            <p>Zone A</p>
+            <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
+                J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
+        </a>
+
     </section>
 </main>
 <footer>

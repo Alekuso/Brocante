@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supra Brocante - Connexion</title>
+    <title>Supra Brocante - Espace Brocanteur</title>
     <link rel="icon" href="images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,36 +35,56 @@
             </li>
             <li class="btn">
 
-                <!--                "Vous" sera affiché si l'utilisateur est connecté.-->
-                <a href="connexion.php">
-                    Connexion
+                <!-- On assume que l'utilisateur est connecté lors de la visite de cette page. -->
+                <a href="espaceBrocanteur.php">
+                    Profil
                 </a>
             </li>
         </ul>
     </nav>
 </header>
 <main>
-    <section id="presentation center">
+    <section class="presentation">
         <article class="center">
-            <h1>Connexion</h1>
+            <h1>Bonjour, Philippe !</h1>
         </article>
     </section>
-    <section class="contactFormContainer bg-blocky container">
-        <article class="contactForm">
-            <form method="POST" action="todo" class="column">
-                <label for="email">Email</label>
-                <input class="size-full" type="email" id="email" name="email" required>
-                <label for="password">Mot de passe</label>
-                <input class="size-full" type="password" id="password" name="password" required>
-                <button type="submit" class="size-half">Créer un compte</button>
-            </form>
+    <section class="articles size-half presentation">
+        <article>
+            <img class="size-full" src="images/placeholder.png" alt="article" />
+            <a class="btn mar-2">Changer photo de profil</a>
+        </article>
+        <article>
+            <h1>Nom Prénom</h1>
+            <h3>Administrateur</h3>
+            <p class="mar-tb-1">Description</p>
+            <a class="btn mar-2">Modifier</a>
         </article>
     </section>
-    <section>
-        <article class="center">
-            <p>Vous voulez vendre ? <a class="underline" href="inscription.php">Inscrivez-vous</a></p>
-        </article>
+    <section class="presentation center">
+        <h2 class="center">Inscriptions à valider</h2>
     </section>
+    <section class="articles articles">
+        <a href="brocanteur.php">
+            <h4>Jean Philippe</h4>
+            <p>Valider</p>
+            <p>Définir Emplacement</p>
+            <p>Refuser</p>
+        </a>
+
+        <a href="brocanteur.php">
+            <h4>Benjamin Bonjour</h4>
+            <p>Valider</p>
+            <p>Définir Emplacement</p>
+            <p>Refuser</p>
+        </a>
+
+        <a href="brocanteur.php">
+            <h4>Andrea Rossi</h4>
+            <p>Valider</p>
+            <p>Définir Emplacement</p>
+            <p>Refuser</p>
+        </a>
 </main>
 <footer>
     <p>Brocante - 2024 ~ 2025</p>

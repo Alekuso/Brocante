@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supra Brocante</title>
+    <title>Supra Brocante - Objets</title>
     <link rel="icon" href="images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +35,7 @@
             </li>
             <li class="btn">
 
-<!--                "Vous" sera affiché si l'utilisateur est connecté.-->
+                <!--                "Vous" sera affiché si l'utilisateur est connecté.-->
                 <a href="connexion.php">
                     Connexion
                 </a>
@@ -44,34 +44,40 @@
     </nav>
 </header>
 <main>
-    <section id="presentation">
-        <article class="indexpresent">
-            <p>Votre brocante annuelle porte sur le thème du rétro !</p>
-            <p>Du 10 au 12 mars</p>
-            <p>Lieu : Rue Grand Pré, Flémalle 4400</p>
-            <p>Frais d'inscription brocanteur : 20€</p>
-            <ul class="container center column">
-                <li>
-                    <a class="btn" href="inscription.php">
-                        S'inscrire
-                    </a>
-                </li>
-                <li>
-                    <a class="btn" href="contact.php">
-                        Nous contacter
-                    </a>
-                </li>
-            </ul>
-        </article>
-        <img class="zone" src="images/zone_A.png" alt="Photo représentative de l'endroit où se trouve la zone A de la brocante" />
-    </section>
-    <section id="brocanteurs">
+    <section id="presentation center">
         <article class="center">
-            <h1>Objets aléatoires</h1>
+            <h1>Objets</h1>
         </article>
     </section>
-    <section class="articles articles-grow">
+    <section id="contactFormContainer bg-fire container">
+        <article class="contactForm">
 
+            <form action="todo" method="get" class="bg-yum pad-2 rounded-sm">
+                <label for="nom">Nom</label>
+                <input class="size-half" type="text" id="nom" name="nom" placeholder="nom de l'objet" required>
+
+                <label for="categorie">Catégorie</label>
+                <select id="categorie" name="category">
+                    <option value="*">Toutes les catégories</option>
+                    <option value="jeu">Jeu</option>
+                    <option value="ancien">Ancien</option>
+                    <option value="collection">Collection</option>
+                    <option value="cassette">Cassette</option>
+                    <option value="cd">CD</option>
+                    <option value="autre">Autre</option>
+                </select>
+
+                <label for="prix-filtre">Filtre</label>
+                <select id="prix-filtre" name="price">
+                    <option value="asc">Prix ascendant</option>
+                    <option value="desc">Prix descendant</option>
+                </select>
+                <button type="submit">Rechercher</button>
+            </form>
+        </article>
+    </section>
+
+    <section class="articles articles-grow">
         <a href="objet.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 1</h4>
