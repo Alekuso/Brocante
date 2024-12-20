@@ -1,3 +1,10 @@
+/*EN CAS DE DEBUG,*/
+/*REND LE TOUT PLUS FACILE A VISUALISER*/
+/** {
+    box-sizing: border-box;
+    outline: 1px solid limegreen !important;
+}*/
+
 * {
     text-decoration: none;
     list-style-type: none;
@@ -39,6 +46,11 @@ a:active {
 header {
     display: flex;
     justify-content: space-between;
+}
+
+#icon {
+    height: 6rem;
+    width: 6rem;
 }
 
 header nav ul {
@@ -87,6 +99,10 @@ img {
     flex-direction: column;
 }
 
+.row {
+    flex-direction: row;
+}
+
 .center {
     align-content: center;
 }
@@ -129,6 +145,23 @@ img {
 
 .pad-4 {
     padding: 4rem;
+}
+
+.pad-2 {
+    padding: 2rem;
+}
+
+.mar-2 {
+    margin: 2rem;
+}
+
+.rounded-sm {
+    border-radius: 0.25rem;
+}
+
+.mar-tb-1 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
 }
 
 /*End of the rewrite, please do the rest connasse*/
@@ -201,7 +234,11 @@ img {
     margin: auto;
 }
 
-.articles article {
+.size-half {
+    width: 50%;
+}
+
+.articles > a {
     background-color: darkmagenta;
     padding: 1rem;
     margin: 1rem;
@@ -210,13 +247,23 @@ img {
     border-radius: 1rem;
 }
 
-.articles > :hover {
+.articles > article {
+    background-color: darkmagenta;
+    padding: 1rem;
+    margin: 1rem;
+    width: 30%;
+    height: 100%;
+    border-radius: 1rem;
+}
+
+
+.articles-grow > :hover {
     background-color: rebeccapurple;
     transform: scale(1.1) translateY(-1rem);
     transition: background-color 1s, transform 0.5s;
 }
 
-.articles article ul {
+.articles > a > ul {
     display: flex;
     justify-items: center;
     align-content: center;
@@ -225,13 +272,32 @@ img {
     gap: 0.5rem;
 }
 
-.articles article ul li {
+.articles > a > ul > li {
     background-color: crimson;
     border-radius: 1rem;
     height: 1.5rem;
 }
 
-.articles article ul li p {
+.articles > a > ul > li p {
+    margin: 0;
+}
+
+.articles > article ul {
+    display: flex;
+    justify-items: center;
+    align-content: center;
+    margin: 0;
+    padding: 0;
+    gap: 0.5rem;
+}
+
+.articles > article ul li {
+    background-color: crimson;
+    border-radius: 1rem;
+    height: 1.5rem;
+}
+
+.articles > article ul li p {
     margin: 0;
 }
 
@@ -320,7 +386,6 @@ img {
 
 .contactForm form {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -338,7 +403,6 @@ img {
     border-radius: 0.25rem;
     color: white;
     height: 2rem;
-    width: 100%;
     margin: 0.5rem;
     border: none;
 }
@@ -346,7 +410,6 @@ img {
 .contactForm form input {
     border-radius: 0.25rem;
     height: 2rem;
-    width: 100%;
     margin: 0.5rem;
     border: none;
 }
@@ -357,3 +420,14 @@ img {
     width: 100%;
     margin: 0.5rem;
 }
+
+.size-full {
+    width: 100%;
+    height: 100%;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+}
+
