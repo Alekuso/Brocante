@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Supra Brocante</title>
-    <link rel="icon" href="./res/img/icon.png">
+    <link rel="icon" href="images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
@@ -20,7 +20,7 @@
 <body>
 <header>
     <a href="index.php">
-        <img src="./res/img/icon.png" alt="Logo Brocante">
+        <img src="images/icon.png" alt="Logo Brocante">
     </a>
     <nav>
         <ul>
@@ -69,12 +69,12 @@
                 </li>
             </ul>
         </article>
-        <img class="zone" src="./res/img/zone_A.png" alt="Photo représentative de l'endroit où se trouve la zone A de la brocante" />
+        <img class="zone" src="images/zone_A.png" alt="Photo représentative de l'endroit où se trouve la zone A de la brocante" />
     </section>
     <section class="articles">
 
         <article>
-            <img src="./res/img/placeholder.png" alt="article" />
+            <img src="images/placeholder.png" alt="article" />
             <h4>Article 1</h4>
             <p>Brocanteur - Zone A</p>
             <ul>
@@ -97,7 +97,7 @@
             <p>12.50€</p>
         </article>
         <article>
-            <img src="./res/img/placeholder.png" alt="article" />
+            <img src="images/placeholder.png" alt="article" />
             <h4>Article 2</h4>
             <p>Brocanteur - Zone D</p>
             <ul>
@@ -115,7 +115,7 @@
             <p>4.99€</p>
         </article>
         <article>
-            <img src="./res/img/placeholder.png" alt="article" />
+            <img src="images/placeholder.png" alt="article" />
             <h4>Article 3</h4>
             <p>Brocanteur - Zone B</p>
             <ul>

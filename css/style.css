@@ -4,10 +4,11 @@
 }
 
 body {
-    cursor: url('../res/img/cursor.png'), auto;
-    /*background: url("../res/img/background.png");*/
+    /*cursor: url('../res/images/cursor.png'), auto;*/
+    /*background: url("../res/images/background.png");*/
     /*background: linear-gradient(to right, #ff0000, #0000ff);*/
-    background: url('https://www.shutterstock.com/image-photo/guy-playing-on-console-260nw-663218446.jpg');
+    /*background: url('https://www.shutterstock.com/image-photo/guy-playing-on-console-260nw-663218446.jpg');*/
+    background: url('../images/bg.jpeg');
     background-size: cover;
     color: white;
     font-family: 'Rubik', sans-serif;
@@ -290,7 +291,7 @@ img {
 }
 
 .bg-blocky {
-    background: url('https://minecraft.wiki/images/thumb/AMCM_Steve.png/1200px-AMCM_Steve.png?64d2d') no-repeat, center, center;
+    background: url('../images/dronkenrijden.jpg');
     background-size: cover;
 }
 
