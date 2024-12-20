@@ -57,7 +57,7 @@
     </section>
     <section class="contactFormContainer bg-blocky container">
         <article class="contactForm">
-            <form method="POST" action="LIEN A VOIR DANS LE FUTURE WAHOO">
+            <form method="POST" action="todo">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" required>
                 <label for="password">Mot de passe</label>
@@ -68,7 +68,7 @@
     </section>
     <section>
         <article class="center">
-            <p>Nouveau par ici ? <a class="underline" href="inscription.php">Inscrivez-vous</a></p>
+            <p>Vous voulez vendre ? <a class="underline" href="inscription.php">Inscrivez-vous</a></p>
         </article>
     </section>
 </main>

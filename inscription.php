@@ -57,7 +57,7 @@
     </section>
     <section class="contactFormContainer bg-yum container">
         <article class="contactForm">
-            <form method="POST" action="LIEN A VOIR DANS LE FUTURE WAHOO">
+            <form method="POST" action="todo">
                 <label for="nom">Nom</label>
                 <input type="text" id="nom" name="nom" required>
                 <label for="prenom">Prénom</label>
