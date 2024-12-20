@@ -11,11 +11,7 @@
 }
 
 body {
-    /*cursor: url('../res/images/cursor.png'), auto;*/
-    /*background: url("../res/images/background.png");*/
-    /*background: linear-gradient(to right, #ff0000, #0000ff);*/
-    /*background: url('https://www.shutterstock.com/image-photo/guy-playing-on-console-260nw-663218446.jpg');*/
-    background: url('../images/bg.jpeg');
+    background: linear-gradient(to bottom, #000000, #111111) no-repeat center center fixed;
     background-size: cover;
     color: white;
     font-family: 'Rubik', sans-serif;
@@ -63,26 +59,22 @@ header nav ul {
 
 header nav ul li {
     align-content: center;
-    background-color: red;
-    border-radius: 1rem;
     height: 50%;
 }
 
 header nav ul :hover {
-    background-color: fuchsia;
-    transform: rotate(380deg) scale(1.2);
-    transition: background-color 1s, transform 0.5s;
+    background-color: dimgray;
+    transform: rotate(6deg) scale(1.1);
+    transition: background-color 0.25s, transform 0.5s;
 }
 
 
 /*Beginning of a rewrite of the css*/
+/* Actually I got the flemme to rewrite it entirely */
+/* Wouldn't be able to respect the deadline if I do so. */
+/* Will hopefully be done for EVAL_V3 */
 img {
-    border-radius: 4px;
-}
-
-.zone :hover {
-    transform: rotate(380deg) scale(1.2);
-    transition: background-color 1s, transform 0.5s;
+    border-radius: 0.15rem;
 }
 
 .container {
@@ -99,24 +91,20 @@ img {
     flex-direction: column;
 }
 
-.row {
-    flex-direction: row;
-}
-
 .center {
     align-content: center;
 }
 
 .btn {
-    background-color: yellowgreen;
-    border-radius: 1rem;
+    background-color: darkslategrey;
+    border-radius: 0.25rem;
     color: white;
     text-decoration: none;
     transition: background-color 0.5s, transform 0.5s;
 }
 
 .btn a {
-    border-radius: 1rem;
+    border-radius: 0.25rem;
     height: 100%;
     width: 100%;
 }
@@ -143,10 +131,6 @@ img {
     padding-right: 1rem;
 }
 
-.pad-4 {
-    padding: 4rem;
-}
-
 .pad-2 {
     padding: 2rem;
 }
@@ -154,6 +138,7 @@ img {
 .mar-2 {
     margin: 2rem;
 }
+
 
 .rounded-sm {
     border-radius: 0.25rem;
@@ -182,12 +167,12 @@ img {
 
 /*after as a background of the article, it should be 1rem bigger than the article tag*/
 #presentation .indexpresent {
-    background-color: green;
+    background-color: #212121;
     padding: 1rem;
     margin: 1rem;
     width: 50%;
     height: 100%;
-    border-radius: 1rem;
+    border-radius: 0.25rem;
 }
 
 #presentation ul {
@@ -205,24 +190,27 @@ img {
     width: 100%;
 }
 
-/* the a tag should take the entire li tag */
+/*FIX NEEDED: BUTTON TAKES THE ENTIRE PRESENTATION PLACE*/
 #presentation ul li a {
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
-    background-color: crimson;
-    border-radius: 1rem;
+    background-color: #212121;
+    outline: 3px solid white;
+    box-sizing: border-box;
+    border-radius: 0.25rem;
     height: 100%;
     width: 100%;
 }
 
 #presentation ul li :hover {
-    background-color: fuchsia;
-    transform: rotate(3deg) scale(1.2) translateY(-0.5rem);
-    transition: background-color 1s, transform 0.5s;
+    background-color: white;
+    color: black;
+    transform: scale(1.05) ;
+    transition: background-color 0.5s, color 0.5s, transform 0.5s;
 }
-
+/* ENDFIX */
 
 
 .articles {
@@ -239,27 +227,27 @@ img {
 }
 
 .articles > a {
-    background-color: darkmagenta;
+    background-color: #212121;
     padding: 1rem;
     margin: 1rem;
     width: 30%;
     height: 100%;
-    border-radius: 1rem;
+    border-radius: 0.25rem;
 }
 
 .articles > article {
-    background-color: darkmagenta;
+    background-color: #212121;
     padding: 1rem;
     margin: 1rem;
     width: 30%;
     height: 100%;
-    border-radius: 1rem;
+    border-radius: 0.25rem;
 }
 
 
 .articles-grow > :hover {
-    background-color: rebeccapurple;
-    transform: scale(1.1) translateY(-1rem);
+    background-color: #323232;
+    transform: scale(1.05) translateY(-0.5rem);
     transition: background-color 1s, transform 0.5s;
 }
 
@@ -273,7 +261,8 @@ img {
 }
 
 .articles > a > ul > li {
-    background-color: crimson;
+    background-color: white;
+    color: black;
     border-radius: 1rem;
     height: 1.5rem;
 }
@@ -292,8 +281,9 @@ img {
 }
 
 .articles > article ul li {
-    background-color: crimson;
-    border-radius: 1rem;
+    background-color: white;
+    color: black;
+    border-radius: 0.25rem;
     height: 1.5rem;
 }
 
@@ -309,7 +299,7 @@ img {
     margin: auto;
 }
 
-
+/*"ZAMN!" STYLE ANIMATION*/
 .contactFirstImg::before {
     content: "ZAMN!";
     font-weight: bolder;
@@ -339,31 +329,14 @@ img {
     transform: translateX(-12rem) translateY(1rem) rotate(-720deg);
     transition: opacity 0.5s, transform 0.5s;
 }
-
+/*END*/
 
 .contactFirstImg :hover {
     transform: rotate(380deg) scale(1.2);
     transition: background-color 1s, transform 0.5s;
 }
-
-.bg-fire {
-    background: url("https://media.istockphoto.com/id/113494458/photo/fire-isolated-over-black-background.jpg?s=612x612&w=0&k=20&c=u6STGsSpJAyBN8kDeqnVUla4-0SnLpdaTsehFsey2p0=") no-repeat center center;
-    background-size: cover;
-}
-
-.bg-arena {
-    background: url('https://oldschool.runescape.wiki/images/thumb/The_Mage_Arena.png/640px-The_Mage_Arena.png?fa62e') no-repeat, center, center;
-    background-size: cover;
-}
-
-.bg-blocky {
-    background: url('../images/dronkenrijden.jpg');
-    background-size: cover;
-}
-
-.bg-yum {
-    background: url('https://assets.foxdcg.com/dpp-uploaded/images/hells-kitchen/D_SER000853WTMX_chip_ENT_hell%27s_kitchen_S23_2024-keyart.jpg?fit=inside%7C*:575') no-repeat, center, center;
-    background-size: cover;
+.bg-darkgray {
+    background: #212121;
 }
 
 .contactFormContainer {
@@ -372,7 +345,7 @@ img {
     margin: auto;
     width: 40%;
     height: 100%;
-    border-radius: 1rem;
+    border-radius: 0.25rem;
 }
 
 .contactForm {

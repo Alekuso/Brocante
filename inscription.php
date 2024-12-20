@@ -50,7 +50,7 @@
             <h1>Frais d'inscription : 20€</h1>
         </article>
     </section>
-    <section class="contactFormContainer bg-yum container">
+    <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
             <form method="POST" action="todo" class="column">
                 <label for="nom">Nom</label>

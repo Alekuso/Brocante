@@ -45,7 +45,7 @@
 </header>
 <main>
     <section class="center contactFirstImg">
-        <img class="contactFirstImg" src="https://oldschool.runescape.wiki/images/thumb/Here_be_penguins.png/800px-Here_be_penguins.png?6ac27" alt="Brocante rétro">
+        <img class="contactFirstImg" src="./images/contact.png" alt="Brocante rétro">
     </section>
     <section id="presentation center">
         <article class="center">
@@ -53,7 +53,7 @@
             <h3>Remplissez ce formulaire et on vous répondra dans le plus bref délais !</h3>
         </article>
     </section>
-    <section class="contactFormContainer bg-fire container">
+    <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
             <form method="POST" action="todo" class="column">
                 <label for="nom">Nom</label>

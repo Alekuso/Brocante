@@ -49,7 +49,7 @@
             <h1>Connexion</h1>
         </article>
     </section>
-    <section class="contactFormContainer bg-blocky container">
+    <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
             <form method="POST" action="todo" class="column">
                 <label for="email">Email</label>

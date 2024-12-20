@@ -49,10 +49,10 @@
             <h1>Objets</h1>
         </article>
     </section>
-    <section id="contactFormContainer bg-fire container">
+    <section id="contactFormContainer container">
         <article class="contactForm">
 
-            <form action="todo" method="get" class="bg-yum pad-2 rounded-sm">
+            <form action="todo" method="get" class="bg-darkgray pad-2 rounded-sm">
                 <label for="nom">Nom</label>
                 <input class="size-half" type="text" id="nom" name="nom" placeholder="nom de l'objet" required>
 
