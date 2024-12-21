@@ -36,8 +36,8 @@
             <li class="btn">
 
                 <!-- On assume que l'utilisateur est connecté lors de la visite de cette page. -->
-                <a href="espaceBrocanteur.php">
-                    Profil
+                <a href="espaceAdministrateur.php">
+                    Espace
                 </a>
             </li>
         </ul>
