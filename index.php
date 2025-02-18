@@ -1,3 +1,78 @@
+<?php
+/* Article {
+ *  intitule: String,
+ *  prix: Number,
+ *  image: String,
+ *  categories: [
+ *      intitule: String
+ * ],
+ *  Brocanteur {
+ *      nom: String,
+ *      prenom: String,
+ *      zone: String
+ *  }
+ * }
+ */
+$articles = [
+    [
+        "intitule" => "Article 1",
+        "prix" => 12.50,
+        "image" => "images/placeholder.png",
+        "categories" => [
+            [
+                "intitule" => "cat1"
+            ],
+            [
+                "intitule" => "cat2"
+            ],
+            [
+                "intitule" => "cat3"
+            ]
+        ],
+        "brocanteur" => [
+            "nom" => "Bro",
+            "prenom" => "canteur",
+            "zone" => "A"
+        ]
+    ],
+
+    [
+        "intitule" => "Article 2",
+        "prix" => 4.99,
+        "image" => "images/placeholder.png",
+        "categories" => [
+            [
+                "intitule" => "cat1"
+            ],
+            [
+                "intitule" => "cat2"
+            ]
+        ],
+        "brocanteur" => [
+            "nom" => "Canteur",
+            "prenom" => "bro",
+            "zone" => "D"
+        ]
+    ],
+
+    [
+        "intitule" => "Article 3",
+        "prix" => 2.99,
+        "image" => "images/placeholder.png",
+        "categories" => [
+            [
+                "intitule" => "cat1"
+            ]
+        ],
+        "brocanteur" => [
+            "nom" => "William",
+            "prenom" => "Joshua",
+            "zone" => "B"
+        ]
+    ]
+];
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -71,62 +146,28 @@
         </article>
     </section>
     <section class="articles articles-grow">
+        <?php
+            $arrayString = "";
+            foreach ($articles as $article) {
+                $arrayString .= "<a href='objet.php'>";
+                $arrayString .= "<img class='center' src='" . $article["image"] . "' alt='". $article["intitule"] ."' />";
+                $arrayString .= "<h4>" . $article["intitule"] . "</h4>";
+                $arrayString .= "<p>" . $article["brocanteur"]["prenom"] . " " .  $article["brocanteur"]["nom"] . " - Zone " . $article["brocanteur"]["zone"] . "</p>";
+                $arrayString .= "<ul>";
+                foreach ($article["categories"] as $categorie) {
+                    $arrayString .= "<li class='pad-lr-1 flex'>";
+                    $arrayString .= "<p class='center'>";
+                    $arrayString .= $categorie["intitule"];
+                    $arrayString .= "</p>";
+                    $arrayString .= "</li>";
+                }
+                $arrayString .= "</ul>";
+                $arrayString .= "<p>" . $article["prix"] . "€</p>";
+                $arrayString .= "</a>";
+            }
 
-        <a href="objet.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 1</h4>
-            <p>Brocanteur - Zone A</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat2
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat3
-                    </p>
-                </li>
-            </ul>
-            <p>12.50€</p>
-        </a>
-        <a href="objet.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 2</h4>
-            <p>Brocanteur - Zone D</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat2
-                    </p>
-                </li>
-            </ul>
-            <p>4.99€</p>
-        </a>
-        <a href="objet.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 3</h4>
-            <p>Brocanteur - Zone B</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-            </ul>
-            <p>2.99€</p>
-        </a>
-
+            echo "$arrayString"
+        ?>
     </section>
 </main>
 <footer>
@@ -135,8 +176,3 @@
 </body>
 
 </html>
-
-<!-- Valide le CI malgré le fait qu'on n'utilise pas encore du code PHP -->
-<?php
-
-?>
