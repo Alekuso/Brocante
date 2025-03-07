@@ -171,7 +171,6 @@ img {
     width: 100%;
 }
 
-/*FIX NEEDED: BUTTON TAKES THE ENTIRE PRESENTATION PLACE*/
 #presentation ul li a {
     display: flex;
     justify-content: center;
@@ -191,7 +190,6 @@ img {
     transform: scale(1.05) ;
     transition: background-color 0.5s, color 0.5s, transform 0.5s;
 }
-/* ENDFIX */
 
 
 .articles {
