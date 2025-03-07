@@ -61,10 +61,7 @@ header nav ul :hover {
 }
 
 
-/*Beginning of a rewrite of the css*/
-/* Actually I got the flemme to rewrite it entirely */
-/* Wouldn't be able to respect the deadline if I do so. */
-/* Will hopefully be done for EVAL_V3 */
+/*Some Rewrite from EVAL_V2*/
 img {
     border-radius: 0.15rem;
 }
