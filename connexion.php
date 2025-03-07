@@ -44,7 +44,7 @@
     </nav>
 </header>
 <main>
-    <section id="presentation center">
+    <section class="presentation center">
         <article class="center">
             <h1>Connexion</h1>
         </article>

@@ -47,7 +47,7 @@
     <section class="center contactFirstImg">
         <img class="contactFirstImg" src="./images/contact.png" alt="Brocante rétro">
     </section>
-    <section id="presentation center">
+    <section class="presentation center">
         <article class="center">
             <h3>Vous avez une question ?</h3>
             <h3>Remplissez ce formulaire et on vous répondra dans le plus bref délais !</h3>

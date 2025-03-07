@@ -44,7 +44,7 @@
     </nav>
 </header>
 <main>
-    <section id="presentation center">
+    <section class="presentation center">
         <article class="center">
             <h1>Inscrivez-vous à la foire aux puces</h1>
             <h1>Frais d'inscription : 20€</h1>

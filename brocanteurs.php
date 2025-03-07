@@ -44,12 +44,12 @@
     </nav>
 </header>
 <main>
-    <section id="presentation center">
+    <section class="presentation center">
         <article class="center">
             <h1>Brocanteurs</h1>
         </article>
     </section>
-    <section id="contactFormContainer container">
+    <section id="contactFormContainer" class="container">
         <article class="contactForm">
 
             <form action="todo" method="get" class="bg-darkgray desk-pad-2 rounded-sm column">
