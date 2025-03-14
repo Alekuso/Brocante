@@ -52,7 +52,7 @@
     </section>
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
-            <form method="POST" action="todo" class="column">
+            <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
                 <label for="nom">Nom</label>
                 <input class="size-full" type="text" id="nom" name="nom" required>
                 <label for="prenom">Prénom</label>
@@ -80,7 +80,25 @@
 
 </html>
 
-<!-- Valide le CI malgré le fait qu'on n'utilise pas encore du code PHP -->
 <?php
+    if($_SERVER["REQUEST_METHOD"] == "POST") {
+        $nom = filter_var($_POST["nom"], FILTER_SANITIZE_STRING);
+        $prenom = filter_var($_POST["prenom"], FILTER_SANITIZE_STRING);
+        $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+        $password = filter_var($_POST["password"], FILTER_SANITIZE_STRING);
+        $passwordConfirm = filter_var($_POST["passwordConfirm"], FILTER_SANITIZE_STRING);
 
+        // Vérifier si les mots de passe correspondent
+        if($password === $passwordConfirm) {
+            // 1. Regarde si l'adresse email existe dans la base de données
+            // - Si oui, l'utilisateur est déjà inscrit + ABORT
+            // Sinon, inscription
+
+            // select * from Brocanteur where email = $email
+            // IF COUNT(*) > 0
+            //      L'utilisateur est déjà inscrit.
+            // ELSE
+            //     INSERT INTO Brocanteur . . . TODO
+        }
+    }
 ?>

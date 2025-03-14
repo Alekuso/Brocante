@@ -51,7 +51,7 @@
     </section>
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
-            <form method="POST" action="todo" class="column">
+            <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
                 <label for="email">Email</label>
                 <input class="size-full" type="email" id="email" name="email" required>
                 <label for="password">Mot de passe</label>
@@ -73,7 +73,11 @@
 
 </html>
 
-<!-- Valide le CI malgré le fait qu'on n'utilise pas encore du code PHP -->
 <?php
+if($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+    $password = filter_var($_POST["password"], FILTER_SANITIZE_STRING);
 
+    // select * from Brocanteur where email = $email and password = $password
+}
 ?>
