@@ -31,38 +31,43 @@
             </form>
         </article>
     </section>
-
-    <section class="articles articles-grow">
-        <a href="brocanteur.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Jean Philippe</h4>
-            <p>Zone A</p>
-            <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
-                J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
-        </a>
-        <a href="brocanteur.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Jean Philippe</h4>
-            <p>Zone A</p>
-            <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
-                J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
-        </a>
-        <a href="brocanteur.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Jean Philippe</h4>
-            <p>Zone A</p>
-            <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
-                J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
-        </a>
-
+    <section>
+<!--        Loop over Zones, fetched from DB and show brocanteurs per zone, also fetched from the DB -->
+        <h3 class="flex center">Zone A</h3>
+        <article class="articles articles-grow">
+<!--            These kinds of articles card are really broken alone so I really hope that it won't be alone next time -->
+<!--            Being lonely is not healthy tho. It doesn't cost anything to talk with someone when you feel alone ❤️ -->
+            <a href="brocanteur.php" class="center">
+                <img src="images/placeholder.png" alt="article" />
+                <h4>Jean Philippe</h4>
+                <p>Zone A</p>
+                <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
+                    J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
+            </a>
+        </article>
+        <h3 class="flex center">Zone B</h3>
+        <article class="articles articles-grow">
+            <a href="brocanteur.php" class="center">
+                <img src="images/placeholder.png" alt="article" />
+                <h4>Jean Philippe</h4>
+                <p>Zone A</p>
+                <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
+                    J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
+            </a>
+        </article>
+        <h3 class="flex center">Zone C</h3>
+        <article class="articles articles-grow">
+            <a href="brocanteur.php" class="center">
+                <img src="images/placeholder.png" alt="article" />
+                <h4>Jean Philippe</h4>
+                <p>Zone A</p>
+                <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
+                    J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
+            </a>
+        </article>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>
 </body>
 
 </html>
-
-<!-- Valide le CI malgré le fait qu'on n'utilise pas encore du code PHP -->
-<?php
-
-?>

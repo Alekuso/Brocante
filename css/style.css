@@ -196,7 +196,9 @@ img {
     display: flex;
     justify-content: space-between;
     align-content: center;
-    width: 70%;
+    /* This will automatically size the cards to their size instead of using 70%
+        which is an arbitrary value that could get messed up depending of the context. */
+    width: fit-content;
     height: 100%;
     margin: auto;
 }
