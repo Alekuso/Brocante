@@ -12,37 +12,7 @@
     <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-<header>
-    <a href="index.php">
-        <img id="icon" src="images/icon.png" alt="Logo Brocante">
-    </a>
-    <nav>
-        <ul>
-            <li class="btn">
-                <a href="brocanteurs.php">
-                    Brocanteurs
-                </a>
-            </li>
-            <li class="btn">
-                <a href="objets.php">
-                    Objets
-                </a>
-            </li>
-            <li class="btn">
-                <a href="contact.php">
-                    Contacter
-                </a>
-            </li>
-            <li class="btn">
-
-                <!--                "Vous" sera affiché si l'utilisateur est connecté.-->
-                <a href="connexion.php">
-                    Connexion
-                </a>
-            </li>
-        </ul>
-    </nav>
-</header>
+<?php include 'inc/header.php'; ?>
 <main>
     <section class="presentation center">
         <article class="center">
@@ -87,9 +57,7 @@
 
     </section>
 </main>
-<footer>
-    <p>Brocante - 2024 ~ 2025</p>
-</footer>
+<?php include 'inc/footer.php'; ?>
 </body>
 
 </html>
