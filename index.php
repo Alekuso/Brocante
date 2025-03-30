@@ -89,11 +89,8 @@ $objets = $db->getRandomObjets();
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>
-</body>
 
-</html>
-
-<?php
+<?php // DEBUG, to be removed
 echo "<pre>";
 echo "<h1>The following is used for DEBUG</h1>";
 foreach ($objets as $objet) {
@@ -107,3 +104,7 @@ foreach ($objets as $objet) {
     echo "<hr>";
 }
 echo "</pre>";
+?>
+</body>
+
+</html>

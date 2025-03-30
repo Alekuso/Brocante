@@ -21,6 +21,37 @@
         <article class="center">
             <h3>Vous avez une question ?</h3>
             <h3>Remplissez ce formulaire et on vous répondra dans le plus bref délais !</h3>
+            <?php
+            if ($_SERVER["REQUEST_METHOD"] === "POST") {
+                $alexEmail = "a.olemans@student.helmo.be";
+                $nom = htmlspecialchars($_POST["nom"]);
+                $prenom = htmlspecialchars($_POST["prenom"]);
+                $email = filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
+                $message = htmlspecialchars($_POST["message"]);
+
+                if (!$email) {
+                    die("Adresse email invalide.");
+                }
+
+                $sujet = "[Supra Brocante] Message de $prenom $nom";
+                $contenu = "Message reçu de : $prenom $nom <$email>\n\n$message";
+
+                // header
+                $headers = "From: $email\r\n";
+                $headers .= "Reply-To: $email\r\n";
+                $headers .= "Content-Type: text/plain; charset=UTF-8";
+
+                // FONCTIONNE UNIQUEMENT SUR LE SERVEUR PROD
+                // C'EST NORMAL SI CA NE MARCHE PAS SUR l'ENV LOCAL
+                $envoi = mail($alexEmail, $sujet, $contenu, $headers);
+
+                if ($envoi) {
+                    echo "<pre>Message envoyé !</pre>";
+                } else {
+                    echo "<pre>godverdomme, php mail werkt niet naar de lokale network</pre>";
+                }
+            }
+            ?>
         </article>
     </section>
     <section class="contactFormContainer bg-darkgray container">
@@ -43,33 +74,3 @@
 </body>
 
 </html>
-
-<?php
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $alexEmail = "a.olemans@student.helmo.be";
-    $nom = htmlspecialchars($_POST["nom"]);
-    $prenom = htmlspecialchars($_POST["prenom"]);
-    $email = filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
-    $message = htmlspecialchars($_POST["message"]);
-
-    if (!$email) {
-        die("Adresse email invalide.");
-    }
-
-    $sujet = "[Supra Brocante] Message de $prenom $nom";
-    $contenu = "Message reçu de : $prenom $nom <$email>\n\n$message";
-
-    // header
-    $headers = "From: $email\r\n";
-    $headers .= "Reply-To: $email\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8";
-
-    $envoi = mail($alexEmail, $sujet, $contenu, $headers);
-
-    if ($envoi) {
-        echo "<pre>Ce message n'est pas censé s'afficher car ça va fail dans tous les cas.</pre>";
-    } else {
-        echo "<pre>godverdomme, php mail werkt niet</pre>";
-    }
-}
-?>

@@ -60,8 +60,3 @@
 </body>
 
 </html>
-
-<!-- Valide le CI malgré le fait qu'on n'utilise pas encore du code PHP -->
-<?php
-
-?>

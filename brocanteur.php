@@ -86,14 +86,7 @@
 
     </section>
 </main>
-<footer>
-    <p>Brocante - 2024 ~ 2025</p>
-</footer>
+<?php include 'inc/footer.php'; ?>
 </body>
 
 </html>
-
-<!-- Valide le CI malgré le fait qu'on n'utilise pas encore du code PHP -->
-<?php
-
-?>

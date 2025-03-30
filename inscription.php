@@ -66,6 +66,7 @@
             // IF COUNT(*) > 0
             //      L'utilisateur est déjà inscrit.
             // ELSE
+            //     HASH PASSWORD
             //     INSERT INTO Brocanteur . . . TODO
         }
     }

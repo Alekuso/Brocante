@@ -46,6 +46,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     $password = filter_var($_POST["password"], FILTER_SANITIZE_STRING);
 
-    // select * from Brocanteur where email = $email and password = $password
+    // select * from Brocanteur where email = $email and (verify: password = $password HASH)
 }
 ?>
