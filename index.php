@@ -78,6 +78,7 @@ $objets = $db->getRandomObjets();
             $arrayString .= "<h4>" . $article["intitule"] . "</h4>";
             $arrayString .= "<p>" . $article["description"] . "</p>";
             // TODO: UL CATEGORIES
+            $arrayString .= "<p>" . $article["prix"] . "€</p>";
             $arrayString .= "</a>";
         }
 
@@ -91,3 +92,18 @@ $objets = $db->getRandomObjets();
 </body>
 
 </html>
+
+<?php
+echo "<pre>";
+echo "<h1>The following is used for DEBUG</h1>";
+foreach ($objets as $objet) {
+    echo "<h1>" . $objet["intitule"] . "</h1>";
+    echo "<p>" . $objet["description"] . "</p>";
+    echo "<p>" . $objet["prix"] . "€</p>";
+    echo "<p>Catégories: TODO</p>";
+    echo "<p>Image: " . $objet["image"] . "</p>";
+    echo "<p>Zone: " . $objet["zid"] . "</p>"; // not right
+    echo "<p>Brocanteur: " . $objet["bid"] . "</p>";
+    echo "<hr>";
+}
+echo "</pre>";
