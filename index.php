@@ -1,76 +1,9 @@
 <?php
-/* Article {
- *  intitule: String,
- *  prix: Number,
- *  image: String,
- *  categories: [
- *      intitule: String
- * ],
- *  Brocanteur {
- *      nom: String,
- *      prenom: String,
- *      zone: String
- *  }
- * }
- */
-$articles = [
-    [
-        "intitule" => "Article 1",
-        "prix" => 12.50,
-        "image" => "images/placeholder.png",
-        "categories" => [
-            [
-                "intitule" => "cat1"
-            ],
-            [
-                "intitule" => "cat2"
-            ],
-            [
-                "intitule" => "cat3"
-            ]
-        ],
-        "brocanteur" => [
-            "nom" => "Bro",
-            "prenom" => "canteur",
-            "zone" => "A"
-        ]
-    ],
+include_once 'inc/db.php';
 
-    [
-        "intitule" => "Article 2",
-        "prix" => 4.99,
-        "image" => "images/placeholder.png",
-        "categories" => [
-            [
-                "intitule" => "cat1"
-            ],
-            [
-                "intitule" => "cat2"
-            ]
-        ],
-        "brocanteur" => [
-            "nom" => "Canteur",
-            "prenom" => "bro",
-            "zone" => "D"
-        ]
-    ],
+$db = new DB();
 
-    [
-        "intitule" => "Article 3",
-        "prix" => 2.99,
-        "image" => "images/placeholder.png",
-        "categories" => [
-            [
-                "intitule" => "cat1"
-            ]
-        ],
-        "brocanteur" => [
-            "nom" => "William",
-            "prenom" => "Joshua",
-            "zone" => "B"
-        ]
-    ]
-];
+$objets = $db->getRandomObjets();
 ?>
 
 <!DOCTYPE html>
@@ -119,7 +52,7 @@ $articles = [
         <?php
         // Affiche les articles aléatoires, de préférence 3.
             $arrayString = "";
-            foreach ($articles as $article) {
+/*            foreach ($articles as $article) {
                 $arrayString .= "<a href='objet.php'>";
                 $arrayString .= "<img class='center' src='" . $article["image"] . "' alt='". $article["intitule"] ."' />";
                 $arrayString .= "<h4>" . $article["intitule"] . "</h4>";
@@ -135,9 +68,22 @@ $articles = [
                 $arrayString .= "</ul>";
                 $arrayString .= "<p>" . $article["prix"] . "€</p>";
                 $arrayString .= "</a>";
+            }*/
+        foreach ($objets as $article) {
+            $arrayString .= "<a href='objet.php'>";
+            if($article["image"] == null){
+                $article["image"] = "images/placeholder.png";
             }
+            $arrayString .= "<img class='center' src='" . $article["image"] . "' alt='". $article["intitule"] ."' />";
+            $arrayString .= "<h4>" . $article["intitule"] . "</h4>";
+            $arrayString .= "<p>" . $article["description"] . "</p>";
+            // TODO: UL CATEGORIES
+            $arrayString .= "</a>";
+        }
 
             echo "$arrayString"
+
+
         ?>
     </section>
 </main>
