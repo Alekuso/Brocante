@@ -25,7 +25,7 @@
     </section>
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
-            <form method="POST" action="todo" class="column">
+            <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
                 <label for="nom">Nom</label>
                 <input class="size-full" type="text" id="nom" name="nom" required>
                 <label for="prenom">Prénom</label>
@@ -44,7 +44,32 @@
 
 </html>
 
-<!-- Valide le CI malgré le fait qu'on n'utilise pas encore du code PHP -->
 <?php
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $alexEmail = "a.olemans@student.helmo.be";
+    $nom = htmlspecialchars($_POST["nom"]);
+    $prenom = htmlspecialchars($_POST["prenom"]);
+    $email = filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
+    $message = htmlspecialchars($_POST["message"]);
 
+    if (!$email) {
+        die("Adresse email invalide.");
+    }
+
+    $sujet = "[Supra Brocante] Message de $prenom $nom";
+    $contenu = "Message reçu de : $prenom $nom <$email>\n\n$message";
+
+    // header
+    $headers = "From: $email\r\n";
+    $headers .= "Reply-To: $email\r\n";
+    $headers .= "Content-Type: text/plain; charset=UTF-8";
+
+    $envoi = mail($alexEmail, $sujet, $contenu, $headers);
+
+    if ($envoi) {
+        echo "<pre>Ce message n'est pas censé s'afficher car ça va fail dans tous les cas.</pre>";
+    } else {
+        echo "<pre>godverdomme, php mail werkt niet</pre>";
+    }
+}
 ?>
