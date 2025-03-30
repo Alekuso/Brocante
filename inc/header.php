@@ -31,4 +31,5 @@
 
 <?php
 // Vérifie si l'utilisateur est connecté et change le texte du lien "Connexion" en "Vous" si c'est le cas.
+include_once "db.php";
 ?>
