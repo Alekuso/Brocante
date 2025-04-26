@@ -47,7 +47,6 @@
 </body>
 
 </html>
-
 <?php
     if($_SERVER["REQUEST_METHOD"] == "POST") {
         $nom = filter_var($_POST["nom"], FILTER_SANITIZE_STRING);
