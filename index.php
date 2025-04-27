@@ -2,7 +2,6 @@
 include_once 'inc/db.php';
 
 $db = new DB();
-
 $objets = $db->getRandomObjets();
 ?>
 
@@ -24,10 +23,10 @@ $objets = $db->getRandomObjets();
 <main>
     <section id="presentation">
         <article class="indexpresent">
-            <p>Votre brocante annuelle porte sur le thème du rétro !</p>
+            <p>Votre brocante annuelle porte sur le thème du rétro !</p>
             <p>Du 10 au 12 mars</p>
-            <p>Lieu : Rue Grand Pré, Flémalle 4400</p>
-            <p>Frais d'inscription brocanteur : 20€</p>
+            <p>Lieu : Rue Grand Pré, Flémalle 4400</p>
+            <p>Frais d'inscription brocanteur : 20€</p>
             <ul class="container center column">
                 <li>
                     <a class="btn" href="inscription.php">
@@ -50,61 +49,25 @@ $objets = $db->getRandomObjets();
     </section>
     <section class="articles articles-grow">
         <?php
-        // Affiche les articles aléatoires, de préférence 3.
-            $arrayString = "";
-/*            foreach ($articles as $article) {
-                $arrayString .= "<a href='objet.php'>";
-                $arrayString .= "<img class='center' src='" . $article["image"] . "' alt='". $article["intitule"] ."' />";
-                $arrayString .= "<h4>" . $article["intitule"] . "</h4>";
-                $arrayString .= "<p>" . $article["brocanteur"]["prenom"] . " " .  $article["brocanteur"]["nom"] . " - Zone " . $article["brocanteur"]["zone"] . "</p>";
-                $arrayString .= "<ul>";
-                foreach ($article["categories"] as $categorie) {
-                    $arrayString .= "<li class='pad-lr-1 flex'>";
-                    $arrayString .= "<p class='center'>";
-                    $arrayString .= $categorie["intitule"];
-                    $arrayString .= "</p>";
-                    $arrayString .= "</li>";
-                }
-                $arrayString .= "</ul>";
-                $arrayString .= "<p>" . $article["prix"] . "€</p>";
-                $arrayString .= "</a>";
-            }*/
+        $arrayString = "";
         foreach ($objets as $article) {
-            $arrayString .= "<a href='objet.php'>";
-            if($article["image"] == null){
+            $arrayString .= "<a href='objet.php?id=" . htmlspecialchars($article["oid"]) . "'>";
+            if ($article["image"] == null) {
                 $article["image"] = "images/placeholder.png";
+            } else {
+                $article["image"] = "uploads/" . htmlspecialchars($article["image"]);
             }
-            $arrayString .= "<img class='center' src='" . $article["image"] . "' alt='". $article["intitule"] ."' />";
-            $arrayString .= "<h4>" . $article["intitule"] . "</h4>";
-            $arrayString .= "<p>" . $article["description"] . "</p>";
-            // TODO: UL CATEGORIES
-            $arrayString .= "<p>" . $article["prix"] . "€</p>";
+            $arrayString .= "<img class='center' src='" . $article["image"] . "' alt='" . htmlspecialchars($article["intitule"]) . "' />";
+            $arrayString .= "<h4>" . htmlspecialchars($article["intitule"]) . "</h4>";
+            $arrayString .= "<p>" . htmlspecialchars($article["description"]) . "</p>";
+            $arrayString .= "<p>" . htmlspecialchars($article["prix"]) . "€</p>";
             $arrayString .= "</a>";
         }
-
-            echo "$arrayString"
-
-
+        echo $arrayString;
         ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>
-
-<?php // DEBUG, to be removed
-echo "<pre>";
-echo "<h1>The following is used for DEBUG</h1>";
-foreach ($objets as $objet) {
-    echo "<h1>" . $objet["intitule"] . "</h1>";
-    echo "<p>" . $objet["description"] . "</p>";
-    echo "<p>" . $objet["prix"] . "€</p>";
-    echo "<p>Catégories: TODO</p>";
-    echo "<p>Image: " . $objet["image"] . "</p>";
-    echo "<p>Zone: " . $objet["zid"] . "</p>"; // not right
-    echo "<p>Brocanteur: " . $objet["bid"] . "</p>";
-    echo "<hr>";
-}
-echo "</pre>";
-?>
 </body>
 
 </html>

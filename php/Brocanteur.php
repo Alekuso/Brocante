@@ -1,0 +1,178 @@
+<?php
+require_once 'Database.php';
+
+/**
+ * Classe Brocanteur
+ * Représente un brocanteur dans le système
+ */
+class Brocanteur {
+    public $bid;
+    public $nom;
+    public $prenom;
+    public $courriel;
+    public $description;
+    public $photo;
+    public $visible;
+    public $est_administrateur;
+    
+    /**
+     * Constructeur
+     */
+    public function __construct($donnees = []) {
+        if (!empty($donnees)) {
+            $this->bid = isset($donnees['bid']) ? $donnees['bid'] : null;
+            $this->nom = $donnees['nom'] ?? '';
+            $this->prenom = $donnees['prenom'] ?? '';
+            $this->courriel = $donnees['courriel'] ?? '';
+            $this->description = $donnees['description'] ?? '';
+            $this->photo = $donnees['photo'] ?? null;
+            $this->visible = isset($donnees['visible']) ? (bool)$donnees['visible'] : false;
+            $this->est_administrateur = isset($donnees['est_administrateur']) ? (bool)$donnees['est_administrateur'] : false;
+        }
+    }
+    
+    /**
+     * Récupère un brocanteur par son ID
+     * 
+     * @param int $id L'ID du brocanteur
+     * @return Brocanteur|null Le brocanteur ou null s'il n'existe pas
+     */
+    public static function obtenirParId($id) {
+        $db = new Database();
+        $donnees = $db->obtenirUn("SELECT * FROM Brocanteur WHERE bid = ?", [$id]);
+        
+        if ($donnees) {
+            return new Brocanteur($donnees);
+        }
+        return null;
+    }
+    
+    /**
+     * Récupère tous les brocanteurs visibles
+     * 
+     * @return array Tableau de brocanteurs
+     */
+    public static function obtenirTousVisibles() {
+        $db = new Database();
+        $resultats = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 1");
+        
+        $brocanteurs = [];
+        foreach ($resultats as $donnees) {
+            $brocanteurs[] = new Brocanteur($donnees);
+        }
+        
+        return $brocanteurs;
+    }
+    
+    /**
+     * Récupère tous les objets de ce brocanteur
+     * 
+     * @return array Tableau d'objets
+     */
+    public function obtenirObjets() {
+        if (!$this->bid) {
+            return [];
+        }
+        
+        $db = new Database();
+        $resultats = $db->obtenirTous("SELECT * FROM Objet WHERE bid = ?", [$this->bid]);
+        
+        $objets = [];
+        foreach ($resultats as $donnees) {
+            require_once 'Objet.php';
+            $objets[] = new Objet($donnees);
+        }
+        
+        return $objets;
+    }
+    
+    /**
+     * Récupère l'emplacement du brocanteur
+     * 
+     * @return Emplacement|null L'emplacement ou null s'il n'existe pas
+     */
+    public function obtenirEmplacement() {
+        if (!$this->bid) {
+            return null;
+        }
+        
+        $db = new Database();
+        $donnees = $db->obtenirUn("SELECT * FROM Emplacement WHERE bid = ?", [$this->bid]);
+        
+        if ($donnees) {
+            require_once 'Emplacement.php';
+            return new Emplacement($donnees);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Récupère la zone du brocanteur via son emplacement
+     * 
+     * @return Zone|null La zone ou null s'il n'existe pas
+     */
+    public function obtenirZone() {
+        $emplacement = $this->obtenirEmplacement();
+        
+        if ($emplacement) {
+            return $emplacement->obtenirZone();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Enregistre le brocanteur dans la base de données
+     * 
+     * @return bool Succès de l'opération
+     */
+    public function enregistrer() {
+        $db = new Database();
+        
+        if ($this->bid) {
+            // Mise à jour
+            $db->executer(
+                "UPDATE Brocanteur SET nom = ?, prenom = ?, courriel = ?, description = ?, 
+                photo = ?, visible = ?, est_administrateur = ? WHERE bid = ?",
+                [
+                    $this->nom, $this->prenom, $this->courriel, $this->description,
+                    $this->photo, $this->visible, $this->est_administrateur, $this->bid
+                ]
+            );
+        } else {
+            // Insertion
+            $db->executer(
+                "INSERT INTO Brocanteur (nom, prenom, courriel, mot_passe, description, photo, visible, est_administrateur) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                [
+                    $this->nom, $this->prenom, $this->courriel, 
+                    password_hash('motdepasse', PASSWORD_DEFAULT), // Mot de passe par défaut
+                    $this->description, $this->photo, $this->visible, 
+                    $this->est_administrateur
+                ]
+            );
+            $this->bid = $db->dernierIdInsere();
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Vérifie les identifiants d'un brocanteur
+     * 
+     * @param string $courriel Le courriel du brocanteur
+     * @param string $motDePasse Le mot de passe du brocanteur
+     * @return Brocanteur|null Le brocanteur connecté ou null si échec
+     */
+    public static function connecter($courriel, $motDePasse) {
+        $db = new Database();
+        $donnees = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
+        
+        if ($donnees && password_verify($motDePasse, $donnees['mot_passe'])) {
+            return new Brocanteur($donnees);
+        }
+        
+        return null;
+    }
+} 
