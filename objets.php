@@ -51,7 +51,8 @@
         <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 1</h4>
-            <p>Brocanteur - Zone A</p>
+            <p>Jean Philippe - Zone A</p>
+            <p>Description de l'article 1 avec quelques détails intéressants</p>
             <ul>
                 <li class="pad-lr-1 flex">
                     <p class="center">
@@ -69,12 +70,13 @@
                     </p>
                 </li>
             </ul>
-            <p>12.50€</p>
+            <h3 class="prix">12.50€</h3>
         </a>
         <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 2</h4>
-            <p>Brocanteur - Zone D</p>
+            <p>Michel Dupont - Zone D</p>
+            <p>Un bel article de collection à ne pas manquer</p>
             <ul>
                 <li class="pad-lr-1 flex">
                     <p class="center">
@@ -87,12 +89,13 @@
                     </p>
                 </li>
             </ul>
-            <p>4.99€</p>
+            <h3 class="prix">4.99€</h3>
         </a>
         <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 3</h4>
-            <p>Brocanteur - Zone B</p>
+            <p>Sophie Martin - Zone B</p>
+            <p>Pièce rare à saisir rapidement</p>
             <ul>
                 <li class="pad-lr-1 flex">
                     <p class="center">
@@ -100,7 +103,7 @@
                     </p>
                 </li>
             </ul>
-            <p>2.99€</p>
+            <h3 class="prix">2.99€</h3>
         </a>
 
     </section>

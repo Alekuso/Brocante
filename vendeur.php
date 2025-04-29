@@ -1,10 +1,33 @@
+<?php
+include_once 'php/Database.php';
+include_once 'php/Objet.php';
+include_once 'php/Brocanteur.php';
+include_once 'php/Categorie.php';
+include_once 'php/Zone.php';
+
+// Récupérer le brocanteur demandé
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$brocanteur = Brocanteur::obtenirParId($id);
+
+// Si le brocanteur n'existe pas, redirection vers la page d'accueil
+if (!$brocanteur) {
+    header('Location: index.php');
+    exit;
+}
+
+// Récupérer la zone du brocanteur
+$zone = $brocanteur->obtenirZone();
+
+// Récupérer les objets du brocanteur
+$objets = $brocanteur->obtenirObjets();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Supra Brocante - Brocanteur</title>
+    <title>Supra Brocante - <?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></title>
     <link rel="icon" href="images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,74 +39,58 @@
 <main>
     <section class="articles size-half presentation">
         <article>
-            <img class="size-full" src="images/placeholder.png" alt="article" />
+            <?php
+            if ($brocanteur->photo == null) {
+                $image = "images/placeholder.png";
+            } else {
+                $image = "uploads/" . htmlspecialchars($brocanteur->photo);
+            }
+            ?>
+            <img class="size-full" src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
         </article>
         <article>
-            <h1>Jean Philippe</h1>
-            <h3>Zone A</h3>
-            <p class="mar-tb-1">Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
-            J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
+            <h1><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h1>
+            <?php if ($zone): ?>
+                <h3><?php echo htmlspecialchars($zone->nom); ?></h3>
+            <?php endif; ?>
+            <p class="mar-tb-1"><?php echo htmlspecialchars($brocanteur->description); ?></p>
         </article>
     </section>
     <section class="presentation center">
-        <h2 class="center">Articles de Jean Philippe</h2>
+        <h2 class="center">Articles de <?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h2>
     </section>
     <section class="articles articles-grow">
-        <a href="produit.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 1</h4>
-            <p>Brocanteur - Zone A</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat2
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat3
-                    </p>
-                </li>
-            </ul>
-            <p>12.50€</p>
-        </a>
-        <a href="produit.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 2</h4>
-            <p>Brocanteur - Zone D</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat2
-                    </p>
-                </li>
-            </ul>
-            <p>4.99€</p>
-        </a>
-        <a href="produit.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 3</h4>
-            <p>Brocanteur - Zone B</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-            </ul>
-            <p>2.99€</p>
-        </a>
-
+        <?php if (empty($objets)): ?>
+            <p class="center">Ce brocanteur n'a pas encore d'objets à vendre.</p>
+        <?php else: ?>
+            <?php foreach ($objets as $article): 
+                $categorie = $article->obtenirCategorie();
+            ?>
+                <a href="produit.php?id=<?php echo htmlspecialchars($article->oid); ?>">
+                    <?php
+                    if ($article->image == null) {
+                        $image = "images/placeholder.png";
+                    } else {
+                        $image = "uploads/" . htmlspecialchars($article->image);
+                    }
+                    ?>
+                    <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($article->intitule); ?>" />
+                    <h4><?php echo htmlspecialchars($article->intitule); ?></h4>
+                    <p><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?><?php echo $zone ? ' - ' . htmlspecialchars($zone->nom) : ''; ?></p>
+                    <p><?php echo htmlspecialchars($article->description); ?></p>
+                    <?php if ($categorie): ?>
+                        <ul>
+                            <li class="pad-lr-1 flex">
+                                <p class="center">
+                                    <?php echo htmlspecialchars($categorie->intitule); ?>
+                                </p>
+                            </li>
+                        </ul>
+                    <?php endif; ?>
+                    <h3 class="prix"><?php echo htmlspecialchars($article->prix); ?>€</h3>
+                </a>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>

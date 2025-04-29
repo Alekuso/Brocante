@@ -64,16 +64,25 @@ $objets = Objet::obtenirAleatoires();
             echo "<img class='center' src='" . $image . "' alt='" . htmlspecialchars($article->intitule) . "' />";
             echo "<h4>" . htmlspecialchars($article->intitule) . "</h4>";
             
-            // Ajout du nom du brocanteur et de la catégorie
+            // Affichage du brocanteur et sa zone (si disponible)
             if ($brocanteur) {
-                echo "<p><strong>Vendeur:</strong> " . htmlspecialchars($brocanteur->prenom . " " . $brocanteur->nom) . "</p>";
-            }
-            if ($categorie) {
-                echo "<p><strong>Catégorie:</strong> " . htmlspecialchars($categorie->intitule) . "</p>";
+                $zone = $brocanteur->obtenirZone();
+                $zoneInfo = $zone ? " - " . htmlspecialchars($zone->nom) : "";
+                echo "<p>" . htmlspecialchars($brocanteur->prenom . " " . $brocanteur->nom) . $zoneInfo . "</p>";
             }
             
+            // Description du produit
             echo "<p>" . htmlspecialchars($article->description) . "</p>";
-            echo "<p>" . htmlspecialchars($article->prix) . "€</p>";
+            
+            // Affichage de la catégorie
+            if ($categorie) {
+                echo "<ul class='pad-lr-1 flex'>";
+                echo "<li class='pad-lr-1 flex'><p class='center'>" . htmlspecialchars($categorie->intitule) . "</p></li>";
+                echo "</ul>";
+            }
+            
+            // Affichage du prix mis en valeur
+            echo "<h3 class='prix'>" . htmlspecialchars($article->prix) . "€</h3>";
             echo "</a>";
         }
         ?>

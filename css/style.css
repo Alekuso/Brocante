@@ -250,6 +250,7 @@ img {
 
 .articles > a > ul > li p {
     margin: 0;
+    font-size: 0.8rem;
 }
 
 .articles > article ul {
@@ -470,4 +471,13 @@ footer {
     .desk-pad-2 {
         padding: 2rem;
     }
+}
+
+/* Styling for product price */
+h3.prix {
+    font-size: 1.2rem;
+    color: white;
+    margin: 0.5rem 0;
+    font-weight: bold;
+    text-align: right;
 }
