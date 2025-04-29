@@ -175,4 +175,43 @@ class Objet {
         $db->executer("DELETE FROM Objet WHERE oid = ?", [$this->oid]);
         return true;
     }
+    
+    /**
+     * Recherche des objets selon différents critères
+     * 
+     * @param string $nom Partie du nom à rechercher (optionnel)
+     * @param int $categorieId ID de la catégorie (optionnel)
+     * @param string $triPrix Ordre de tri par prix ('asc' ou 'desc')
+     * @return array Tableau d'objets correspondant aux critères
+     */
+    public static function rechercher($nom = '', $categorieId = null, $triPrix = 'asc') {
+        $db = new Database();
+        $params = [];
+        $sql = "SELECT * FROM Objet WHERE 1=1";
+        
+        // Filtre par nom
+        if (!empty($nom)) {
+            $sql .= " AND intitule LIKE ?";
+            $params[] = "%$nom%";
+        }
+        
+        // Filtre par catégorie
+        if (!empty($categorieId)) {
+            $sql .= " AND cid = ?";
+            $params[] = $categorieId;
+        }
+        
+        // Tri par prix
+        $ordre = ($triPrix === 'desc') ? 'DESC' : 'ASC';
+        $sql .= " ORDER BY prix $ordre";
+        
+        $resultats = $db->obtenirTous($sql, $params);
+        
+        $objets = [];
+        foreach ($resultats as $donnees) {
+            $objets[] = new Objet($donnees);
+        }
+        
+        return $objets;
+    }
 } 

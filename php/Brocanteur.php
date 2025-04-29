@@ -175,4 +175,41 @@ class Brocanteur {
         
         return null;
     }
+    
+    /**
+     * Recherche des brocanteurs selon leur nom et prénom
+     * 
+     * @param string $nom Partie du nom à rechercher (optionnel)
+     * @param string $prenom Partie du prénom à rechercher (optionnel)
+     * @return array Tableau de brocanteurs correspondant aux critères
+     */
+    public static function rechercher($nom = '', $prenom = '') {
+        $db = new Database();
+        $params = [];
+        $sql = "SELECT * FROM Brocanteur WHERE visible = 1";
+        
+        // Filtre par nom
+        if (!empty($nom)) {
+            $sql .= " AND nom LIKE ?";
+            $params[] = "%$nom%";
+        }
+        
+        // Filtre par prénom
+        if (!empty($prenom)) {
+            $sql .= " AND prenom LIKE ?";
+            $params[] = "%$prenom%";
+        }
+        
+        // Tri par nom puis prénom
+        $sql .= " ORDER BY nom ASC, prenom ASC";
+        
+        $resultats = $db->obtenirTous($sql, $params);
+        
+        $brocanteurs = [];
+        foreach ($resultats as $donnees) {
+            $brocanteurs[] = new Brocanteur($donnees);
+        }
+        
+        return $brocanteurs;
+    }
 } 

@@ -1,3 +1,22 @@
+<?php
+include_once 'php/Database.php';
+include_once 'php/Brocanteur.php';
+include_once 'php/Zone.php';
+
+// Initialisation des paramètres de recherche
+$nom = isset($_GET['nom']) ? trim($_GET['nom']) : '';
+$prenom = isset($_GET['prenom']) ? trim($_GET['prenom']) : '';
+
+// Si la recherche est active, récupérer les brocanteurs correspondants
+if (!empty($nom) || !empty($prenom)) {
+    $brocanteurs = Brocanteur::rechercher($nom, $prenom);
+    $zones = []; // Pas besoin de zones car on affiche juste les résultats de recherche
+} else {
+    // Sinon, récupérer toutes les zones avec leurs brocanteurs
+    $zones = Zone::obtenirToutes();
+    $brocanteurs = null;
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -22,49 +41,79 @@
     <section id="contactFormContainer" class="container">
         <article class="contactForm">
 
-            <form action="todo" method="get" class="bg-darkgray desk-pad-2 rounded-sm column">
+            <form action="brocanteurs.php" method="get" class="bg-darkgray desk-pad-2 rounded-sm column">
                 <label for="nom">Nom</label>
-                <input class="size-half" type="text" id="nom" name="nom" placeholder="Nom" required>
+                <input class="size-half" type="text" id="nom" name="nom" placeholder="Nom" value="<?php echo htmlspecialchars($nom); ?>">
                 <label for="prenom">Prénom</label>
-                <input class="size-half" type="text" id="prenom" name="prenom" placeholder="Prénom" required>
+                <input class="size-half" type="text" id="prenom" name="prenom" placeholder="Prénom" value="<?php echo htmlspecialchars($prenom); ?>">
                 <button type="submit" class="size-half">Rechercher</button>
             </form>
         </article>
     </section>
     <section>
-<!--        Loop over Zones, fetched from DB and show brocanteurs per zone, also fetched from the DB -->
-        <h3 class="flex center">Zone A</h3>
-        <article class="articles articles-grow">
-<!--            These kinds of articles card are really broken alone so I really hope that it won't be alone next time -->
-<!--            Being lonely is not healthy tho. It doesn't cost anything to talk with someone when you feel alone ❤️ -->
-            <a href="vendeur.php" class="center">
-                <img src="images/placeholder.png" alt="article" />
-                <h4>Jean Philippe</h4>
-                <p>Zone A</p>
-                <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
-                    J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
-            </a>
-        </article>
-        <h3 class="flex center">Zone B</h3>
-        <article class="articles articles-grow">
-            <a href="vendeur.php" class="center">
-                <img src="images/placeholder.png" alt="article" />
-                <h4>Jean Philippe</h4>
-                <p>Zone A</p>
-                <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
-                    J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
-            </a>
-        </article>
-        <h3 class="flex center">Zone C</h3>
-        <article class="articles articles-grow">
-            <a href="vendeur.php" class="center">
-                <img src="images/placeholder.png" alt="article" />
-                <h4>Jean Philippe</h4>
-                <p>Zone A</p>
-                <p>Passionné de brocantes depuis 1934, j'admire les brocantes et je me suis pris d'affection pour les brocanteurs.
-                    J'ai réussi à faire mon rêve de toute une vie, être brocanteur.</p>
-            </a>
-        </article>
+        <?php if ($brocanteurs !== null): ?>
+            <!-- Affichage des résultats de recherche -->
+            <h3 class="flex center zone-title">Résultats de recherche</h3>
+            <article class="articles articles-grow brocanteurs-grid">
+                <?php if (empty($brocanteurs)): ?>
+                    <p class="center">Aucun brocanteur ne correspond à votre recherche.</p>
+                <?php else: ?>
+                    <?php foreach ($brocanteurs as $brocanteur): 
+                        $zone = $brocanteur->obtenirZone();
+                        $emplacement = $brocanteur->obtenirEmplacement();
+                    ?>
+                        <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>" class="center brocanteur-card">
+                            <?php
+                            if ($brocanteur->photo == null) {
+                                $image = "images/placeholder.png";
+                            } else {
+                                $image = "uploads/" . htmlspecialchars($brocanteur->photo);
+                            }
+                            ?>
+                            <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
+                            <h4><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h4>
+                            <?php if ($zone): ?>
+                                <p><?php echo htmlspecialchars($zone->nom); ?></p>
+                            <?php endif; ?>
+                            <?php if ($emplacement): ?>
+                                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
+                            <?php endif; ?>
+                            <p><?php echo htmlspecialchars($brocanteur->description); ?></p>
+                        </a>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </article>
+        <?php else: ?>
+            <!-- Affichage par zones -->
+            <?php foreach ($zones as $zone): 
+                $brocanteurs = $zone->obtenirBrocanteurs();
+                if (empty($brocanteurs)) continue;
+            ?>
+                <h3 class="flex center zone-title"><?php echo htmlspecialchars($zone->nom); ?></h3>
+                <article class="articles articles-grow brocanteurs-grid">
+                    <?php foreach ($brocanteurs as $brocanteur): 
+                        $emplacement = $brocanteur->obtenirEmplacement();
+                    ?>
+                        <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>" class="center brocanteur-card">
+                            <?php
+                            if ($brocanteur->photo == null) {
+                                $image = "images/placeholder.png";
+                            } else {
+                                $image = "uploads/" . htmlspecialchars($brocanteur->photo);
+                            }
+                            ?>
+                            <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
+                            <h4><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h4>
+                            <p><?php echo htmlspecialchars($zone->nom); ?></p>
+                            <?php if ($emplacement): ?>
+                                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
+                            <?php endif; ?>
+                            <p><?php echo htmlspecialchars($brocanteur->description); ?></p>
+                        </a>
+                    <?php endforeach; ?>
+                </article>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>

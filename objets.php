@@ -1,3 +1,20 @@
+<?php
+include_once 'php/Database.php';
+include_once 'php/Objet.php';
+include_once 'php/Brocanteur.php';
+include_once 'php/Categorie.php';
+
+// Initialisation des paramètres de recherche
+$nom = isset($_GET['nom']) ? trim($_GET['nom']) : '';
+$categorieId = isset($_GET['category']) && $_GET['category'] !== '*' ? $_GET['category'] : null;
+$prixFiltre = isset($_GET['price']) ? $_GET['price'] : 'asc';
+
+// Récupération des catégories pour le formulaire
+$categories = Categorie::obtenirToutes();
+
+// Récupération des objets avec les filtres
+$objets = Objet::rechercher($nom, $categorieId, $prixFiltre);
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -22,90 +39,73 @@
     <section id="contactFormContainer" class="container">
         <article class="contactForm">
 
-            <form action="todo" method="get" class="bg-darkgray desk-pad-2 rounded-sm">
+            <form action="objets.php" method="get" class="bg-darkgray desk-pad-2 rounded-sm">
                 <label for="nom">Nom</label>
-                <input class="size-half" type="text" id="nom" name="nom" placeholder="nom de l'objet" required>
+                <input class="size-half" type="text" id="nom" name="nom" placeholder="nom de l'objet" value="<?php echo htmlspecialchars($nom); ?>">
 
                 <label for="categorie">Catégorie</label>
                 <select id="categorie" name="category">
                     <option value="*">Toutes les catégories</option>
-                    <option value="jeu">Jeu</option>
-                    <option value="ancien">Ancien</option>
-                    <option value="collection">Collection</option>
-                    <option value="cassette">Cassette</option>
-                    <option value="cd">CD</option>
-                    <option value="autre">Autre</option>
+                    <?php foreach ($categories as $categorie): ?>
+                        <option value="<?php echo htmlspecialchars($categorie->cid); ?>" <?php echo ($categorieId == $categorie->cid) ? 'selected' : ''; ?>>
+                            <?php echo htmlspecialchars($categorie->intitule); ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
 
                 <label for="prix-filtre">Filtre</label>
                 <select id="prix-filtre" name="price">
-                    <option value="asc">Prix ascendant</option>
-                    <option value="desc">Prix descendant</option>
+                    <option value="asc" <?php echo ($prixFiltre === 'asc') ? 'selected' : ''; ?>>Prix ascendant</option>
+                    <option value="desc" <?php echo ($prixFiltre === 'desc') ? 'selected' : ''; ?>>Prix descendant</option>
                 </select>
                 <button type="submit">Rechercher</button>
             </form>
         </article>
     </section>
 
-    <section class="articles articles-grow">
-        <a href="produit.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 1</h4>
-            <p>Jean Philippe - Zone A</p>
-            <p>Description de l'article 1 avec quelques détails intéressants</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat2
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat3
-                    </p>
-                </li>
-            </ul>
-            <h3 class="prix">12.50€</h3>
-        </a>
-        <a href="produit.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 2</h4>
-            <p>Michel Dupont - Zone D</p>
-            <p>Un bel article de collection à ne pas manquer</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat2
-                    </p>
-                </li>
-            </ul>
-            <h3 class="prix">4.99€</h3>
-        </a>
-        <a href="produit.php">
-            <img src="images/placeholder.png" alt="article" />
-            <h4>Article 3</h4>
-            <p>Sophie Martin - Zone B</p>
-            <p>Pièce rare à saisir rapidement</p>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        cat1
-                    </p>
-                </li>
-            </ul>
-            <h3 class="prix">2.99€</h3>
-        </a>
-
+    <section class="articles articles-grow objets-grid">
+        <?php if (empty($objets)): ?>
+            <p class="center">Aucun objet ne correspond à votre recherche.</p>
+        <?php else: ?>
+            <?php foreach ($objets as $article):
+                $brocanteur = $article->obtenirBrocanteur();
+                $categorie = $article->obtenirCategorie();
+            ?>
+                <a href="produit.php?id=<?php echo htmlspecialchars($article->oid); ?>" class="objet-card">
+                    <?php
+                    if ($article->image == null) {
+                        $image = "images/placeholder.png";
+                    } else {
+                        $image = "uploads/" . htmlspecialchars($article->image);
+                    }
+                    ?>
+                    <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($article->intitule); ?>" />
+                    <h4><?php echo htmlspecialchars($article->intitule); ?></h4>
+                    
+                    <?php if ($brocanteur): ?>
+                        <?php $zone = $brocanteur->obtenirZone(); ?>
+                        <p>
+                            <?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>
+                            <?php echo $zone ? ' - ' . htmlspecialchars($zone->nom) : ''; ?>
+                        </p>
+                    <?php endif; ?>
+                    
+                    <p><?php echo htmlspecialchars($article->description); ?></p>
+                    
+                    <?php if ($categorie): ?>
+                        <ul>
+                            <li class="pad-lr-1 flex">
+                                <p class="center">
+                                    <?php echo htmlspecialchars($categorie->intitule); ?>
+                                </p>
+                            </li>
+                        </ul>
+                    <?php endif; ?>
+                    
+                    <h3 class="prix"><?php echo htmlspecialchars($article->prix); ?>€</h3>
+                </a>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>
