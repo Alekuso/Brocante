@@ -37,7 +37,7 @@
         <article class="articles articles-grow">
 <!--            These kinds of articles card are really broken alone so I really hope that it won't be alone next time -->
 <!--            Being lonely is not healthy tho. It doesn't cost anything to talk with someone when you feel alone ❤️ -->
-            <a href="brocanteur.php" class="center">
+            <a href="vendeur.php" class="center">
                 <img src="images/placeholder.png" alt="article" />
                 <h4>Jean Philippe</h4>
                 <p>Zone A</p>
@@ -47,7 +47,7 @@
         </article>
         <h3 class="flex center">Zone B</h3>
         <article class="articles articles-grow">
-            <a href="brocanteur.php" class="center">
+            <a href="vendeur.php" class="center">
                 <img src="images/placeholder.png" alt="article" />
                 <h4>Jean Philippe</h4>
                 <p>Zone A</p>
@@ -57,7 +57,7 @@
         </article>
         <h3 class="flex center">Zone C</h3>
         <article class="articles articles-grow">
-            <a href="brocanteur.php" class="center">
+            <a href="vendeur.php" class="center">
                 <img src="images/placeholder.png" alt="article" />
                 <h4>Jean Philippe</h4>
                 <p>Zone A</p>

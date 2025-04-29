@@ -1,5 +1,6 @@
 <?php
-require_once 'Database.php';
+require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/Objet.php';
 
 /**
  * Classe Categorie
@@ -62,7 +63,6 @@ class Categorie {
             return [];
         }
         
-        require_once 'Objet.php';
         return Objet::obtenirParCategorie($this->cid);
     }
     

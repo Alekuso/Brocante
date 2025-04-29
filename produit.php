@@ -20,7 +20,7 @@
         </article>
         <article>
             <h1>Article Super !</h1>
-            <h3 class="mar-O pad-0"><a class="mar-0 pad-0" href="brocanteur.php">Jean Philippe - Zone A</a></h3>
+            <h3 class="mar-O pad-0"><a class="mar-0 pad-0" href="vendeur.php">Jean Philippe - Zone A</a></h3>
             <h4>12.50€</h4>
             <ul>
                 <li class="pad-lr-1 flex">
@@ -45,4 +45,4 @@
 <?php include 'inc/footer.php'; ?>
 </body>
 
-</html>
+</html> 

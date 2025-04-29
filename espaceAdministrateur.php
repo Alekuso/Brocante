@@ -35,21 +35,21 @@
         <h2 class="center">Inscriptions à valider</h2>
     </section>
     <section class="articles articles">
-        <a href="brocanteur.php">
+        <a href="vendeur.php">
             <h4>Jean Philippe</h4>
             <p>Valider</p>
             <p>Définir Emplacement</p>
             <p>Refuser</p>
         </a>
 
-        <a href="brocanteur.php">
+        <a href="vendeur.php">
             <h4>Benjamin Bonjour</h4>
             <p>Valider</p>
             <p>Définir Emplacement</p>
             <p>Refuser</p>
         </a>
 
-        <a href="brocanteur.php">
+        <a href="vendeur.php">
             <h4>Andrea Rossi</h4>
             <p>Valider</p>
             <p>Définir Emplacement</p>

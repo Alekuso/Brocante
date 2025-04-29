@@ -30,6 +30,8 @@
 </header>
 
 <?php
-// Vérifie si l'utilisateur est connecté et change le texte du lien "Connexion" en "Vous" si c'est le cas.
-include_once "db.php";
+include_once 'php/Database.php';
+include_once 'php/Objet.php';
+include_once 'php/Brocanteur.php';
+include_once 'php/Categorie.php';
 ?>

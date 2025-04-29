@@ -1,8 +1,10 @@
 <?php
-include_once 'inc/db.php';
+include_once 'php/Database.php';
+include_once 'php/Objet.php';
+include_once 'php/Brocanteur.php';
+include_once 'php/Categorie.php';
 
-$db = new DB();
-$objets = $db->getRandomObjets();
+$objets = Objet::obtenirAleatoires();
 ?>
 
 <!DOCTYPE html>
@@ -49,25 +51,35 @@ $objets = $db->getRandomObjets();
     </section>
     <section class="articles articles-grow">
         <?php
-        $arrayString = "";
         foreach ($objets as $article) {
-            $arrayString .= "<a href='objet.php?id=" . htmlspecialchars($article["oid"]) . "'>";
-            if ($article["image"] == null) {
-                $article["image"] = "images/placeholder.png";
+            $brocanteur = $article->obtenirBrocanteur();
+            $categorie = $article->obtenirCategorie();
+            
+            echo "<a href='produit.php?id=" . htmlspecialchars($article->oid) . "'>";
+            if ($article->image == null) {
+                $image = "images/placeholder.png";
             } else {
-                $article["image"] = "uploads/" . htmlspecialchars($article["image"]);
+                $image = "uploads/" . htmlspecialchars($article->image);
             }
-            $arrayString .= "<img class='center' src='" . $article["image"] . "' alt='" . htmlspecialchars($article["intitule"]) . "' />";
-            $arrayString .= "<h4>" . htmlspecialchars($article["intitule"]) . "</h4>";
-            $arrayString .= "<p>" . htmlspecialchars($article["description"]) . "</p>";
-            $arrayString .= "<p>" . htmlspecialchars($article["prix"]) . "€</p>";
-            $arrayString .= "</a>";
+            echo "<img class='center' src='" . $image . "' alt='" . htmlspecialchars($article->intitule) . "' />";
+            echo "<h4>" . htmlspecialchars($article->intitule) . "</h4>";
+            
+            // Ajout du nom du brocanteur et de la catégorie
+            if ($brocanteur) {
+                echo "<p><strong>Vendeur:</strong> " . htmlspecialchars($brocanteur->prenom . " " . $brocanteur->nom) . "</p>";
+            }
+            if ($categorie) {
+                echo "<p><strong>Catégorie:</strong> " . htmlspecialchars($categorie->intitule) . "</p>";
+            }
+            
+            echo "<p>" . htmlspecialchars($article->description) . "</p>";
+            echo "<p>" . htmlspecialchars($article->prix) . "€</p>";
+            echo "</a>";
         }
-        echo $arrayString;
         ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>
 </body>
 
-</html>
+</html> 

@@ -29,7 +29,7 @@
         <h2 class="center">Articles de Jean Philippe</h2>
     </section>
     <section class="articles articles-grow">
-        <a href="objet.php">
+        <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 1</h4>
             <p>Brocanteur - Zone A</p>
@@ -52,7 +52,7 @@
             </ul>
             <p>12.50€</p>
         </a>
-        <a href="objet.php">
+        <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 2</h4>
             <p>Brocanteur - Zone D</p>
@@ -70,7 +70,7 @@
             </ul>
             <p>4.99€</p>
         </a>
-        <a href="objet.php">
+        <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 3</h4>
             <p>Brocanteur - Zone B</p>
@@ -89,4 +89,4 @@
 <?php include 'inc/footer.php'; ?>
 </body>
 
-</html>
+</html> 

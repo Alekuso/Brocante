@@ -36,7 +36,7 @@
         <h2 class="center">Vos articles</h2>
     </section>
     <section class="articles articles-grow">
-        <a href="objet.php">
+        <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 1</h4>
             <p>Brocanteur - Zone A</p>
@@ -60,7 +60,7 @@
             <p>12.50€</p>
             <p>Modifier</p>
         </a>
-        <a href="objet.php">
+        <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 2</h4>
             <p>Brocanteur - Zone D</p>
@@ -79,7 +79,7 @@
             <p>4.99€</p>
             <p>Modifier</p>
         </a>
-        <a href="objet.php">
+        <a href="produit.php">
             <img src="images/placeholder.png" alt="article" />
             <h4>Article 3</h4>
             <p>Brocanteur - Zone B</p>

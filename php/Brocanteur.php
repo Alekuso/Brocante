@@ -1,5 +1,5 @@
 <?php
-require_once 'Database.php';
+require_once __DIR__ . '/Database.php';
 
 /**
  * Classe Brocanteur
@@ -79,7 +79,7 @@ class Brocanteur {
         
         $objets = [];
         foreach ($resultats as $donnees) {
-            require_once 'Objet.php';
+            require_once __DIR__ . '/Objet.php';
             $objets[] = new Objet($donnees);
         }
         
@@ -100,7 +100,7 @@ class Brocanteur {
         $donnees = $db->obtenirUn("SELECT * FROM Emplacement WHERE bid = ?", [$this->bid]);
         
         if ($donnees) {
-            require_once 'Emplacement.php';
+            require_once __DIR__ . '/Emplacement.php';
             return new Emplacement($donnees);
         }
         

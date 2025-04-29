@@ -1,5 +1,7 @@
 <?php
-require_once 'Database.php';
+require_once __DIR__ . '/Database.php';
+require_once __DIR__ . '/Emplacement.php';
+require_once __DIR__ . '/Brocanteur.php';
 
 /**
  * Classe Zone
@@ -69,7 +71,6 @@ class Zone {
         
         $emplacements = [];
         foreach ($resultats as $donnees) {
-            require_once 'Emplacement.php';
             $emplacements[] = new Emplacement($donnees);
         }
         
@@ -96,7 +97,6 @@ class Zone {
         
         $brocanteurs = [];
         foreach ($resultats as $donnees) {
-            require_once 'Brocanteur.php';
             $brocanteurs[] = new Brocanteur($donnees);
         }
         
