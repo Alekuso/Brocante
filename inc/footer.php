@@ -7,4 +7,10 @@
         <li><a href="contact.php">Contact</a></li>
     </ul>
     <p class="footer-addresse">Du 10 au 12 mars - Rue Grand Pré, Flémalle 4400</p>
+    <?php 
+    // Affiche le nom de l'utilisateur connecté
+    if (class_exists('Brocanteur') && Brocanteur::estConnecte()): 
+    ?>
+        <p class="footer-user">Connecté: <?php echo htmlspecialchars($_SESSION['prenom'] . ' ' . $_SESSION['nom']); ?></p>
+    <?php endif; ?>
 </footer>
