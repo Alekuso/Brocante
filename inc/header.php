@@ -1,3 +1,6 @@
+<?php
+include_once 'php/Brocanteur.php'; 
+?>
 <header>
     <a href="index.php">
         <img id="icon" src="images/icon.png" alt="Logo Brocante">
@@ -19,12 +22,29 @@
                     Contacter
                 </a>
             </li>
-            <li class="btn">
-                <!--"Vous" sera affiché si l'utilisateur est connecté.-->
-                <a href="connexion.php">
-                    Connexion
-                </a>
-            </li>
+            <?php if (Brocanteur::estConnecte()): ?>
+                <li class="btn">
+                    <a href="<?php echo Brocanteur::estAdmin() ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'; ?>">
+                        <?php echo Brocanteur::estAdmin() ? 'Espace Administrateur' : 'Espace Brocanteur'; ?>
+                    </a>
+                </li>
+                <li class="btn">
+                    <a href="logout.php">
+                        Déconnexion
+                    </a>
+                </li>
+            <?php else: ?>
+                <li class="btn">
+                    <a href="connexion.php">
+                        Connexion
+                    </a>
+                </li>
+                <li class="btn">
+                    <a href="inscription.php">
+                        S'inscrire
+                    </a>
+                </li>
+            <?php endif; ?>
         </ul>
     </nav>
 </header>
@@ -32,6 +52,5 @@
 <?php
 include_once 'php/Database.php';
 include_once 'php/Objet.php';
-include_once 'php/Brocanteur.php';
 include_once 'php/Categorie.php';
 ?>

@@ -73,10 +73,10 @@ $objets = Objet::rechercher($nom, $categorieId, $prixFiltre);
             ?>
                 <a href="produit.php?id=<?php echo htmlspecialchars($article->oid); ?>" class="objet-card">
                     <?php
-                    if ($article->image == null) {
+                    if ($article->image === null) {
                         $image = "images/placeholder.png";
                     } else {
-                        $image = "uploads/" . htmlspecialchars($article->image);
+                        $image = "uploads/objets/" . htmlspecialchars($article->image);
                     }
                     ?>
                     <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($article->intitule); ?>" />

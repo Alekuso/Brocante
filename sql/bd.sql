@@ -60,19 +60,16 @@ INSERT INTO Categorie (intitule) VALUES
 ('Goodies');
 
 INSERT INTO Brocanteur (nom, prenom, courriel, mot_passe, description, visible, est_administrateur) VALUES 
-('Dupont', 'Jean', 'jean.dupont@gmail.com', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Collectionneur de consoles Nintendo depuis 1990', 1, 0),
-('Martin', 'Sophie', 'sophie.martin@hotmail.com', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Passionnée de jeux PS1 et PS2', 1, 0),
-('Petit', 'Michel', 'michel.petit@outlook.be', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Spécialiste en jeux rétro SEGA', 1, 0),
-('Leroy', 'Julie', 'julie.leroy@gmail.com', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Fan de RPG japonais et collectionneuse de figurines', 1, 0),
-('Bernard', 'Thomas', 'thomas.bernard@outlook.be', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Collectionneur d''ordinateurs vintage et jeux DOS', 1, 0),
-('Lambert', 'Marie', 'marie.lambert@hotmail.com', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Achète et vend des jeux Game Boy et Game Boy Color', 1, 0),
-('Durand', 'Alexandre', 'alexandre.durand@gmail.com', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Amateur de FPS et jeux d''action des années 2000', 1, 0),
-('Lefèvre', 'Nathalie', 'nathalie.lefevre@outlook.be', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Vente de magazines et guides stratégiques rétro', 1, 0),
-('Dubois', 'Patrick', 'patrick.dubois@hotmail.com', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Collectionneur de consoles Xbox et jeux PC', 1, 0),
-('Moreau', 'Isabelle', 'isabelle.moreau@gmail.com', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Spécialiste en éditions limitées et collectors', 1, 0),
-('Olemans', 'Alex', 'alex@femboy.be', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Administrateur du site', 0, 1),
-('Admin', 'Admin', 'a.olemans@student.helmo.be', '$2y$10$kCrAl/e.lS0zqDOzvdRQMOg6TU4kHLukxQwSv0zHWtVGT0AoXSCeK', 'Administrateur du site', 0, 1);
-
+('Dupont', 'Jean', 'jean.dupont@gmail.com', 'jesuischiffré', 'Collectionneur de consoles Nintendo depuis 1990', 1, 0),
+('Martin', 'Sophie', 'sophie.martin@hotmail.com', 'jesuischiffré', 'Passionnée de jeux PS1 et PS2', 1, 0),
+('Petit', 'Michel', 'michel.petit@outlook.be', 'jesuischiffré', 'Spécialiste en jeux rétro SEGA', 1, 0),
+('Leroy', 'Julie', 'julie.leroy@gmail.com', 'jesuischiffré', 'Fan de RPG japonais et collectionneuse de figurines', 1, 0),
+('Bernard', 'Thomas', 'thomas.bernard@outlook.be', 'jesuischiffré', 'Collectionneur d''ordinateurs vintage et jeux DOS', 1, 0),
+('Lambert', 'Marie', 'marie.lambert@hotmail.com', 'jesuischiffré', 'Achète et vend des jeux Game Boy et Game Boy Color', 1, 0),
+('Durand', 'Alexandre', 'alexandre.durand@gmail.com', 'jesuischiffré', 'Amateur de FPS et jeux d''action des années 2000', 1, 0),
+('Lefèvre', 'Nathalie', 'nathalie.lefevre@outlook.be', 'jesuischiffré', 'Vente de magazines et guides stratégiques rétro', 1, 0),
+('Dubois', 'Patrick', 'patrick.dubois@hotmail.com', 'jesuischiffré', 'Collectionneur de consoles Xbox et jeux PC', 1, 0),
+('Moreau', 'Isabelle', 'isabelle.moreau@gmail.com', 'jesuischiffré', 'Spécialiste en éditions limitées et collectors', 1, 0);
 INSERT INTO Emplacement (code, zid, bid) VALUES 
 ('A1', 1, 1),
 ('A2', 1, 4),

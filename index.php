@@ -56,10 +56,10 @@ $objets = Objet::obtenirAleatoires();
             $categorie = $article->obtenirCategorie();
             
             echo "<a href='produit.php?id=" . htmlspecialchars($article->oid) . "'>";
-            if ($article->image == null) {
+            if ($article->image === null) {
                 $image = "images/placeholder.png";
             } else {
-                $image = "uploads/" . htmlspecialchars($article->image);
+                $image = "uploads/objets/" . htmlspecialchars($article->image);
             }
             echo "<img class='center' src='" . $image . "' alt='" . htmlspecialchars($article->intitule) . "' />";
             echo "<h4>" . htmlspecialchars($article->intitule) . "</h4>";

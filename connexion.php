@@ -1,3 +1,40 @@
+<?php
+include_once 'php/Database.php';
+include_once 'php/Brocanteur.php';
+
+// Rediriger si déjà connecté
+if (Brocanteur::estConnecte()) {
+    header('Location: espaceBrocanteur.php');
+    exit;
+}
+
+$erreur = '';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $courriel = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+    $motDePasse = $_POST["password"];
+    
+    if (empty($courriel) || empty($motDePasse)) {
+        $erreur = 'Tous les champs sont obligatoires';
+    } else {
+        $brocanteur = Brocanteur::connecter($courriel, $motDePasse);
+        
+        if ($brocanteur) {
+            Brocanteur::connecterUtilisateur($brocanteur);
+            
+            // Rediriger selon le rôle
+            if ($brocanteur->est_administrateur) {
+                header('Location: espaceAdministrateur.php');
+            } else {
+                header('Location: espaceBrocanteur.php');
+            }
+            exit;
+        } else {
+            $erreur = 'Email ou mot de passe incorrect';
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -21,12 +58,16 @@
     </section>
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
+            <?php if (!empty($erreur)): ?>
+                <p class="erreur"><?php echo htmlspecialchars($erreur); ?></p>
+            <?php endif; ?>
+            
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
                 <label for="email">Email</label>
                 <input class="size-full" type="email" id="email" name="email" required>
                 <label for="password">Mot de passe</label>
                 <input class="size-full" type="password" id="password" name="password" required>
-                <button type="submit" class="size-half">Créer un compte</button>
+                <button type="submit" class="size-half">Se connecter</button>
             </form>
         </article>
     </section>
@@ -40,12 +81,3 @@
 </body>
 
 </html>
-
-<?php
-if($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
-    $password = filter_var($_POST["password"], FILTER_SANITIZE_STRING);
-
-    // select * from Brocanteur where email = $email and (verify: password = $password HASH)
-}
-?>

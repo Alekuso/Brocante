@@ -18,6 +18,7 @@ if (!$objet) {
 $brocanteur = $objet->obtenirBrocanteur();
 $categorie = $objet->obtenirCategorie();
 $zone = $brocanteur ? $brocanteur->obtenirZone() : null;
+$emplacement = $brocanteur ? $brocanteur->obtenirEmplacement() : null;
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -38,10 +39,10 @@ $zone = $brocanteur ? $brocanteur->obtenirZone() : null;
     <section class="articles size-half presentation">
         <article>
             <?php
-            if ($objet->image == null) {
+            if ($objet->image === null) {
                 $image = "images/placeholder.png";
             } else {
-                $image = "uploads/" . htmlspecialchars($objet->image);
+                $image = "uploads/objets/" . htmlspecialchars($objet->image);
             }
             ?>
             <img class="size-full" src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($objet->intitule); ?>" />
@@ -55,6 +56,9 @@ $zone = $brocanteur ? $brocanteur->obtenirZone() : null;
                         - <?php echo htmlspecialchars($zone->nom); ?>
                     </a>
                 </h3>
+                <?php if ($emplacement): ?>
+                    <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
+                <?php endif; ?>
             <?php endif; ?>
             <h4><?php echo htmlspecialchars($objet->prix); ?>€</h4>
             <?php if ($categorie): ?>

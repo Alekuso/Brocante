@@ -1,3 +1,25 @@
+<?php
+include_once 'php/Brocanteur.php';
+include_once 'php/Database.php';
+
+// Vérifier si l'utilisateur est connecté et est admin
+if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
+    header('Location: index.php');
+    exit;
+}
+
+// Récupérer l'admin connecté
+$admin = Brocanteur::obtenirConnecte();
+
+// Récupérer les brocanteurs à valider (non visibles)
+$db = new Database();
+$resultats = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 0 AND est_administrateur = 0");
+
+$brocanteurs = [];
+foreach ($resultats as $donnees) {
+    $brocanteurs[] = new Brocanteur($donnees);
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -16,45 +38,45 @@
 <main>
     <section class="presentation">
         <article class="center">
-            <h1>Bonjour, Philippe !</h1>
+            <h1>Bonjour, <?php echo htmlspecialchars($admin->prenom); ?> !</h1>
         </article>
     </section>
     <section class="articles size-half presentation">
         <article>
-            <img class="size-full" src="images/placeholder.png" alt="article" />
-            <a class="btn mar-2">Changer photo de profil</a>
+            <?php 
+            if ($admin->photo === null) {
+                $image = "images/placeholder.png";
+            } else {
+                $image = "uploads/brocanteurs/" . htmlspecialchars($admin->photo);
+            }
+            ?>
+            <img class="size-full" src="<?php echo $image; ?>" alt="Photo de profil" />
         </article>
         <article>
-            <h1>Nom Prénom</h1>
+            <h1><?php echo htmlspecialchars($admin->prenom . ' ' . $admin->nom); ?></h1>
             <h3>Administrateur</h3>
-            <p class="mar-tb-1">Description</p>
-            <a class="btn mar-2">Modifier</a>
+            <p class="mar-tb-1"><?php echo htmlspecialchars($admin->description); ?></p>
+            
+            <a href="modifierProfil.php" class="btn mar-2">Modifier profil</a>
         </article>
     </section>
     <section class="presentation center">
         <h2 class="center">Inscriptions à valider</h2>
     </section>
     <section class="articles articles">
-        <a href="vendeur.php">
-            <h4>Jean Philippe</h4>
-            <p>Valider</p>
-            <p>Définir Emplacement</p>
-            <p>Refuser</p>
-        </a>
-
-        <a href="vendeur.php">
-            <h4>Benjamin Bonjour</h4>
-            <p>Valider</p>
-            <p>Définir Emplacement</p>
-            <p>Refuser</p>
-        </a>
-
-        <a href="vendeur.php">
-            <h4>Andrea Rossi</h4>
-            <p>Valider</p>
-            <p>Définir Emplacement</p>
-            <p>Refuser</p>
-        </a>
+        <?php if (empty($brocanteurs)): ?>
+            <p class="center">Aucune inscription en attente.</p>
+        <?php else: ?>
+            <?php foreach ($brocanteurs as $brocanteur): ?>
+                <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>">
+                    <h4><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h4>
+                    <p>Valider</p>
+                    <p><a href="attribuerEmplacement.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>">Définir Emplacement</a></p>
+                    <p>Refuser</p>
+                </a>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </section>
 </main>
 <?php include 'inc/footer.php'; ?>
 </body>

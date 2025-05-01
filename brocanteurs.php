@@ -53,7 +53,7 @@ if (!empty($nom) || !empty($prenom)) {
     <section>
         <?php if ($brocanteurs !== null): ?>
             <!-- Affichage des résultats de recherche -->
-            <h3 class="flex center zone-title">Résultats de recherche</h3>
+            <h3 class="flex center">Résultats de recherche</h3>
             <article class="articles articles-grow brocanteurs-grid">
                 <?php if (empty($brocanteurs)): ?>
                     <p class="center">Aucun brocanteur ne correspond à votre recherche.</p>
@@ -64,10 +64,10 @@ if (!empty($nom) || !empty($prenom)) {
                     ?>
                         <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>" class="center brocanteur-card">
                             <?php
-                            if ($brocanteur->photo == null) {
+                            if ($brocanteur->photo === null) {
                                 $image = "images/placeholder.png";
                             } else {
-                                $image = "uploads/" . htmlspecialchars($brocanteur->photo);
+                                $image = "uploads/brocanteurs/" . htmlspecialchars($brocanteur->photo);
                             }
                             ?>
                             <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
@@ -89,17 +89,17 @@ if (!empty($nom) || !empty($prenom)) {
                 $brocanteurs = $zone->obtenirBrocanteurs();
                 if (empty($brocanteurs)) continue;
             ?>
-                <h3 class="flex center zone-title"><?php echo htmlspecialchars($zone->nom); ?></h3>
+                <h3 class="flex center"><?php echo htmlspecialchars($zone->nom); ?></h3>
                 <article class="articles articles-grow brocanteurs-grid">
                     <?php foreach ($brocanteurs as $brocanteur): 
                         $emplacement = $brocanteur->obtenirEmplacement();
                     ?>
                         <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>" class="center brocanteur-card">
                             <?php
-                            if ($brocanteur->photo == null) {
+                            if ($brocanteur->photo === null) {
                                 $image = "images/placeholder.png";
                             } else {
-                                $image = "uploads/" . htmlspecialchars($brocanteur->photo);
+                                $image = "uploads/brocanteurs/" . htmlspecialchars($brocanteur->photo);
                             }
                             ?>
                             <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />

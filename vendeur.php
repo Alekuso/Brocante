@@ -18,6 +18,9 @@ if (!$brocanteur) {
 // Récupérer la zone du brocanteur
 $zone = $brocanteur->obtenirZone();
 
+// Récupérer l'emplacement du brocanteur
+$emplacement = $brocanteur->obtenirEmplacement();
+
 // Récupérer les objets du brocanteur
 $objets = $brocanteur->obtenirObjets();
 ?>
@@ -43,7 +46,7 @@ $objets = $brocanteur->obtenirObjets();
             if ($brocanteur->photo == null) {
                 $image = "images/placeholder.png";
             } else {
-                $image = "uploads/" . htmlspecialchars($brocanteur->photo);
+                $image = "uploads/brocanteurs/" . htmlspecialchars($brocanteur->photo);
             }
             ?>
             <img class="size-full" src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
@@ -53,6 +56,13 @@ $objets = $brocanteur->obtenirObjets();
             <?php if ($zone): ?>
                 <h3><?php echo htmlspecialchars($zone->nom); ?></h3>
             <?php endif; ?>
+            
+            <?php if ($emplacement): ?>
+                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
+            <?php else: ?>
+                <p class="emplacement">Emplacement non attribué</p>
+            <?php endif; ?>
+            
             <p class="mar-tb-1"><?php echo htmlspecialchars($brocanteur->description); ?></p>
         </article>
     </section>
@@ -68,10 +78,10 @@ $objets = $brocanteur->obtenirObjets();
             ?>
                 <a href="produit.php?id=<?php echo htmlspecialchars($article->oid); ?>">
                     <?php
-                    if ($article->image == null) {
+                    if ($article->image === null) {
                         $image = "images/placeholder.png";
                     } else {
-                        $image = "uploads/" . htmlspecialchars($article->image);
+                        $image = "uploads/objets/" . htmlspecialchars($article->image);
                     }
                     ?>
                     <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($article->intitule); ?>" />

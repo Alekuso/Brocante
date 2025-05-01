@@ -212,4 +212,42 @@ class Brocanteur {
         
         return $brocanteurs;
     }
+    
+
+    public static function demarrerSession() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
+    public static function estConnecte() {
+        self::demarrerSession();
+        return isset($_SESSION['bid']);
+    }
+
+    public static function estAdmin() {
+        self::demarrerSession();
+        return isset($_SESSION['est_admin']) && $_SESSION['est_admin'] === true;
+    }
+
+    public static function connecterUtilisateur($brocanteur) {
+        self::demarrerSession();
+        $_SESSION['bid'] = $brocanteur->bid;
+        $_SESSION['prenom'] = $brocanteur->prenom;
+        $_SESSION['nom'] = $brocanteur->nom;
+        $_SESSION['est_admin'] = $brocanteur->est_administrateur;
+    }
+    
+    public static function deconnecter() {
+        self::demarrerSession();
+        session_unset();
+        session_destroy();
+    }
+
+    public static function obtenirConnecte() {
+        if (self::estConnecte()) {
+            return self::obtenirParId($_SESSION['bid']);
+        }
+        return null;
+    }
 } 
