@@ -2,6 +2,9 @@
 include_once 'php/Brocanteur.php';
 include_once 'php/Database.php';
 
+use Brocante\Base\Database;
+use Brocante\Modele\Brocanteur;
+
 // Vérifier si l'utilisateur est connecté
 if (!Brocanteur::estConnecte()) {
     header('Location: connexion.php');
@@ -43,10 +46,10 @@ $emplacement = $brocanteur->obtenirEmplacement();
 <?php include 'inc/header.php'; ?>
 <main>
     <?php if (!empty($erreur)): ?>
-        <div class="erreur-message"><?php echo htmlspecialchars($erreur); ?></div>
+        <div class="message-erreur"><?php echo htmlspecialchars($erreur); ?></div>
     <?php endif; ?>
     <?php if (!empty($succes)): ?>
-        <div class="succes-message"><?php echo htmlspecialchars($succes); ?></div>
+        <div class="message-succes"><?php echo htmlspecialchars($succes); ?></div>
     <?php endif; ?>
     <section class="presentation">
         <article class="center">
@@ -93,7 +96,7 @@ $emplacement = $brocanteur->obtenirEmplacement();
             <p class="center">Vous n'avez pas encore d'articles à vendre.</p>
         <?php else: ?>
             <?php foreach ($objets as $objet): ?>
-                <a href="produit.php?id=<?php echo htmlspecialchars($objet->oid); ?>">
+                <article class="objet-card">
                     <?php 
                     if ($objet->image === null) {
                         $image = "images/placeholder.png";
@@ -101,25 +104,29 @@ $emplacement = $brocanteur->obtenirEmplacement();
                         $image = "uploads/objets/" . htmlspecialchars($objet->image);
                     }
                     ?>
-                    <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($objet->intitule); ?>" />
-                    <h4><?php echo htmlspecialchars($objet->intitule); ?></h4>
-                    <p><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?> <?php echo $zone ? '- ' . htmlspecialchars($zone->nom) : ''; ?></p>
-                    <p><?php echo htmlspecialchars($objet->description); ?></p>
-                    <?php 
-                    $categorie = $objet->obtenirCategorie();
-                    if ($categorie): 
-                    ?>
-                        <ul>
-                            <li class="pad-lr-1 flex">
-                                <p class="center">
-                                    <?php echo htmlspecialchars($categorie->intitule); ?>
-                                </p>
-                            </li>
-                        </ul>
-                    <?php endif; ?>
-                    <h3 class="prix"><?php echo htmlspecialchars($objet->prix); ?>€</h3>
-                    <p><a href="modifierObjet.php?id=<?php echo htmlspecialchars($objet->oid); ?>" class="btn-small">Modifier</a></p>
-                </a>
+                    <a href="produit.php?id=<?php echo htmlspecialchars($objet->oid); ?>" class="card-content">
+                        <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($objet->intitule); ?>" />
+                        <h4><?php echo htmlspecialchars($objet->intitule); ?></h4>
+                        <p><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?> <?php echo $zone ? '- ' . htmlspecialchars($zone->nom) : ''; ?></p>
+                        <p><?php echo htmlspecialchars($objet->description); ?></p>
+                        <?php 
+                        $categorie = $objet->obtenirCategorie();
+                        if ($categorie): 
+                        ?>
+                            <ul>
+                                <li class="pad-lr-1 flex">
+                                    <p class="center">
+                                        <?php echo htmlspecialchars($categorie->intitule); ?>
+                                    </p>
+                                </li>
+                            </ul>
+                        <?php endif; ?>
+                        <h3 class="prix"><?php echo htmlspecialchars($objet->prix); ?>€</h3>
+                    </a>
+                    <div class="card-actions">
+                        <a href="modifierObjet.php?id=<?php echo htmlspecialchars($objet->oid); ?>" class="btn-small">Modifier</a>
+                    </div>
+                </article>
             <?php endforeach; ?>
         <?php endif; ?>
 

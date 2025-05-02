@@ -3,6 +3,10 @@ include_once 'php/Database.php';
 include_once 'php/Brocanteur.php';
 include_once 'php/Zone.php';
 
+use Brocante\Base\Database;
+use Brocante\Modele\Brocanteur;
+use Brocante\Modele\Zone;
+
 // Initialisation des paramètres de recherche
 $nom = isset($_GET['nom']) ? trim($_GET['nom']) : '';
 $prenom = isset($_GET['prenom']) ? trim($_GET['prenom']) : '';

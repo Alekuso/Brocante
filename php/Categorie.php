@@ -1,5 +1,8 @@
 <?php
+namespace Brocante\Modele;
+
 require_once __DIR__ . '/Database.php';
+use Brocante\Base\Database;
 require_once __DIR__ . '/Objet.php';
 
 /**

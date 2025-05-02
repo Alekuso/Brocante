@@ -1,5 +1,8 @@
 <?php
+namespace Brocante\Modele;
+
 require_once __DIR__ . '/Database.php';
+use Brocante\Base\Database;
 
 /**
  * Classe Brocanteur
@@ -54,7 +57,7 @@ class Brocanteur {
      */
     public static function obtenirTousVisibles() {
         $db = new Database();
-        $resultats = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 1");
+        $resultats = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 1 ORDER BY nom, prenom");
         
         $brocanteurs = [];
         foreach ($resultats as $donnees) {
@@ -80,7 +83,7 @@ class Brocanteur {
         $objets = [];
         foreach ($resultats as $donnees) {
             require_once __DIR__ . '/Objet.php';
-            $objets[] = new Objet($donnees);
+            $objets[] = new \Brocante\Modele\Objet($donnees);
         }
         
         return $objets;
@@ -97,11 +100,14 @@ class Brocanteur {
         }
         
         $db = new Database();
-        $donnees = $db->obtenirUn("SELECT * FROM Emplacement WHERE bid = ?", [$this->bid]);
+        $donnees = $db->obtenirUn("SELECT e.*, z.nom AS zone_nom 
+                                    FROM Emplacement e 
+                                    JOIN Zone z ON e.zid = z.zid 
+                                    WHERE e.bid = ?", [$this->bid]);
         
         if ($donnees) {
             require_once __DIR__ . '/Emplacement.php';
-            return new Emplacement($donnees);
+            return new \Brocante\Modele\Emplacement($donnees);
         }
         
         return null;
@@ -130,13 +136,19 @@ class Brocanteur {
     public function enregistrer() {
         $db = new Database();
         
+        // Sécurité: Filtrer les données
+        $nom = htmlspecialchars($this->nom);
+        $prenom = htmlspecialchars($this->prenom);
+        $courriel = filter_var($this->courriel, FILTER_SANITIZE_EMAIL);
+        $description = htmlspecialchars($this->description);
+        
         if ($this->bid) {
             // Mise à jour
             $db->executer(
                 "UPDATE Brocanteur SET nom = ?, prenom = ?, courriel = ?, description = ?, 
                 photo = ?, visible = ?, est_administrateur = ? WHERE bid = ?",
                 [
-                    $this->nom, $this->prenom, $this->courriel, $this->description,
+                    $nom, $prenom, $courriel, $description,
                     $this->photo, $this->visible, $this->est_administrateur, $this->bid
                 ]
             );
@@ -146,9 +158,9 @@ class Brocanteur {
                 "INSERT INTO Brocanteur (nom, prenom, courriel, mot_passe, description, photo, visible, est_administrateur) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 [
-                    $this->nom, $this->prenom, $this->courriel, 
-                    password_hash('motdepasse', PASSWORD_DEFAULT), // Mot de passe par défaut
-                    $this->description, $this->photo, $this->visible, 
+                    $nom, $prenom, $courriel, 
+                    password_hash('motdepasse', PASSWORD_DEFAULT),
+                    $description, $this->photo, $this->visible, 
                     $this->est_administrateur
                 ]
             );
@@ -167,6 +179,8 @@ class Brocanteur {
      */
     public static function connecter($courriel, $motDePasse) {
         $db = new Database();
+        // Sécurité: sanitize l'email
+        $courriel = filter_var($courriel, FILTER_SANITIZE_EMAIL);
         $donnees = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
         if ($donnees && password_verify($motDePasse, $donnees['mot_passe'])) {
@@ -188,19 +202,16 @@ class Brocanteur {
         $params = [];
         $sql = "SELECT * FROM Brocanteur WHERE visible = 1";
         
-        // Filtre par nom
         if (!empty($nom)) {
             $sql .= " AND nom LIKE ?";
             $params[] = "%$nom%";
         }
         
-        // Filtre par prénom
         if (!empty($prenom)) {
             $sql .= " AND prenom LIKE ?";
             $params[] = "%$prenom%";
         }
         
-        // Tri par nom puis prénom
         $sql .= " ORDER BY nom ASC, prenom ASC";
         
         $resultats = $db->obtenirTous($sql, $params);
@@ -249,5 +260,66 @@ class Brocanteur {
             return self::obtenirParId($_SESSION['bid']);
         }
         return null;
+    }
+    
+    public static function validerInscription($donnees) {
+        $erreurs = [];
+        
+        // Validation du nom
+        if (empty($donnees['nom'])) {
+            $erreurs['nom'] = "Le nom est obligatoire";
+        }
+        
+        // Validation du prénom
+        if (empty($donnees['prenom'])) {
+            $erreurs['prenom'] = "Le prénom est obligatoire";
+        }
+        
+        // Validation du courriel
+        if (empty($donnees['courriel'])) {
+            $erreurs['courriel'] = "Le courriel est obligatoire";
+        } elseif (!filter_var($donnees['courriel'], FILTER_VALIDATE_EMAIL)) {
+            $erreurs['courriel'] = "Format de courriel invalide";
+        } else {
+            // Vérifier si le courriel existe déjà
+            $db = new Database();
+            $existant = $db->obtenirUn("SELECT bid FROM Brocanteur WHERE courriel = ?", [$donnees['courriel']]);
+            if ($existant) {
+                $erreurs['courriel'] = "Ce courriel est déjà utilisé";
+            }
+        }
+        
+        // Validation du mot de passe
+        if (empty($donnees['mot_passe'])) {
+            $erreurs['mot_passe'] = "Le mot de passe est obligatoire";
+        } elseif (strlen($donnees['mot_passe']) < 6) {
+            $erreurs['mot_passe'] = "Le mot de passe doit contenir au moins 6 caractères";
+        }
+        
+        // Validation de la confirmation du mot de passe
+        if (empty($donnees['confirmation_mot_passe'])) {
+            $erreurs['confirmation_mot_passe'] = "La confirmation du mot de passe est obligatoire";
+        } elseif ($donnees['mot_passe'] !== $donnees['confirmation_mot_passe']) {
+            $erreurs['confirmation_mot_passe'] = "Les mots de passe ne correspondent pas";
+        }
+        
+        // Validation de la description
+        if (empty($donnees['description'])) {
+            $erreurs['description'] = "La description est obligatoire";
+        }
+        
+        // Validation de la photo si présente
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
+            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+            $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
+            
+            if (!in_array($extension, $allowed)) {
+                $erreurs['photo'] = "Format de fichier non autorisé. Utilisez JPG, PNG ou GIF";
+            } elseif ($_FILES['photo']['size'] > 5000000) { // 5MB
+                $erreurs['photo'] = "Le fichier est trop volumineux (max 5MB)";
+            }
+        }
+        
+        return $erreurs;
     }
 } 

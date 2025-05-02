@@ -4,6 +4,11 @@ include_once 'php/Objet.php';
 include_once 'php/Brocanteur.php';
 include_once 'php/Categorie.php';
 
+use Brocante\Base\Database;
+use Brocante\Modele\Objet;
+use Brocante\Modele\Brocanteur;
+use Brocante\Modele\Categorie;
+
 // Initialisation des paramètres de recherche
 $nom = isset($_GET['nom']) ? trim($_GET['nom']) : '';
 $categorieId = isset($_GET['category']) && $_GET['category'] !== '*' ? $_GET['category'] : null;

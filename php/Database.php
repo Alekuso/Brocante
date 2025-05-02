@@ -1,67 +1,55 @@
 <?php
+namespace Brocante\Base;
+
 /**
- * Classe Base de données
- * Gère la connexion et les requêtes à la base de données
+ * Database
+ * Gère les connexions à la base de données
  */
 class Database {
-    public $pdo;
-
-    /**
-     * Constructeur: établit la connexion à la base de données
-     */
+    private $connexion;
+    
     public function __construct() {
-        $serveur = "192.168.132.203:3306";
-        $utilisateur = "Q240027";
-        $motDePasse = "acac755efeefd68d81d093e26fff0dea6cb50163";
-        $nomBD = "Q240027";
-        
-        $this->pdo = new PDO("mysql:host=$serveur;dbname=$nomBD;charset=utf8", $utilisateur, $motDePasse);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    }
-
-    /**
-     * Exécute une requête SQL et retourne le résultat
-     * 
-     * @param string $requete La requête SQL
-     * @param array $parametres Les paramètres de la requête
-     * @return PDOStatement L'objet statement après exécution
-     */
-    public function executer($requete, $parametres = []) {
-        $stmt = $this->pdo->prepare($requete);
-        $stmt->execute($parametres);
-        return $stmt;
+        try {
+            $serveur = "192.168.132.203:3306";
+            $utilisateur = "Q240027";
+            $motDePasse = "acac755efeefd68d81d093e26fff0dea6cb50163";
+            $nomBD = "Q240027";
+            
+            $this->connexion = new \PDO(
+                "mysql:host=$serveur;dbname=$nomBD;charset=utf8",
+                $utilisateur,
+                $motDePasse,
+                [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
+            );
+        } catch (\PDOException $e) {
+            die('Erreur connexion BD: ' . $e->getMessage());
+        }
     }
     
-    /**
-     * Retourne une seule ligne de résultat
-     * 
-     * @param string $requete La requête SQL
-     * @param array $parametres Les paramètres de la requête
-     * @return array|false Un tableau associatif contenant la ligne ou false si aucun résultat
-     */
-    public function obtenirUn($requete, $parametres = []) {
-        $stmt = $this->executer($requete, $parametres);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    public function obtenirUn($requete, $params = []) {
+        $stmt = $this->connexion->prepare($requete);
+        $stmt->execute($params);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
     
-    /**
-     * Retourne toutes les lignes de résultat
-     * 
-     * @param string $requete La requête SQL
-     * @param array $parametres Les paramètres de la requête
-     * @return array Un tableau de tableaux associatifs contenant les lignes
-     */
-    public function obtenirTous($requete, $parametres = []) {
-        $stmt = $this->executer($requete, $parametres);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function obtenirTous($requete, $params = []) {
+        $stmt = $this->connexion->prepare($requete);
+        $stmt->execute($params);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
     
-    /**
-     * Retourne le dernier ID inséré
-     * 
-     * @return string L'ID de la dernière insertion
-     */
+    public function compter($requete, $params = []) {
+        $stmt = $this->connexion->prepare($requete);
+        $stmt->execute($params);
+        return (int)$stmt->fetchColumn();
+    }
+    
+    public function executer($requete, $params = []) {
+        $stmt = $this->connexion->prepare($requete);
+        return $stmt->execute($params);
+    }
+    
     public function dernierIdInsere() {
-        return $this->pdo->lastInsertId();
+        return $this->connexion->lastInsertId();
     }
 } 

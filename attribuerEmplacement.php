@@ -1,6 +1,13 @@
 <?php
 include_once 'php/Brocanteur.php';
 include_once 'php/Zone.php';
+include_once 'php/Database.php';
+include_once 'php/Emplacement.php';
+
+use Brocante\Modele\Brocanteur;
+use Brocante\Modele\Zone;
+use Brocante\Modele\Emplacement;
+use Brocante\Base\Database;
 
 // Vérifier si l'utilisateur est connecté et est admin
 if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
@@ -98,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
             <?php if (!empty($message)): ?>
-                <p class="center"><?php echo htmlspecialchars($message); ?></p>
+                <p class="message-succes center"><?php echo htmlspecialchars($message); ?></p>
             <?php endif; ?>
             
             <form method="POST" action="attribuerEmplacement.php<?php echo $id ? '?id=' . $id : ''; ?>" class="column">

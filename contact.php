@@ -1,3 +1,64 @@
+<?php
+include_once 'php/Brocanteur.php';
+use Brocante\Modele\Brocanteur;
+
+$erreurs = [];
+$prenom = $email = $nom = $message = '';
+$succes = false;
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    $nom = $_POST["nom"] ?? '';
+    $prenom = $_POST["prenom"] ?? '';
+    $email = $_POST["email"] ?? '';
+    $message = $_POST["message"] ?? '';
+    
+    // Validation du formulaire
+    if (empty($nom)) {
+        $erreurs['nom'] = "Le nom est obligatoire";
+    }
+    
+    if (empty($prenom)) {
+        $erreurs['prenom'] = "Le prénom est obligatoire";
+    }
+    
+    if (empty($email)) {
+        $erreurs['email'] = "L'email est obligatoire";
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $erreurs['email'] = "Format d'email invalide";
+    }
+    
+    if (empty($message)) {
+        $erreurs['message'] = "Le message est obligatoire";
+    }
+    
+    // Si pas d'erreurs, traiter le formulaire
+    if (empty($erreurs)) {
+        $alexEmail = "a.olemans@student.helmo.be";
+        $nomFiltre = htmlspecialchars($nom);
+        $prenomFiltre = htmlspecialchars($prenom);
+        $emailFiltre = filter_var($email, FILTER_SANITIZE_EMAIL);
+        $messageFiltre = htmlspecialchars($message);
+
+        $sujet = "[Supra Brocante] Message de $prenomFiltre $nomFiltre";
+        $contenu = "Message reçu de : $prenomFiltre $nomFiltre <$emailFiltre>\n\n$messageFiltre";
+
+        $headers = "From: $emailFiltre\r\n";
+        $headers .= "Reply-To: $emailFiltre\r\n";
+        $headers .= "Content-Type: text/plain; charset=UTF-8";
+
+        // Sur serveur de production
+        mail($alexEmail, $sujet, $contenu, $headers);
+        // Copie nécessaire pour test prof
+        mail($emailFiltre, $sujet, $contenu, $headers);
+        $succes = true;
+
+        
+        
+        // Vider les champs après envoi réussi
+        $prenom = $email = $nom = $message = '';
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -14,57 +75,49 @@
 <body>
 <?php include 'inc/header.php'; ?>
 <main>
-    <section class="center contactFirstImg">
-        <img class="contactFirstImg" src="./images/contact.png" alt="Brocante rétro">
+    <section class="contact-image-container center">
+        <img src="./images/contact.png" alt="Brocante rétro" class="contact-image">
     </section>
     <section class="presentation center">
         <article class="center">
+            <h1>Contact</h1>
             <h3>Vous avez une question ?</h3>
-            <h3>Remplissez ce formulaire et on vous répondra dans le plus bref délais !</h3>
-            <?php
-            if ($_SERVER["REQUEST_METHOD"] === "POST") {
-                $alexEmail = "a.olemans@student.helmo.be";
-                $nom = htmlspecialchars($_POST["nom"]);
-                $prenom = htmlspecialchars($_POST["prenom"]);
-                $email = filter_var($_POST["email"], FILTER_VALIDATE_EMAIL);
-                $message = htmlspecialchars($_POST["message"]);
-
-                if (!$email) {
-                    die("Adresse email invalide.");
-                }
-
-                $sujet = "[Supra Brocante] Message de $prenom $nom";
-                $contenu = "Message reçu de : $prenom $nom <$email>\n\n$message";
-
-                // header
-                $headers = "From: $email\r\n";
-                $headers .= "Reply-To: $email\r\n";
-                $headers .= "Content-Type: text/plain; charset=UTF-8";
-
-                // FONCTIONNE UNIQUEMENT SUR LE SERVEUR PROD
-                // C'EST NORMAL SI CA NE MARCHE PAS SUR l'ENV LOCAL
-                $envoi = mail($alexEmail, $sujet, $contenu, $headers);
-
-                if ($envoi) {
-                    echo "<pre>Message envoyé !</pre>";
-                } else {
-                    echo "<pre>godverdomme, php mail werkt niet naar de lokale network</pre>";
-                }
-            }
-            ?>
+            <h3>Remplissez ce formulaire et on vous répondra dans le plus bref délais !</h3>
+            
+            <?php if ($succes): ?>
+                <div class="message-succes">
+                    <p>Votre message a été envoyé avec succès !</p>
+                </div>
+            <?php endif; ?>
         </article>
     </section>
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
                 <label for="nom">Nom</label>
-                <input class="size-full" type="text" id="nom" name="nom" required>
+                <input class="size-full" type="text" id="nom" name="nom" value="" required>
+                <?php if (isset($erreurs['nom'])): ?>
+                    <p class="erreur"><?php echo $erreurs['nom']; ?></p>
+                <?php endif; ?>
+                
                 <label for="prenom">Prénom</label>
-                <input class="size-full" type="text" id="prenom" name="prenom" required>
+                <input class="size-full" type="text" id="prenom" name="prenom" value="" required>
+                <?php if (isset($erreurs['prenom'])): ?>
+                    <p class="erreur"><?php echo $erreurs['prenom']; ?></p>
+                <?php endif; ?>
+                
                 <label for="email">Email</label>
-                <input class="size-full" type="email" id="email" name="email" required>
+                <input class="size-full" type="email" id="email" name="email" value="" required>
+                <?php if (isset($erreurs['email'])): ?>
+                    <p class="erreur"><?php echo $erreurs['email']; ?></p>
+                <?php endif; ?>
+                
                 <label for="message">Message</label>
                 <textarea id="message" name="message" required></textarea>
+                <?php if (isset($erreurs['message'])): ?>
+                    <p class="erreur"><?php echo $erreurs['message']; ?></p>
+                <?php endif; ?>
+                
                 <button type="submit" class="size-half">Envoyer</button>
             </form>
         </article>

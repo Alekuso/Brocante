@@ -2,6 +2,9 @@
 include_once 'php/Brocanteur.php';
 include_once 'php/Database.php';
 
+use Brocante\Modele\Brocanteur;
+use Brocante\Base\Database;
+
 // Vérifier si l'utilisateur est connecté
 if (!Brocanteur::estConnecte()) {
     header('Location: connexion.php');
@@ -40,40 +43,58 @@ if (isset($_POST['modifier_donnees'])) {
 
 // Traiter l'upload de photo
 if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-    // Vérifier le type de fichier
-    $allowed = ['image/jpeg', 'image/png', 'image/gif'];
-    $type = $_FILES['photo']['type'];
+    // Vérifier le type MIME et l'extension
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
     
-    if (in_array($type, $allowed)) {
+    $file_type = $_FILES['photo']['type'];
+    $file_name = $_FILES['photo']['name'];
+    $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+    
+    if (in_array($file_type, $allowed_types) && in_array($file_extension, $allowed_extensions)) {
         // Créer le dossier si nécessaire
         $uploadDir = 'uploads/brocanteurs/';
-        if (!file_exists($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
+        if (!is_dir($uploadDir)) {
+            if (!mkdir($uploadDir, 0777, true)) {
+                $erreur = "Impossible de créer le répertoire d'upload.";
+            }
         }
         
-        // Générer un nom de fichier unique
-        $filename = $utilisateur->bid . '_' . time() . '_' . $_FILES['photo']['name'];
-        $destination = $uploadDir . $filename;
-        
-        // Déplacer le fichier
-        if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
-            // Mettre à jour la base de données
-            $db = new Database();
-            $db->executer("UPDATE Brocanteur SET photo = ? WHERE bid = ?", 
-                [$filename, $utilisateur->bid]);
+        if (empty($erreur)) {
+            // Générer un nom de fichier unique
+            $filename = $utilisateur->bid . '_' . time() . '_' . preg_replace('/[^a-zA-Z0-9\.]/', '_', $file_name);
+            $destination = $uploadDir . $filename;
             
-            // Mettre à jour l'objet utilisateur
-            $utilisateur->photo = $filename;
-            $succes = "Photo de profil mise à jour avec succès.";
-            
-            // Rediriger vers la page appropriée
-            header('Location: ' . ($utilisateur->est_administrateur ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'));
-            exit;
-        } else {
-            $erreur = "Erreur lors de l'upload de la photo.";
+            // Vérifier si le dossier est accessible en écriture
+            if (!is_writable($uploadDir)) {
+                $erreur = "Le dossier d'upload n'est pas accessible en écriture.";
+            } else {
+                // Déplacer le fichier
+                if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
+                    // Supprimer l'ancienne photo si elle existe
+                    if ($utilisateur->photo && file_exists($uploadDir . $utilisateur->photo) && is_file($uploadDir . $utilisateur->photo)) {
+                        @unlink($uploadDir . $utilisateur->photo);
+                    }
+                    
+                    // Mettre à jour la base de données
+                    $db = new Database();
+                    $db->executer("UPDATE Brocanteur SET photo = ? WHERE bid = ?", 
+                        [$filename, $utilisateur->bid]);
+                    
+                    // Mettre à jour l'objet utilisateur
+                    $utilisateur->photo = $filename;
+                    $succes = "Photo de profil mise à jour avec succès.";
+                    
+                    // Rediriger vers la page appropriée
+                    header('Location: ' . ($utilisateur->est_administrateur ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'));
+                    exit;
+                } else {
+                    $erreur = "Erreur lors de l'upload de la photo. Code: " . $_FILES['photo']['error'];
+                }
+            }
         }
     } else {
-        $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG, PNG ou GIF.";
+        $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG, PNG ou GIF uniquement.";
     }
 }
 
@@ -98,10 +119,30 @@ $emplacement = $utilisateur->obtenirEmplacement();
 <?php include 'inc/header.php'; ?>
 <main>
     <?php if (!empty($erreur)): ?>
-        <div class="erreur-message"><?php echo htmlspecialchars($erreur); ?></div>
+        <div class="message-erreur">
+            <?php echo htmlspecialchars($erreur); ?>
+            <?php if (isset($_FILES['photo']) && $_FILES['photo']['error'] != 0): ?>
+                <br>Code d'erreur PHP: <?php echo htmlspecialchars($_FILES['photo']['error']); ?>
+                <?php 
+                    $upload_errors = [
+                        0 => "Aucune erreur, le téléchargement est réussi.",
+                        1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
+                        2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
+                        3 => "Le fichier n'a été que partiellement téléchargé.",
+                        4 => "Aucun fichier n'a été téléchargé.",
+                        6 => "Dossier temporaire manquant.",
+                        7 => "Échec d'écriture du fichier sur le disque.",
+                        8 => "Une extension PHP a arrêté le téléchargement du fichier."
+                    ];
+                    if (isset($upload_errors[$_FILES['photo']['error']])) {
+                        echo " - " . htmlspecialchars($upload_errors[$_FILES['photo']['error']]);
+                    }
+                ?>
+            <?php endif; ?>
+        </div>
     <?php endif; ?>
     <?php if (!empty($succes)): ?>
-        <div class="succes-message"><?php echo htmlspecialchars($succes); ?></div>
+        <div class="message-succes"><?php echo htmlspecialchars($succes); ?></div>
     <?php endif; ?>
 
     <section class="presentation">
@@ -123,6 +164,7 @@ $emplacement = $utilisateur->obtenirEmplacement();
             
             <!-- Formulaire pour changer la photo de profil -->
             <form method="POST" action="modifierProfil.php" enctype="multipart/form-data" class="photo-form">
+                <input type="hidden" name="MAX_FILE_SIZE" value="5000000" />
                 <div class="file-input-wrapper">
                     <input type="file" name="photo" id="photo" accept="image/*" class="file-input">
                     <button type="submit" class="btn mar-2">Changer photo de profil</button>
@@ -148,17 +190,17 @@ $emplacement = $utilisateur->obtenirEmplacement();
             <form method="POST" action="modifierProfil.php" class="profile-form">
                 <div class="form-group">
                     <label for="nom">Nom:</label>
-                    <input type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($utilisateur->nom); ?>" class="size-full">
+                    <input type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($utilisateur->nom); ?>" class="size-full" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="prenom">Prénom:</label>
-                    <input type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($utilisateur->prenom); ?>" class="size-full">
+                    <input type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($utilisateur->prenom); ?>" class="size-full" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="description">Description:</label>
-                    <textarea id="description" name="description" rows="4" class="size-full"><?php echo htmlspecialchars($utilisateur->description); ?></textarea>
+                    <textarea id="description" name="description" rows="4" class="size-full" required><?php echo htmlspecialchars($utilisateur->description); ?></textarea>
                 </div>
                 
                 <div class="form-actions">

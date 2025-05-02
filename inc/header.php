@@ -1,5 +1,6 @@
 <?php
-include_once 'php/Brocanteur.php'; 
+include_once 'php/Brocanteur.php';
+use Brocante\Modele\Brocanteur;
 ?>
 <header>
     <a href="index.php">
@@ -50,7 +51,10 @@ include_once 'php/Brocanteur.php';
 </header>
 
 <?php
+// These includes aren't needed in the header since they should be included in the pages that use them
+/* 
 include_once 'php/Database.php';
 include_once 'php/Objet.php';
 include_once 'php/Categorie.php';
+*/
 ?>

@@ -4,6 +4,11 @@ include_once 'php/Database.php';
 include_once 'php/Objet.php';
 include_once 'php/Categorie.php';
 
+use Brocante\Modele\Brocanteur;
+use Brocante\Modele\Objet;
+use Brocante\Modele\Categorie;
+use Brocante\Base\Database;
+
 // Vérifier si l'utilisateur est connecté
 if (!Brocanteur::estConnecte()) {
     header('Location: connexion.php');
@@ -55,32 +60,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Traitement de l'image
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $allowed = ['image/jpeg', 'image/png', 'image/gif'];
-            $type = $_FILES['image']['type'];
+            // Vérifier le type MIME et l'extension
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+            $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
             
-            if (in_array($type, $allowed)) {
+            $file_type = $_FILES['image']['type'];
+            $file_name = $_FILES['image']['name'];
+            $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
+            
+            if (in_array($file_type, $allowed_types) && in_array($file_extension, $allowed_extensions)) {
                 // Créer le dossier si nécessaire
                 $uploadDir = 'uploads/objets/';
-                if (!file_exists($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
+                if (!is_dir($uploadDir)) {
+                    if (!mkdir($uploadDir, 0777, true)) {
+                        $erreur = "Impossible de créer le répertoire d'upload.";
+                    }
                 }
                 
-                // Générer un nom de fichier unique
-                $filename = time() . '_' . $_FILES['image']['name'];
-                $destination = $uploadDir . $filename;
-                
-                // Déplacer le fichier
-                if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
-                    // Supprimer l'ancienne image si elle existe
-                    if ($objet->image && file_exists($uploadDir . $objet->image)) {
-                        unlink($uploadDir . $objet->image);
+                if (empty($erreur)) {
+                    // Générer un nom de fichier unique
+                    $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9\.]/', '_', $file_name);
+                    $destination = $uploadDir . $filename;
+                    
+                    // Vérifier si le dossier est accessible en écriture
+                    if (!is_writable($uploadDir)) {
+                        $erreur = "Le dossier d'upload n'est pas accessible en écriture.";
+                    } else {
+                        // Déplacer le fichier
+                        if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
+                            // Supprimer l'ancienne image si elle existe
+                            if ($objet->image && file_exists($uploadDir . $objet->image) && is_file($uploadDir . $objet->image)) {
+                                @unlink($uploadDir . $objet->image);
+                            }
+                            $objet->image = $filename;
+                        } else {
+                            $erreur = "Erreur lors de l'upload de l'image. Code: " . $_FILES['image']['error'];
+                        }
                     }
-                    $objet->image = $filename;
-                } else {
-                    $erreur = "Erreur lors de l'upload de l'image.";
                 }
             } else {
-                $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG, PNG ou GIF.";
+                $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG, PNG ou GIF uniquement.";
             }
         }
         
@@ -115,10 +134,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php include 'inc/header.php'; ?>
 <main>
     <?php if (!empty($erreur)): ?>
-        <div class="erreur-message"><?php echo htmlspecialchars($erreur); ?></div>
+        <div class="message-erreur">
+            <?php echo htmlspecialchars($erreur); ?>
+            <?php if (isset($_FILES['image']) && $_FILES['image']['error'] != 0): ?>
+                <br>Code d'erreur PHP: <?php echo htmlspecialchars($_FILES['image']['error']); ?>
+                <?php 
+                    $upload_errors = [
+                        0 => "Aucune erreur, le téléchargement est réussi.",
+                        1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
+                        2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
+                        3 => "Le fichier n'a été que partiellement téléchargé.",
+                        4 => "Aucun fichier n'a été téléchargé.",
+                        6 => "Dossier temporaire manquant.",
+                        7 => "Échec d'écriture du fichier sur le disque.",
+                        8 => "Une extension PHP a arrêté le téléchargement du fichier."
+                    ];
+                    if (isset($upload_errors[$_FILES['image']['error']])) {
+                        echo " - " . htmlspecialchars($upload_errors[$_FILES['image']['error']]);
+                    }
+                ?>
+            <?php endif; ?>
+        </div>
     <?php endif; ?>
     <?php if (!empty($succes)): ?>
-        <div class="succes-message"><?php echo htmlspecialchars($succes); ?></div>
+        <div class="message-succes"><?php echo htmlspecialchars($succes); ?></div>
     <?php endif; ?>
 
     <section class="presentation">

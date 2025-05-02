@@ -4,6 +4,11 @@ include_once 'php/Objet.php';
 include_once 'php/Brocanteur.php';
 include_once 'php/Categorie.php';
 
+use Brocante\Base\Database;
+use Brocante\Modele\Objet;
+use Brocante\Modele\Brocanteur;
+use Brocante\Modele\Categorie;
+
 // Récupérer l'objet demandé
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $objet = Objet::obtenirParId($id);

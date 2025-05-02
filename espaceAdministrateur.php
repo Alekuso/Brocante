@@ -1,6 +1,13 @@
 <?php
 include_once 'php/Brocanteur.php';
 include_once 'php/Database.php';
+include_once 'php/Emplacement.php';
+include_once 'php/Zone.php';
+
+use Brocante\Modele\Brocanteur;
+use Brocante\Base\Database;
+use Brocante\Modele\Emplacement;
+use Brocante\Modele\Zone;
 
 // Vérifier si l'utilisateur est connecté et est admin
 if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
@@ -13,11 +20,30 @@ $admin = Brocanteur::obtenirConnecte();
 
 // Récupérer les brocanteurs à valider (non visibles)
 $db = new Database();
-$resultats = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 0 AND est_administrateur = 0");
+$brocanteurs_attente = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 0 AND est_administrateur = 0 ORDER BY nom ASC");
 
-$brocanteurs = [];
-foreach ($resultats as $donnees) {
-    $brocanteurs[] = new Brocanteur($donnees);
+// Récupérer les brocanteurs validés
+$brocanteurs_valides = $db->obtenirTous("
+    SELECT b.*, e.code as emplacement_code, z.nom as zone_nom
+    FROM Brocanteur b 
+    LEFT JOIN Emplacement e ON b.bid = e.bid
+    LEFT JOIN Zone z ON e.zid = z.zid
+    WHERE b.visible = 1 AND b.est_administrateur = 0
+    ORDER BY b.nom ASC
+");
+
+// Compter les zones et emplacements
+$stats = [
+    'total_brocanteurs' => count($brocanteurs_attente) + count($brocanteurs_valides),
+    'attente' => count($brocanteurs_attente),
+    'valides' => count($brocanteurs_valides),
+    'emplacements_attribues' => 0
+];
+
+foreach ($brocanteurs_valides as $brocanteur) {
+    if (!empty($brocanteur['emplacement_code'])) {
+        $stats['emplacements_attribues']++;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -36,11 +62,6 @@ foreach ($resultats as $donnees) {
 <body>
 <?php include 'inc/header.php'; ?>
 <main>
-    <section class="presentation">
-        <article class="center">
-            <h1>Bonjour, <?php echo htmlspecialchars($admin->prenom); ?> !</h1>
-        </article>
-    </section>
     <section class="articles size-half presentation">
         <article>
             <?php 
@@ -53,28 +74,108 @@ foreach ($resultats as $donnees) {
             <img class="size-full" src="<?php echo $image; ?>" alt="Photo de profil" />
         </article>
         <article>
-            <h1><?php echo htmlspecialchars($admin->prenom . ' ' . $admin->nom); ?></h1>
-            <h3>Administrateur</h3>
+            <h1>Espace Administrateur</h1>
+            <h2>Bonjour, <?php echo htmlspecialchars($admin->prenom); ?> !</h2>
             <p class="mar-tb-1"><?php echo htmlspecialchars($admin->description); ?></p>
-            
             <a href="modifierProfil.php" class="btn mar-2">Modifier profil</a>
         </article>
     </section>
-    <section class="presentation center">
-        <h2 class="center">Inscriptions à valider</h2>
+    
+    <!-- Statistiques -->
+    <section class="stats-container bg-darkgray">
+        <div class="stats-grid">
+            <div class="stat-box">
+                <h3>Total des brocanteurs</h3>
+                <p class="stat-number"><?php echo $stats['total_brocanteurs']; ?></p>
+            </div>
+            <div class="stat-box">
+                <h3>En attente</h3>
+                <p class="stat-number"><?php echo $stats['attente']; ?></p>
+            </div>
+            <div class="stat-box">
+                <h3>Validés</h3>
+                <p class="stat-number"><?php echo $stats['valides']; ?></p>
+            </div>
+            <div class="stat-box">
+                <h3>Emplacements attribués</h3>
+                <p class="stat-number"><?php echo $stats['emplacements_attribues']; ?></p>
+            </div>
+        </div>
     </section>
-    <section class="articles articles">
-        <?php if (empty($brocanteurs)): ?>
+    
+    <!-- Inscriptions en attente -->
+    <section class="presentation">
+        <h2 class="center">Inscriptions en attente</h2>
+        
+        <?php if (empty($brocanteurs_attente)): ?>
             <p class="center">Aucune inscription en attente.</p>
         <?php else: ?>
-            <?php foreach ($brocanteurs as $brocanteur): ?>
-                <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>">
-                    <h4><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h4>
-                    <p>Valider</p>
-                    <p><a href="attribuerEmplacement.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>">Définir Emplacement</a></p>
-                    <p>Refuser</p>
-                </a>
-            <?php endforeach; ?>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($brocanteurs_attente as $brocanteur): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($brocanteur['bid']); ?></td>
+                                <td><?php echo htmlspecialchars($brocanteur['nom']); ?></td>
+                                <td><?php echo htmlspecialchars($brocanteur['prenom']); ?></td>
+                                <td><?php echo htmlspecialchars($brocanteur['courriel']); ?></td>
+                                <td class="actions">
+                                    <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
+                                    <a href="attribuerEmplacement.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Emplacement</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </section>
+    
+    <!-- Brocanteurs validés -->
+    <section class="presentation">
+        <h2 class="center">Brocanteurs validés</h2>
+        
+        <?php if (empty($brocanteurs_valides)): ?>
+            <p class="center">Aucun brocanteur validé.</p>
+        <?php else: ?>
+            <div class="admin-table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                            <th>Zone</th>
+                            <th>Emplacement</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($brocanteurs_valides as $brocanteur): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($brocanteur['bid']); ?></td>
+                                <td><?php echo htmlspecialchars($brocanteur['nom']); ?></td>
+                                <td><?php echo htmlspecialchars($brocanteur['prenom']); ?></td>
+                                <td><?php echo htmlspecialchars($brocanteur['zone_nom'] ?? 'Non assigné'); ?></td>
+                                <td><?php echo htmlspecialchars($brocanteur['emplacement_code'] ?? 'Non assigné'); ?></td>
+                                <td class="actions">
+                                    <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
+                                    <a href="attribuerEmplacement.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Emplacement</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
         <?php endif; ?>
     </section>
 </main>

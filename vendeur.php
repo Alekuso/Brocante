@@ -5,6 +5,12 @@ include_once 'php/Brocanteur.php';
 include_once 'php/Categorie.php';
 include_once 'php/Zone.php';
 
+use Brocante\Base\Database;
+use Brocante\Modele\Objet;
+use Brocante\Modele\Brocanteur;
+use Brocante\Modele\Categorie;
+use Brocante\Modele\Zone;
+
 // Récupérer le brocanteur demandé
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $brocanteur = Brocanteur::obtenirParId($id);

@@ -4,6 +4,11 @@ include_once 'php/Objet.php';
 include_once 'php/Brocanteur.php';
 include_once 'php/Categorie.php';
 
+use Brocante\Base\Database;
+use Brocante\Modele\Objet;
+use Brocante\Modele\Brocanteur;
+use Brocante\Modele\Categorie;
+
 $objets = Objet::obtenirAleatoires();
 ?>
 
@@ -50,42 +55,38 @@ $objets = Objet::obtenirAleatoires();
         </article>
     </section>
     <section class="articles articles-grow">
-        <?php
-        foreach ($objets as $article) {
+        <?php foreach ($objets as $article):
             $brocanteur = $article->obtenirBrocanteur();
             $categorie = $article->obtenirCategorie();
             
-            echo "<a href='produit.php?id=" . htmlspecialchars($article->oid) . "'>";
             if ($article->image === null) {
                 $image = "images/placeholder.png";
             } else {
                 $image = "uploads/objets/" . htmlspecialchars($article->image);
             }
-            echo "<img class='center' src='" . $image . "' alt='" . htmlspecialchars($article->intitule) . "' />";
-            echo "<h4>" . htmlspecialchars($article->intitule) . "</h4>";
-            
-            // Affichage du brocanteur et sa zone (si disponible)
-            if ($brocanteur) {
-                $zone = $brocanteur->obtenirZone();
-                $zoneInfo = $zone ? " - " . htmlspecialchars($zone->nom) : "";
-                echo "<p>" . htmlspecialchars($brocanteur->prenom . " " . $brocanteur->nom) . $zoneInfo . "</p>";
-            }
-            
-            // Description du produit
-            echo "<p>" . htmlspecialchars($article->description) . "</p>";
-            
-            // Affichage de la catégorie
-            if ($categorie) {
-                echo "<ul class='pad-lr-1 flex'>";
-                echo "<li class='pad-lr-1 flex'><p class='center'>" . htmlspecialchars($categorie->intitule) . "</p></li>";
-                echo "</ul>";
-            }
-            
-            // Affichage du prix mis en valeur
-            echo "<h3 class='prix'>" . htmlspecialchars($article->prix) . "€</h3>";
-            echo "</a>";
-        }
         ?>
+            <a href="produit.php?id=<?php echo htmlspecialchars($article->oid); ?>">
+                <img class="center" src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($article->intitule); ?>" />
+                <h4><?php echo htmlspecialchars($article->intitule); ?></h4>
+                
+                <?php if ($brocanteur): 
+                    $zone = $brocanteur->obtenirZone();
+                    $zoneInfo = $zone ? " - " . htmlspecialchars($zone->nom) : "";
+                ?>
+                    <p><?php echo htmlspecialchars($brocanteur->prenom . " " . $brocanteur->nom) . $zoneInfo; ?></p>
+                <?php endif; ?>
+                
+                <p><?php echo htmlspecialchars($article->description); ?></p>
+                
+                <?php if ($categorie): ?>
+                    <ul class="pad-lr-1 flex">
+                        <li class="pad-lr-1 flex"><p class="center"><?php echo htmlspecialchars($categorie->intitule); ?></p></li>
+                    </ul>
+                <?php endif; ?>
+                
+                <h3 class="prix"><?php echo htmlspecialchars($article->prix); ?>€</h3>
+            </a>
+        <?php endforeach; ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>

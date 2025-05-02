@@ -1,5 +1,8 @@
 <?php
+namespace Brocante\Modele;
+
 require_once __DIR__ . '/Database.php';
+use Brocante\Base\Database;
 require_once __DIR__ . '/Brocanteur.php';
 require_once __DIR__ . '/Categorie.php';
 
@@ -23,7 +26,7 @@ class Objet {
         if (!empty($donnees)) {
             $this->oid = isset($donnees['oid']) ? $donnees['oid'] : null;
             $this->intitule = $donnees['intitule'] ?? '';
-            $this->prix = $donnees['prix'] ?? 0.0;
+            $this->prix = $donnees['prix'] ?? 0;
             $this->description = $donnees['description'] ?? '';
             $this->image = $donnees['image'] ?? null;
             $this->bid = $donnees['bid'] ?? null;
@@ -54,7 +57,14 @@ class Objet {
      */
     public static function obtenirTous() {
         $db = new Database();
-        $resultats = $db->obtenirTous("SELECT * FROM Objet");
+        $sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom
+                FROM Objet o
+                LEFT JOIN Categorie c ON o.cid = c.cid
+                LEFT JOIN Brocanteur b ON o.bid = b.bid
+                WHERE b.visible = 1
+                ORDER BY o.intitule ASC";
+        
+        $resultats = $db->obtenirTous($sql);
         
         $objets = [];
         foreach ($resultats as $donnees) {
@@ -143,22 +153,29 @@ class Objet {
     public function enregistrer() {
         $db = new Database();
         
+        // Filtrer les données
+        $intitule = htmlspecialchars($this->intitule);
+        $description = htmlspecialchars($this->description);
+        
         if ($this->oid) {
             // Mise à jour
-            $db->executer(
+            $success = $db->executer(
                 "UPDATE Objet SET intitule = ?, prix = ?, description = ?, image = ?, bid = ?, cid = ? WHERE oid = ?",
-                [$this->intitule, $this->prix, $this->description, $this->image, $this->bid, $this->cid, $this->oid]
+                [$intitule, $this->prix, $description, $this->image, $this->bid, $this->cid, $this->oid]
             );
         } else {
             // Insertion
-            $db->executer(
+            $success = $db->executer(
                 "INSERT INTO Objet (intitule, prix, description, image, bid, cid) VALUES (?, ?, ?, ?, ?, ?)",
-                [$this->intitule, $this->prix, $this->description, $this->image, $this->bid, $this->cid]
+                [$intitule, $this->prix, $description, $this->image, $this->bid, $this->cid]
             );
-            $this->oid = $db->dernierIdInsere();
+            
+            if ($success) {
+                $this->oid = $db->dernierIdInsere();
+            }
         }
         
-        return true;
+        return $success;
     }
     
     /**
@@ -172,8 +189,7 @@ class Objet {
         }
         
         $db = new Database();
-        $db->executer("DELETE FROM Objet WHERE oid = ?", [$this->oid]);
-        return true;
+        return $db->executer("DELETE FROM Objet WHERE oid = ?", [$this->oid]);
     }
     
     /**
@@ -181,29 +197,31 @@ class Objet {
      * 
      * @param string $nom Partie du nom à rechercher (optionnel)
      * @param int $categorieId ID de la catégorie (optionnel)
-     * @param string $triPrix Ordre de tri par prix ('asc' ou 'desc')
+     * @param string $prixFiltre Ordre de tri par prix ('asc' ou 'desc')
      * @return array Tableau d'objets correspondant aux critères
      */
-    public static function rechercher($nom = '', $categorieId = null, $triPrix = 'asc') {
+    public static function rechercher($nom = '', $categorieId = null, $prixFiltre = 'asc') {
         $db = new Database();
         $params = [];
-        $sql = "SELECT * FROM Objet WHERE 1=1";
         
-        // Filtre par nom
+        $sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom
+                FROM Objet o
+                LEFT JOIN Categorie c ON o.cid = c.cid
+                LEFT JOIN Brocanteur b ON o.bid = b.bid
+                WHERE b.visible = 1";
+        
         if (!empty($nom)) {
-            $sql .= " AND intitule LIKE ?";
+            $sql .= " AND (o.intitule LIKE ? OR o.description LIKE ?)";
+            $params[] = "%$nom%";
             $params[] = "%$nom%";
         }
         
-        // Filtre par catégorie
         if (!empty($categorieId)) {
-            $sql .= " AND cid = ?";
+            $sql .= " AND o.cid = ?";
             $params[] = $categorieId;
         }
         
-        // Tri par prix
-        $ordre = ($triPrix === 'desc') ? 'DESC' : 'ASC';
-        $sql .= " ORDER BY prix $ordre";
+        $sql .= " ORDER BY o.prix " . ($prixFiltre === 'desc' ? 'DESC' : 'ASC');
         
         $resultats = $db->obtenirTous($sql, $params);
         
@@ -212,6 +230,51 @@ class Objet {
             $objets[] = new Objet($donnees);
         }
         
+        // Sauvegarder les critères de recherche dans un cookie (valable 30 jours)
+        setcookie('recherche_objet_nom', $nom, time() + 30 * 24 * 3600, '/');
+        setcookie('recherche_objet_categorie', $categorieId, time() + 30 * 24 * 3600, '/');
+        setcookie('recherche_objet_prix', $prixFiltre, time() + 30 * 24 * 3600, '/');
+        
         return $objets;
+    }
+    
+    public static function validerFormulaire($donnees) {
+        $erreurs = [];
+        
+        // Validation de l'intitulé
+        if (empty($donnees['intitule'])) {
+            $erreurs['intitule'] = "L'intitulé est obligatoire";
+        }
+        
+        // Validation du prix
+        if (empty($donnees['prix'])) {
+            $erreurs['prix'] = "Le prix est obligatoire";
+        } elseif (!is_numeric($donnees['prix']) || $donnees['prix'] < 0) {
+            $erreurs['prix'] = "Le prix doit être un nombre positif";
+        }
+        
+        // Validation de la description
+        if (empty($donnees['description'])) {
+            $erreurs['description'] = "La description est obligatoire";
+        }
+        
+        // Validation de la catégorie
+        if (empty($donnees['categorie'])) {
+            $erreurs['categorie'] = "La catégorie est obligatoire";
+        }
+        
+        // Validation de l'image
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+            $extension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+            
+            if (!in_array($extension, $allowed)) {
+                $erreurs['image'] = "Format de fichier non autorisé. Utilisez JPG, PNG ou GIF";
+            } elseif ($_FILES['image']['size'] > 5000000) { // 5MB
+                $erreurs['image'] = "Le fichier est trop volumineux (max 5MB)";
+            }
+        }
+        
+        return $erreurs;
     }
 } 
