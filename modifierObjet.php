@@ -213,7 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-actions">
                     <input type="submit" value="Enregistrer" class="btn mar-2">
                     <a href="espaceBrocanteur.php" class="btn mar-2">Annuler</a>
-                    <a href="supprimerObjet.php?id=<?php echo $objet->oid; ?>" class="btn btn-danger mar-2" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet objet ?');">Supprimer</a>
+                    <a href="supprimerObjet.php?id=<?php echo $objet->oid; ?>" class="btn btn-danger mar-2">Supprimer</a>
                 </div>
             </form>
         </article>

@@ -2,6 +2,9 @@
 include_once 'php/Database.php';
 include_once 'php/Brocanteur.php';
 
+use Brocante\Modele\Brocanteur;
+use Brocante\Base\Database;
+
 // Rediriger si déjà connecté
 if (Brocanteur::estConnecte()) {
     header('Location: espaceBrocanteur.php');
@@ -55,14 +58,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ]
             );
             
-            $succes = 'Inscription réussie! Vous pouvez maintenant vous connecter.';
+            $succes = 'Inscription réussie! Un administrateur doit maintenant valider votre compte avant que vous puissiez vous connecter.';
             
             // Récupérer l'ID du brocanteur créé
             $brocanteur->bid = $db->dernierIdInsere();
             
             if ($brocanteur->bid) {
                 // Rediriger vers la page de connexion
-                header('Location: connexion.php?inscrit=1');
+                header('Location: connexion.php?inscrit=1&attente=1');
                 exit;
             } else {
                 $erreur = 'Erreur lors de l\'inscription. Veuillez réessayer.';

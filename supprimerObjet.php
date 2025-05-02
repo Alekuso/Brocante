@@ -3,6 +3,10 @@ include_once 'php/Brocanteur.php';
 include_once 'php/Database.php';
 include_once 'php/Objet.php';
 
+use Brocante\Modele\Brocanteur;
+use Brocante\Base\Database;
+use Brocante\Modele\Objet;
+
 // Vérifier si l'utilisateur est connecté
 if (!Brocanteur::estConnecte()) {
     header('Location: connexion.php');

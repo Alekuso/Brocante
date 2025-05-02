@@ -1,6 +1,8 @@
 <?php
 include_once 'php/Brocanteur.php';
 
+use Brocante\Modele\Brocanteur;
+
 // Déconnecter l'utilisateur
 Brocanteur::deconnecter();
 

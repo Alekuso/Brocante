@@ -18,6 +18,10 @@ if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
 // Récupérer l'admin connecté
 $admin = Brocanteur::obtenirConnecte();
 
+// Messages
+$message = isset($_GET['message']) ? $_GET['message'] : '';
+$erreur = isset($_GET['erreur']) ? $_GET['erreur'] : '';
+
 // Récupérer les brocanteurs à valider (non visibles)
 $db = new Database();
 $brocanteurs_attente = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 0 AND est_administrateur = 0 ORDER BY nom ASC");
@@ -62,6 +66,13 @@ foreach ($brocanteurs_valides as $brocanteur) {
 <body>
 <?php include 'inc/header.php'; ?>
 <main>
+    <?php if (!empty($message)): ?>
+        <div class="message-succes"><?php echo htmlspecialchars($message); ?></div>
+    <?php endif; ?>
+    <?php if (!empty($erreur)): ?>
+        <div class="message-erreur"><?php echo htmlspecialchars($erreur); ?></div>
+    <?php endif; ?>
+    
     <section class="articles size-half presentation">
         <article>
             <?php 
@@ -130,7 +141,8 @@ foreach ($brocanteurs_valides as $brocanteur) {
                                 <td><?php echo htmlspecialchars($brocanteur['courriel']); ?></td>
                                 <td class="actions">
                                     <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
-                                    <a href="attribuerEmplacement.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Emplacement</a>
+                                    <a href="validerInscription.php?id=<?php echo $brocanteur['bid']; ?>&action=valider" class="btn-small">Valider & Attribuer</a>
+                                    <a href="validerInscription.php?id=<?php echo $brocanteur['bid']; ?>&action=refuser" class="btn-small" style="background-color: #cc3333;">Refuser</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

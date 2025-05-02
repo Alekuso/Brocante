@@ -17,6 +17,7 @@ if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
 
 // Récupérer le brocanteur à modifier
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$isValidating = isset($_GET['validate']) && $_GET['validate'] == 1;
 $brocanteur = null;
 
 if ($id > 0) {
@@ -27,6 +28,20 @@ if ($id > 0) {
 $zones = Zone::obtenirToutes();
 
 $message = '';
+$erreur = '';
+
+// Si l'utilisateur arrive de la validation d'inscription
+if ($isValidating) {
+    $db = new Database();
+    // Vérifier que le brocanteur n'est pas déjà visible
+    $isVisible = $db->obtenirUn("SELECT visible FROM Brocanteur WHERE bid = ?", [$id])['visible'] ?? 0;
+    
+    if ($isVisible) {
+        $message = "Ce brocanteur est déjà validé. Vous pouvez modifier son emplacement.";
+    } else {
+        $message = "Pour valider l'inscription de ce brocanteur, vous devez lui attribuer un emplacement.";
+    }
+}
 
 // Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -34,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $brocanteurId = $_POST['brocanteur_id'] ?? $id;
     
     if (empty($zoneId) || empty($brocanteurId)) {
-        $message = 'Veuillez sélectionner une zone';
+        $erreur = 'Veuillez sélectionner une zone';
     } else {
         // Attribution de la zone
         $db = new Database();
@@ -78,6 +93,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         // Rendre le brocanteur visible
         $db->executer("UPDATE Brocanteur SET visible = 1 WHERE bid = ?", [$brocanteurId]);
+        
+        // Rediriger vers l'espace administrateur avec un message de succès
+        if ($isValidating) {
+            header('Location: espaceAdministrateur.php?message=' . urlencode("L'inscription du brocanteur a été validée et l'emplacement attribué avec succès."));
+            exit;
+        }
     }
 }
 ?>
@@ -108,7 +129,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <p class="message-succes center"><?php echo htmlspecialchars($message); ?></p>
             <?php endif; ?>
             
-            <form method="POST" action="attribuerEmplacement.php<?php echo $id ? '?id=' . $id : ''; ?>" class="column">
+            <?php if (!empty($erreur)): ?>
+                <p class="message-erreur center"><?php echo htmlspecialchars($erreur); ?></p>
+            <?php endif; ?>
+            
+            <form method="POST" action="attribuerEmplacement.php<?php echo $id ? '?id=' . $id . ($isValidating ? '&validate=1' : '') : ''; ?>" class="column">
                 <?php if ($brocanteur): ?>
                     <input type="hidden" name="brocanteur_id" value="<?php echo htmlspecialchars($brocanteur->bid); ?>">
                     <label for="nom">Nom</label>
@@ -137,6 +162,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
 
                 <button type="submit" class="size-half">Attribuer</button>
+                
+                <?php if ($isValidating): ?>
+                    <p class="mar-tb-1 center">
+                        <a href="espaceAdministrateur.php" class="btn-small">Annuler et retourner à l'espace administrateur</a>
+                    </p>
+                <?php endif; ?>
             </form>
         </article>
     </section>

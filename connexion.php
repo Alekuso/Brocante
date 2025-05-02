@@ -2,6 +2,9 @@
 include_once 'php/Database.php';
 include_once 'php/Brocanteur.php';
 
+use Brocante\Modele\Brocanteur;
+use Brocante\Base\Database;
+
 // Rediriger si déjà connecté
 if (Brocanteur::estConnecte()) {
     header('Location: espaceBrocanteur.php');
@@ -9,6 +12,15 @@ if (Brocanteur::estConnecte()) {
 }
 
 $erreur = '';
+$message = '';
+
+if (isset($_GET['inscrit']) && $_GET['inscrit'] == 1) {
+    if (isset($_GET['attente']) && $_GET['attente'] == 1) {
+        $message = 'Votre inscription a été enregistrée! Un administrateur doit maintenant valider votre compte avant que vous puissiez vous connecter.';
+    } else {
+        $message = 'Inscription réussie! Vous pouvez maintenant vous connecter.';
+    }
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $courriel = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
@@ -17,20 +29,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($courriel) || empty($motDePasse)) {
         $erreur = 'Tous les champs sont obligatoires';
     } else {
-        $brocanteur = Brocanteur::connecter($courriel, $motDePasse);
+        // Vérifie d'abord si le compte existe, même s'il n'est pas encore visible
+        $db = new Database();
+        $brocanteur_data = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
-        if ($brocanteur) {
-            Brocanteur::connecterUtilisateur($brocanteur);
-            
-            // Rediriger selon le rôle
-            if ($brocanteur->est_administrateur) {
-                header('Location: espaceAdministrateur.php');
-            } else {
-                header('Location: espaceBrocanteur.php');
-            }
-            exit;
+        if ($brocanteur_data && !$brocanteur_data['visible'] && password_verify($motDePasse, $brocanteur_data['mot_passe'])) {
+            $erreur = 'Votre compte est en attente de validation par un administrateur.';
         } else {
-            $erreur = 'Email ou mot de passe incorrect';
+            $brocanteur = Brocanteur::connecter($courriel, $motDePasse);
+            
+            if ($brocanteur) {
+                Brocanteur::connecterUtilisateur($brocanteur);
+                
+                // Rediriger selon le rôle
+                if ($brocanteur->est_administrateur) {
+                    header('Location: espaceAdministrateur.php');
+                } else {
+                    header('Location: espaceBrocanteur.php');
+                }
+                exit;
+            } else {
+                $erreur = 'Email ou mot de passe incorrect';
+            }
         }
     }
 }
@@ -60,6 +80,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <article class="contactForm">
             <?php if (!empty($erreur)): ?>
                 <p class="erreur"><?php echo htmlspecialchars($erreur); ?></p>
+            <?php endif; ?>
+            
+            <?php if (!empty($message)): ?>
+                <p class="message-succes"><?php echo htmlspecialchars($message); ?></p>
             <?php endif; ?>
             
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">

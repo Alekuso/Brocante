@@ -184,7 +184,11 @@ class Brocanteur {
         $donnees = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
         if ($donnees && password_verify($motDePasse, $donnees['mot_passe'])) {
-            return new Brocanteur($donnees);
+            // Si l'utilisateur est un admin, il peut toujours se connecter
+            // Sinon, il doit être visible (validé par un admin)
+            if ($donnees['est_administrateur'] || $donnees['visible']) {
+                return new Brocanteur($donnees);
+            }
         }
         
         return null;
