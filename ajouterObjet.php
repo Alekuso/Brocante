@@ -60,8 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Traitement de l'image si présente
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             // Vérifier le type MIME et l'extension
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-            $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $allowed_types = ['image/jpeg', 'image/png'];
+            $allowed_extensions = ['jpg', 'jpeg', 'png'];
             
             $file_type = $_FILES['image']['type'];
             $file_name = $_FILES['image']['name'];
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
             } else {
-                $erreurs['image'] = "Le type de fichier n'est pas autorisé. Utilisez JPG, PNG ou GIF uniquement.";
+                $erreurs['image'] = "Le type de fichier n'est pas autorisé. Utilisez JPG ou PNG uniquement.";
             }
         }
         
@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <article class="contactForm">
             <form method="POST" action="ajouterObjet.php" enctype="multipart/form-data" class="bg-darkgray desk-pad-2 rounded-sm">
                 <!-- Champ caché pour limiter la taille des fichiers -->
-                <input type="hidden" name="MAX_FILE_SIZE" value="5000000" />
+                <input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
 
                 <div class="form-group">
                     <label for="intitule">Titre de l'objet:</label>
@@ -200,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <div class="form-group">
                     <label for="image">Image (facultatif):</label>
-                    <input type="file" id="image" name="image" accept="image/*">
+                    <input type="file" id="image" name="image" accept="image/jpeg, image/png">
                 </div>
                 
                 <button type="submit">Ajouter l'objet</button>

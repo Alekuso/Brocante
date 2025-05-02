@@ -44,11 +44,10 @@ $stats = [
     'emplacements_attribues' => 0
 ];
 
-foreach ($brocanteurs_valides as $brocanteur) {
-    if (!empty($brocanteur['emplacement_code'])) {
-        $stats['emplacements_attribues']++;
-    }
-}
+// Requête directe pour compter les emplacements attribués
+$query_emplacements = "SELECT COUNT(*) as count FROM Emplacement WHERE bid IS NOT NULL";
+$result = $db->obtenirUn($query_emplacements);
+$stats['emplacements_attribues'] = $result['count'];
 ?>
 <!DOCTYPE html>
 <html lang="fr">

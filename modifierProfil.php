@@ -44,8 +44,8 @@ if (isset($_POST['modifier_donnees'])) {
 // Traiter l'upload de photo
 if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
     // Vérifier le type MIME et l'extension
-    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-    $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+    $allowed_types = ['image/jpeg', 'image/png'];
+    $allowed_extensions = ['jpg', 'jpeg', 'png'];
     
     $file_type = $_FILES['photo']['type'];
     $file_name = $_FILES['photo']['name'];
@@ -61,8 +61,8 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
         }
         
         if (empty($erreur)) {
-            // Générer un nom de fichier unique
-            $filename = $utilisateur->bid . '_' . time() . '_' . preg_replace('/[^a-zA-Z0-9\.]/', '_', $file_name);
+            // Générer un nom de fichier au format NOMPRENOM.extension
+            $filename = strtoupper($utilisateur->nom . $utilisateur->prenom) . '.' . $file_extension;
             $destination = $uploadDir . $filename;
             
             // Vérifier si le dossier est accessible en écriture
@@ -94,7 +94,7 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
             }
         }
     } else {
-        $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG, PNG ou GIF uniquement.";
+        $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG ou PNG uniquement.";
     }
 }
 
@@ -164,9 +164,9 @@ $emplacement = $utilisateur->obtenirEmplacement();
             
             <!-- Formulaire pour changer la photo de profil -->
             <form method="POST" action="modifierProfil.php" enctype="multipart/form-data" class="photo-form">
-                <input type="hidden" name="MAX_FILE_SIZE" value="5000000" />
+                <input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
                 <div class="file-input-wrapper">
-                    <input type="file" name="photo" id="photo" accept="image/*" class="file-input">
+                    <input type="file" name="photo" id="photo" accept="image/jpeg, image/png" class="file-input">
                     <button type="submit" class="btn mar-2">Changer photo de profil</button>
                 </div>
             </form>

@@ -61,8 +61,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Traitement de l'image
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             // Vérifier le type MIME et l'extension
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-            $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+            $allowed_types = ['image/jpeg', 'image/png'];
+            $allowed_extensions = ['jpg', 'jpeg', 'png'];
             
             $file_type = $_FILES['image']['type'];
             $file_name = $_FILES['image']['name'];
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
             } else {
-                $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG, PNG ou GIF uniquement.";
+                $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG ou PNG uniquement.";
             }
         }
         
@@ -207,7 +207,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <div class="form-group">
                     <label for="image">Changer l'image:</label>
-                    <input type="file" id="image" name="image" accept="image/*" class="size-full">
+                    <input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
+                    <input type="file" id="image" name="image" accept="image/jpeg, image/png" class="size-full">
                 </div>
                 
                 <div class="form-actions">
