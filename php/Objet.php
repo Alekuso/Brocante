@@ -32,7 +32,12 @@ class Objet {
      */
     public static function obtenirParId($id) {
         $db = Database::getInstance();
-        $donnees = $db->obtenirUn("SELECT * FROM Objet WHERE oid = ?", [$id]);
+        $donnees = $db->obtenirUn(
+            "SELECT o.* FROM Objet o 
+             JOIN Brocanteur b ON o.bid = b.bid 
+             WHERE o.oid = ? AND b.visible = 1", 
+            [$id]
+        );
         
         if ($donnees) {
             return new Objet($donnees);

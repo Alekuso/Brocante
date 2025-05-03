@@ -21,6 +21,12 @@ if (!$brocanteur) {
     exit;
 }
 
+// Redirige si le brocanteur n'est pas visible
+if (!$brocanteur->visible) {
+    header('Location: brocanteurs.php');
+    exit;
+}
+
 // Récupère la zone du brocanteur
 $zone = $brocanteur->obtenirZone();
 

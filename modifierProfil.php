@@ -22,8 +22,10 @@ if (isset($_POST['modifier_donnees'])) {
     $prenom = trim($_POST['prenom']);
     $description = trim($_POST['description']);
     $courriel = trim($_POST['courriel']);
+    $visible = isset($_POST['visible']) ? 1 : 0;
     
     if (!empty($nom) && !empty($prenom) && !empty($description) && !empty($courriel)) {
+
         // Vérifier si l'email a changé et s'il n'est pas déjà utilisé
         if ($courriel !== $utilisateur->courriel) {
             $db = Database::getInstance();
@@ -39,14 +41,15 @@ if (isset($_POST['modifier_donnees'])) {
         
         if (empty($erreur)) {
             $db = Database::getInstance();
-            $db->executer("UPDATE Brocanteur SET nom = ?, prenom = ?, description = ?, courriel = ? WHERE bid = ?", 
-                [$nom, $prenom, $description, $courriel, $utilisateur->bid]);
+            $db->executer("UPDATE Brocanteur SET nom = ?, prenom = ?, description = ?, courriel = ?, visible = ? WHERE bid = ?", 
+                [$nom, $prenom, $description, $courriel, $visible, $utilisateur->bid]);
             
 
             $utilisateur->nom = $nom;
             $utilisateur->prenom = $prenom;
             $utilisateur->description = $description;
             $utilisateur->courriel = $courriel;
+            $utilisateur->visible = $visible;
             $succes = "Informations mises à jour";
             
             // Redirige
@@ -230,6 +233,14 @@ $emplacement = $utilisateur->obtenirEmplacement();
                 <section class="form-group">
                     <label for="courriel">Email:</label>
                     <input type="email" id="courriel" name="courriel" value="<?php echo htmlspecialchars($utilisateur->courriel); ?>" class="size-full" required>
+                </section>
+                
+                <section class="form-group">
+                    <label for="visible">Visibilité sur le site:</label>
+                    <section class="checkbox-container">
+                        <input type="checkbox" id="visible" name="visible" <?php echo $utilisateur->visible ? 'checked' : ''; ?>>
+                        <label for="visible">Être visible sur le site (permet aux visiteurs de voir votre profil et vos objets)</label>
+                    </section>
                 </section>
                 
                 <section class="form-actions">

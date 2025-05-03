@@ -24,6 +24,12 @@ $brocanteur = $objet->obtenirBrocanteur();
 $categorie = $objet->obtenirCategorie();
 $zone = $brocanteur ? $brocanteur->obtenirZone() : null;
 $emplacement = $brocanteur ? $brocanteur->obtenirEmplacement() : null;
+
+// Redirige si le brocanteur n'existe pas ou n'est pas visible
+if (!$brocanteur || !$brocanteur->visible) {
+    header('Location: objets.php');
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">

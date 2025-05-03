@@ -10,6 +10,7 @@ use Brocante\Modele\Emplacement;
 use Brocante\Modele\Zone;
 
 // Vérifie si l'utilisateur est connecté et est admin
+// KNOWN ISSUE: L'utilisateur doit se déconnecter et se reconnecter pour voir ses modifications !!!!!! TO FIX
 if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
     header('Location: index.php');
     exit;
