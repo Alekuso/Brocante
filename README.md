@@ -10,6 +10,10 @@ Prenom: Admin
 Email: admin@admin.com
 MDP: admin
 
+Le mail du contact s'envoie à tous les administrateurs.
+Il est donc important de changer l'email du compte administrateur lors du test dans l'espace administrateur
+ou directement dans la db ou encore sur la page modifierProfil.php
+
 Identifiants brocanteurs:
 Email:
 - jean.dupont@gmail.com
