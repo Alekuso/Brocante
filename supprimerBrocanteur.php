@@ -83,8 +83,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'confirmer') {
                 Cette action est irréversible !
             </p>
             <footer class="confirmation-actions">
-                <a href="supprimerBrocanteur.php?id=<?php echo $brocanteurId; ?>&action=confirmer" class="btn danger">Confirmer la suppression</a>
-                <a href="espaceAdministrateur.php" class="btn">Annuler</a>
+                <a href="supprimerBrocanteur.php?id=<?php echo $brocanteurId; ?>&action=confirmer" class="btn danger pad-tb-1 pad-lr-2">Confirmer la suppression</a>
+                <a href="espaceAdministrateur.php" class="btn pad-tb-1 pad-lr-2">Annuler</a>
             </footer>
         </section>
     </section>

@@ -125,6 +125,16 @@ header nav ul li.btn:hover a {
     padding-right: 20px;
 }
 
+.pad-lr-2 {
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.pad-tb-1 {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
 .mar-2 {
     margin: 30px;
 }
@@ -792,4 +802,20 @@ h3.prix {
     gap: 10px;
     padding: 15px;
     background-color: #2a2a2a;
+}
+
+.confirmation-actions {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn.danger {
+    background-color: #c92a2a;
+    color: white;
+}
+
+.btn.danger:hover {
+    background-color: #e03131;
 }

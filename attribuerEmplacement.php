@@ -32,40 +32,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $zoneId = $_POST['zone'] ?? '';
     $brocanteurId = $_POST['brocanteur_id'] ?? $id;
     
-    if (empty($zoneId) || empty($brocanteurId)) {
-        $erreur = 'Veuillez sélectionner une zone';
+    if (empty($brocanteurId)) {
+        $erreur = 'Veuillez sélectionner un brocanteur';
     } else {
         $db = Database::getInstance();
         $emplacement = $db->obtenirUn("SELECT * FROM Emplacement WHERE bid = ?", [$brocanteurId]);
-        $zone = Zone::obtenirParId($zoneId);
         
-        if ($zone) {
-            // Génère le code
-            $lettre = substr($zone->nom, -1);
-            $emplacements = $db->obtenirTous("SELECT * FROM Emplacement WHERE zid = ?", [$zoneId]);
-            $numero = count($emplacements) + 1;
-            $code = $lettre . $numero;
-            
+        // Si zoneId est vide, ça signifie qu'on veut annuler l'attribution
+        if (empty($zoneId)) {
             if ($emplacement) {
-                $db->executer("UPDATE Emplacement SET zid = ?, code = ? WHERE bid = ?", [$zoneId, $code, $brocanteurId]);
-                $message = 'Emplacement mis à jour';
+                $db->executer("DELETE FROM Emplacement WHERE bid = ?", [$brocanteurId]);
+                $message = 'Attribution d\'emplacement annulée';
+                header('Location: espaceAdministrateur.php?message=' . urlencode("Attribution d'emplacement annulée"));
+                exit;
             } else {
-                $db->executer("INSERT INTO Emplacement (code, zid, bid) VALUES (?, ?, ?)", [$code, $zoneId, $brocanteurId]);
-                $message = 'Emplacement attribué';
+                $erreur = 'Aucun emplacement n\'était attribué à ce brocanteur';
             }
         } else {
-            $message = "Zone non trouvée";
-            $code = 'E-' . $brocanteurId;
+            $zone = Zone::obtenirParId($zoneId);
             
-            if ($emplacement) {
-                $db->executer("UPDATE Emplacement SET zid = ?, code = ? WHERE bid = ?", [$zoneId, $code, $brocanteurId]);
+            if ($zone) {
+                // Génère le code
+                $lettre = substr($zone->nom, -1);
+                $emplacements = $db->obtenirTous("SELECT * FROM Emplacement WHERE zid = ?", [$zoneId]);
+                $numero = count($emplacements) + 1;
+                $code = $lettre . $numero;
+                
+                // Vérifie si l'emplacement n'est pas déjà attribué à un autre brocanteur
+                $emplacementExistant = $db->obtenirUn(
+                    "SELECT e.*, b.nom, b.prenom FROM Emplacement e 
+                     JOIN Brocanteur b ON e.bid = b.bid 
+                     WHERE e.code = ? AND e.zid = ? AND e.bid != ?", 
+                    [$code, $zoneId, $brocanteurId]
+                );
+                
+                if ($emplacementExistant) {
+                    $erreur = "L'emplacement $code est déjà attribué à " . 
+                              htmlspecialchars($emplacementExistant['prenom'] . ' ' . $emplacementExistant['nom']) . ". " .
+                              "Veuillez choisir une autre zone.";
+                } else {
+                    if ($emplacement) {
+                        $db->executer("UPDATE Emplacement SET zid = ?, code = ? WHERE bid = ?", [$zoneId, $code, $brocanteurId]);
+                        $message = 'Emplacement mis à jour';
+                    } else {
+                        $db->executer("INSERT INTO Emplacement (code, zid, bid) VALUES (?, ?, ?)", [$code, $zoneId, $brocanteurId]);
+                        $message = 'Emplacement attribué';
+                    }
+                    
+                    header('Location: espaceAdministrateur.php?message=' . urlencode("Emplacement attribué avec succès"));
+                    exit;
+                }
             } else {
-                $db->executer("INSERT INTO Emplacement (code, zid, bid) VALUES (?, ?, ?)", [$code, $zoneId, $brocanteurId]);
+                $erreur = "Zone non trouvée";
             }
         }
-        
-        header('Location: espaceAdministrateur.php?message=' . urlencode("Emplacement attribué avec succès"));
-        exit;
     }
 }
 ?>
@@ -105,11 +125,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="POST" action="attribuerEmplacement.php<?php echo $id ? '?id=' . $id : ''; ?>" class="column">
                 <?php 
                 if ($brocanteur) {
+                    // Récupère l'emplacement actuel
+                    $emplacementActuel = $brocanteur->obtenirEmplacement();
+                    $zoneActuelle = $brocanteur->obtenirZone();
+                    
                     echo '<input type="hidden" name="brocanteur_id" value="' . htmlspecialchars($brocanteur->bid) . '">';
                     echo '<label for="nom">Nom</label>';
                     echo '<input class="size-full" type="text" id="nom" name="nom" value="' . htmlspecialchars($brocanteur->nom) . '" readonly>';
                     echo '<label for="prenom">Prénom</label>';
                     echo '<input class="size-full" type="text" id="prenom" name="prenom" value="' . htmlspecialchars($brocanteur->prenom) . '" readonly>';
+                    
+                    if ($emplacementActuel) {
+                        echo '<p class="message-succes center">Emplacement actuel: ' . htmlspecialchars($emplacementActuel->code) . ' (Zone: ' . htmlspecialchars($zoneActuelle->nom) . ')</p>';
+                    } else {
+                        echo '<p class="message-erreur center">Aucun emplacement attribué actuellement.</p>';
+                    }
                 } else {
                     echo '<label for="brocanteur">Brocanteur</label>';
                     echo '<select class="size-full" id="brocanteur" name="brocanteur_id" required>';
@@ -127,11 +157,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ?>
 
                 <label for="zone">Zone</label>
-                <select class="size-full" id="zone" name="zone" required>
-                    <option value="">-- Sélectionnez une zone --</option>
+                <select class="size-full" id="zone" name="zone">
+                    <option value="">-- Aucun emplacement (annuler l'attribution) --</option>
                     <?php 
                     foreach ($zones as $zone) {
-                        echo '<option value="' . htmlspecialchars($zone->zid) . '">' . htmlspecialchars($zone->nom) . '</option>';
+                        $selected = ($zoneActuelle && $zoneActuelle->zid == $zone->zid) ? 'selected' : '';
+                        echo '<option value="' . htmlspecialchars($zone->zid) . '" ' . $selected . '>' . htmlspecialchars($zone->nom) . '</option>';
                     }
                     ?>
                 </select>

@@ -67,7 +67,15 @@ class Objet {
      */
     public static function obtenirAleatoires($nombre = 3) {
         $db = Database::getInstance();
-        $resultats = $db->obtenirTous("SELECT * FROM Objet ORDER BY RAND() LIMIT " . intval($nombre));
+        $sql = "SELECT o.* 
+                FROM Objet o
+                JOIN Brocanteur b ON o.bid = b.bid
+                JOIN Emplacement e ON b.bid = e.bid
+                WHERE b.visible = 1
+                ORDER BY RAND() 
+                LIMIT " . intval($nombre);
+        
+        $resultats = $db->obtenirTous($sql);
         
         $objets = [];
         foreach ($resultats as $donnees) {

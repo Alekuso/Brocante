@@ -107,7 +107,6 @@ $stats['emplacements_attribues'] = $result['count'];
             <article class="stat-box">
                 <h3>Places disponibles</h3>
                 <p class="stat-number"><?php echo max(0, 15 - $stats['total_brocanteurs']); ?></p>
-                <p class="stat-note">Pour nouveaux brocanteurs</p>
             </article>
         </section>
     </section>

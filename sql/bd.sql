@@ -60,19 +60,19 @@ INSERT INTO Categorie (intitule) VALUES
 ('Goodies');
 
 INSERT INTO Brocanteur (nom, prenom, courriel, mot_passe, photo, description, visible, est_administrateur) VALUES 
-('Dupont', 'Jean', 'jean.dupont@gmail.com', 'quelque chose de sympa', 'DUPONTJEAN.jpg', 'Collectionneur de consoles Nintendo depuis 1990', 1, 0),
-('Martin', 'Sophie', 'sophie.martin@hotmail.com', 'quelque chose de sympa', 'MARTINSOPHIE.jpg', 'Passionnée de jeux PS1 et PS2', 1, 0),
-('Petit', 'Michel', 'michel.petit@outlook.be', 'quelque chose de sympa', 'PETITMICHEL.jpg', 'Spécialiste en jeux rétro SEGA', 0, 0),
-('Leroy', 'Julie', 'julie.leroy@gmail.com', 'quelque chose de sympa', 'LEROYJULIE.jpg', 'Fan de RPG japonais et collectionneuse de figurines', 1, 0),
-('Bernard', 'Thomas', 'thomas.bernard@outlook.be', 'quelque chose de sympa', 'BERNARDTHOMAS.jpg', 'Collectionneur d''ordinateurs vintage et jeux DOS', 0, 0),
-('Lambert', 'Marie', 'marie.lambert@hotmail.com', 'quelque chose de sympa', 'LAMBERTMARIE.jpg', 'Achète et vend des jeux Game Boy et Game Boy Color', 1, 0),
-('Durand', 'Alexandre', 'alexandre.durand@gmail.com', 'quelque chose de sympa', 'DURANDALEXANDRE.jpg', 'Amateur de FPS et jeux d''action des années 2000', 0, 0),
-('Lefèvre', 'Nathalie', 'nathalie.lefevre@outlook.be', 'quelque chose de sympa', 'LEFEVRENATHALIE.jpg', 'Vente de magazines et guides stratégiques rétro', 1, 0),
-('Dubois', 'Patrick', 'patrick.dubois@hotmail.com', 'quelque chose de sympa', 'DUBOISPATRICK.jpg', 'Collectionneur de consoles Xbox et jeux PC', 1, 0),
-('Moreau', 'Isabelle', 'isabelle.moreau@gmail.com', 'quelque chose de sympa', 'MOREAUISABELLE.jpg', 'Spécialiste en éditions limitées et collectors', 0, 0),
+('Dupont', 'Jean', 'jean.dupont@gmail.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'DUPONTJEAN.jpg', 'Collectionneur de consoles Nintendo depuis 1990', 1, 0),
+('Martin', 'Sophie', 'sophie.martin@hotmail.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'MARTINSOPHIE.jpg', 'Passionnée de jeux PS1 et PS2', 1, 0),
+('Petit', 'Michel', 'michel.petit@outlook.be', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'PETITMICHEL.jpg', 'Spécialiste en jeux rétro SEGA', 0, 0),
+('Leroy', 'Julie', 'julie.leroy@gmail.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'LEROYJULIE.jpg', 'Fan de RPG japonais et collectionneuse de figurines', 1, 0),
+('Bernard', 'Thomas', 'thomas.bernard@outlook.be', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'BERNARDTHOMAS.jpg', 'Collectionneur d''ordinateurs vintage et jeux DOS', 0, 0),
+('Lambert', 'Marie', 'marie.lambert@hotmail.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'LAMBERTMARIE.jpg', 'Achète et vend des jeux Game Boy et Game Boy Color', 1, 0),
+('Durand', 'Alexandre', 'alexandre.durand@gmail.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'DURANDALEXANDRE.jpg', 'Amateur de FPS et jeux d''action des années 2000', 0, 0),
+('Lefèvre', 'Nathalie', 'nathalie.lefevre@outlook.be', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'LEFEVRENATHALIE.jpg', 'Vente de magazines et guides stratégiques rétro', 1, 0),
+('Dubois', 'Patrick', 'patrick.dubois@hotmail.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'DUBOISPATRICK.jpg', 'Collectionneur de consoles Xbox et jeux PC', 1, 0),
+('Moreau', 'Isabelle', 'isabelle.moreau@gmail.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'MOREAUISABELLE.jpg', 'Spécialiste en éditions limitées et collectors', 0, 0),
 ('Admin', 'Admin', 'admin@admin.com', '$2y$12$UUOZh7jWgH9pnUxTxTOEYuFnf/ske7WnnGIP7Hs.IPwzZw/xcws6q', 'ADMINADMIN.png', 'Administrateur du site', 1, 1),
-('Duval', 'Richard', 'richard.duval@gmail.com', 'quelque chose de sympa', 'DUVALRICHARD.jpg', 'Passionné de jeux d''arcade vintages', 0, 0),
-('Martin', 'Louise', 'louise.martin@outlook.com', 'quelque chose de sympa', 'MARTINLOUISE.jpg', 'Collectionneuse de jeux de société rétro', 0, 0);
+('Duval', 'Richard', 'richard.duval@gmail.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'DUVALRICHARD.jpg', 'Passionné de jeux d''arcade vintages', 0, 0),
+('Martin', 'Louise', 'louise.martin@outlook.com', '$2y$10$wDpxsNbXh/QUnAxAlWJpteJy7xf44t04CzIrf21jMLsnDd/1fVOyy', 'MARTINLOUISE.jpg', 'Collectionneuse de jeux de société rétro', 0, 0);
 
 INSERT INTO Emplacement (code, zid, bid) VALUES 
 ('A1', 1, 1),
