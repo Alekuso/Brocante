@@ -35,7 +35,7 @@ class Emplacement {
      * @return Emplacement|null L'emplacement ou null s'il n'existe pas
      */
     public static function obtenirParId($id) {
-        $db = new Database();
+        $db = Database::getInstance();
         $donnees = $db->obtenirUn("SELECT * FROM Emplacement WHERE eid = ?", [$id]);
         
         if ($donnees) {
@@ -50,7 +50,7 @@ class Emplacement {
      * @return array Tableau d'emplacements
      */
     public static function obtenirTous() {
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous("SELECT * FROM Emplacement ORDER BY eid ASC");
         
         $emplacements = [];
@@ -93,7 +93,7 @@ class Emplacement {
      * @return bool Succès de l'opération
      */
     public function enregistrer() {
-        $db = new Database();
+        $db = Database::getInstance();
         
         if ($this->eid) {
             // Mise à jour

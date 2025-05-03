@@ -30,7 +30,7 @@ class Categorie {
      * @return Categorie|null La catégorie ou null si elle n'existe pas
      */
     public static function obtenirParId($id) {
-        $db = new Database();
+        $db = Database::getInstance();
         $donnees = $db->obtenirUn("SELECT * FROM Categorie WHERE cid = ?", [$id]);
         
         if ($donnees) {
@@ -45,7 +45,7 @@ class Categorie {
      * @return array Tableau de catégories
      */
     public static function obtenirToutes() {
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous("SELECT * FROM Categorie ORDER BY intitule ASC");
         
         $categories = [];
@@ -75,7 +75,7 @@ class Categorie {
      * @return bool Succès de l'opération
      */
     public function enregistrer() {
-        $db = new Database();
+        $db = Database::getInstance();
         
         if ($this->cid) {
             // Mise à jour

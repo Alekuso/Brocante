@@ -22,7 +22,7 @@ if ($id > 0 && $action === 'valider') {
     exit;
 } elseif ($id > 0 && $action === 'refuser') {
     // Refuser l'inscription (supprimer le compte)
-    $db = new Database();
+    $db = Database::getInstance();
     
     // On vérifie d'abord que le brocanteur existe et qu'il n'est pas visible
     $brocanteur = $db->obtenirUn("SELECT * FROM Brocanteur WHERE bid = ? AND visible = 0", [$id]);

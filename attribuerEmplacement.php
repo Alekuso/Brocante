@@ -32,7 +32,7 @@ $erreur = '';
 
 // Si l'utilisateur arrive de la validation d'inscription
 if ($isValidating) {
-    $db = new Database();
+    $db = Database::getInstance();
     // Vérifier que le brocanteur n'est pas déjà visible
     $isVisible = $db->obtenirUn("SELECT visible FROM Brocanteur WHERE bid = ?", [$id])['visible'] ?? 0;
     
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erreur = 'Veuillez sélectionner une zone';
     } else {
         // Attribution de la zone
-        $db = new Database();
+        $db = Database::getInstance();
         // Vérifier si un emplacement existe déjà
         $emplacement = $db->obtenirUn("SELECT * FROM Emplacement WHERE bid = ?", [$brocanteurId]);
         

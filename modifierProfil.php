@@ -23,7 +23,7 @@ if (isset($_POST['modifier_donnees'])) {
     $description = trim($_POST['description']);
     
     if (!empty($nom) && !empty($prenom) && !empty($description)) {
-        $db = new Database();
+        $db = Database::getInstance();
         $db->executer("UPDATE Brocanteur SET nom = ?, prenom = ?, description = ? WHERE bid = ?", 
             [$nom, $prenom, $description, $utilisateur->bid]);
         
@@ -77,7 +77,7 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
                     }
                     
                     // Mettre à jour la base de données
-                    $db = new Database();
+                    $db = Database::getInstance();
                     $db->executer("UPDATE Brocanteur SET photo = ? WHERE bid = ?", 
                         [$filename, $utilisateur->bid]);
                     

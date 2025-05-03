@@ -23,7 +23,7 @@ $message = isset($_GET['message']) ? $_GET['message'] : '';
 $erreur = isset($_GET['erreur']) ? $_GET['erreur'] : '';
 
 // Récupérer les brocanteurs à valider (non visibles)
-$db = new Database();
+$db = Database::getInstance();
 $brocanteurs_attente = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 0 AND est_administrateur = 0 ORDER BY nom ASC");
 
 // Récupérer les brocanteurs validés

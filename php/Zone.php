@@ -33,7 +33,7 @@ class Zone {
      * @return Zone|null La zone ou null si elle n'existe pas
      */
     public static function obtenirParId($id) {
-        $db = new Database();
+        $db = Database::getInstance();
         $donnees = $db->obtenirUn("SELECT * FROM Zone WHERE zid = ?", [$id]);
         
         if ($donnees) {
@@ -48,7 +48,7 @@ class Zone {
      * @return array Tableau de zones
      */
     public static function obtenirToutes() {
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous("SELECT * FROM Zone ORDER BY nom ASC");
         
         $zones = [];
@@ -69,7 +69,7 @@ class Zone {
             return [];
         }
         
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous("SELECT * FROM Emplacement WHERE zid = ? ORDER BY code ASC", [$this->zid]);
         
         $emplacements = [];
@@ -90,7 +90,7 @@ class Zone {
             return [];
         }
         
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous(
             "SELECT b.* FROM Brocanteur b 
             JOIN Emplacement e ON b.bid = e.bid 
@@ -112,7 +112,7 @@ class Zone {
      * @return bool Succès de l'opération
      */
     public function enregistrer() {
-        $db = new Database();
+        $db = Database::getInstance();
         
         if ($this->zid) {
             // Mise à jour

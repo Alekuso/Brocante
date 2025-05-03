@@ -41,7 +41,7 @@ class Brocanteur {
      * @return Brocanteur|null Le brocanteur ou null s'il n'existe pas
      */
     public static function obtenirParId($id) {
-        $db = new Database();
+        $db = Database::getInstance();
         $donnees = $db->obtenirUn("SELECT * FROM Brocanteur WHERE bid = ?", [$id]);
         
         if ($donnees) {
@@ -56,7 +56,7 @@ class Brocanteur {
      * @return array Tableau de brocanteurs
      */
     public static function obtenirTousVisibles() {
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 1 ORDER BY nom, prenom");
         
         $brocanteurs = [];
@@ -77,7 +77,7 @@ class Brocanteur {
             return [];
         }
         
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous("SELECT * FROM Objet WHERE bid = ?", [$this->bid]);
         
         $objets = [];
@@ -99,7 +99,7 @@ class Brocanteur {
             return null;
         }
         
-        $db = new Database();
+        $db = Database::getInstance();
         $donnees = $db->obtenirUn("SELECT e.*, z.nom AS zone_nom 
                                     FROM Emplacement e 
                                     JOIN Zone z ON e.zid = z.zid 
@@ -134,7 +134,7 @@ class Brocanteur {
      * @return bool Succès de l'opération
      */
     public function enregistrer() {
-        $db = new Database();
+        $db = Database::getInstance();
         
         // Sécurité: Filtrer les données
         $nom = htmlspecialchars($this->nom);
@@ -178,7 +178,7 @@ class Brocanteur {
      * @return Brocanteur|null Le brocanteur connecté ou null si échec
      */
     public static function connecter($courriel, $motDePasse) {
-        $db = new Database();
+        $db = Database::getInstance();
         // Sécurité: sanitize l'email
         $courriel = filter_var($courriel, FILTER_SANITIZE_EMAIL);
         $donnees = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
@@ -202,7 +202,7 @@ class Brocanteur {
      * @return array Tableau de brocanteurs correspondant aux critères
      */
     public static function rechercher($nom = '', $prenom = '') {
-        $db = new Database();
+        $db = Database::getInstance();
         $params = [];
         $sql = "SELECT * FROM Brocanteur WHERE visible = 1";
         
@@ -286,7 +286,7 @@ class Brocanteur {
             $erreurs['courriel'] = "Format de courriel invalide";
         } else {
             // Vérifier si le courriel existe déjà
-            $db = new Database();
+            $db = Database::getInstance();
             $existant = $db->obtenirUn("SELECT bid FROM Brocanteur WHERE courriel = ?", [$donnees['courriel']]);
             if ($existant) {
                 $erreurs['courriel'] = "Ce courriel est déjà utilisé";

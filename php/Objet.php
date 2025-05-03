@@ -41,7 +41,7 @@ class Objet {
      * @return Objet|null L'objet ou null s'il n'existe pas
      */
     public static function obtenirParId($id) {
-        $db = new Database();
+        $db = Database::getInstance();
         $donnees = $db->obtenirUn("SELECT * FROM Objet WHERE oid = ?", [$id]);
         
         if ($donnees) {
@@ -56,7 +56,7 @@ class Objet {
      * @return array Tableau d'objets
      */
     public static function obtenirTous() {
-        $db = new Database();
+        $db = Database::getInstance();
         $sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom
                 FROM Objet o
                 LEFT JOIN Categorie c ON o.cid = c.cid
@@ -81,7 +81,7 @@ class Objet {
      * @return array Tableau d'objets
      */
     public static function obtenirAleatoires($nombre = 3) {
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous("SELECT * FROM Objet ORDER BY RAND() LIMIT " . intval($nombre));
         
         $objets = [];
@@ -99,7 +99,7 @@ class Objet {
      * @return array Tableau d'objets
      */
     public static function obtenirParCategorie($categorieId) {
-        $db = new Database();
+        $db = Database::getInstance();
         $resultats = $db->obtenirTous("SELECT * FROM Objet WHERE cid = ?", [$categorieId]);
         
         $objets = [];
@@ -151,7 +151,7 @@ class Objet {
      * @return bool Succès de l'opération
      */
     public function enregistrer() {
-        $db = new Database();
+        $db = Database::getInstance();
         
         // Filtrer les données
         $intitule = htmlspecialchars($this->intitule);
@@ -188,7 +188,7 @@ class Objet {
             return false;
         }
         
-        $db = new Database();
+        $db = Database::getInstance();
         return $db->executer("DELETE FROM Objet WHERE oid = ?", [$this->oid]);
     }
     
@@ -201,7 +201,7 @@ class Objet {
      * @return array Tableau d'objets correspondant aux critères
      */
     public static function rechercher($nom = '', $categorieId = null, $prixFiltre = 'asc') {
-        $db = new Database();
+        $db = Database::getInstance();
         $params = [];
         
         $sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom

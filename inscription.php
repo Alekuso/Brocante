@@ -27,7 +27,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $erreur = 'Les mots de passe ne correspondent pas';
     } else {
         // Vérifier si l'email existe déjà
-        $db = new Database();
+        $db = Database::getInstance();
         $existe = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
         if ($existe) {

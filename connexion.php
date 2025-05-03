@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $erreur = 'Tous les champs sont obligatoires';
     } else {
         // Vérifie d'abord si le compte existe, même s'il n'est pas encore visible
-        $db = new Database();
+        $db = Database::getInstance();
         $brocanteur_data = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
         if ($brocanteur_data && !$brocanteur_data['visible'] && password_verify($motDePasse, $brocanteur_data['mot_passe'])) {
