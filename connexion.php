@@ -12,15 +12,6 @@ if (Brocanteur::estConnecte()) {
 }
 
 $erreur = '';
-$message = '';
-
-if (isset($_GET['inscrit']) && $_GET['inscrit'] == 1) {
-    if (isset($_GET['attente']) && $_GET['attente'] == 1) {
-        $message = 'Votre inscription a été enregistrée! Un administrateur doit maintenant valider votre compte avant que vous puissiez vous connecter.';
-    } else {
-        $message = 'Inscription réussie! Vous pouvez maintenant vous connecter.';
-    }
-}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $courriel = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
@@ -80,10 +71,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <article class="contactForm">
             <?php if (!empty($erreur)): ?>
                 <p class="erreur"><?php echo htmlspecialchars($erreur); ?></p>
-            <?php endif; ?>
-            
-            <?php if (!empty($message)): ?>
-                <p class="message-succes"><?php echo htmlspecialchars($message); ?></p>
             <?php endif; ?>
             
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
