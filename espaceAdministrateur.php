@@ -120,34 +120,24 @@ $stats['emplacements_attribues'] = $result['count'];
         <?php if (empty($brocanteurs_attente)): ?>
             <p class="center">Aucune inscription en attente.</p>
         <?php else: ?>
-            <div class="admin-table-container">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Email</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($brocanteurs_attente as $brocanteur): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($brocanteur['bid']); ?></td>
-                                <td><?php echo htmlspecialchars($brocanteur['nom']); ?></td>
-                                <td><?php echo htmlspecialchars($brocanteur['prenom']); ?></td>
-                                <td><?php echo htmlspecialchars($brocanteur['courriel']); ?></td>
-                                <td class="actions">
-                                    <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
-                                    <a href="validerInscription.php?id=<?php echo $brocanteur['bid']; ?>&action=valider" class="btn-small">Valider & Attribuer</a>
-                                    <a href="validerInscription.php?id=<?php echo $brocanteur['bid']; ?>&action=refuser" class="btn-small" style="background-color: #cc3333;">Refuser</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+            <section class="admin-cards-container">
+                <?php foreach ($brocanteurs_attente as $brocanteur): ?>
+                    <article class="admin-card waiting">
+                        <header class="admin-card-header">
+                            <h3><?php echo htmlspecialchars($brocanteur['prenom'] . ' ' . $brocanteur['nom']); ?></h3>
+                            <span class="admin-card-id">ID: <?php echo htmlspecialchars($brocanteur['bid']); ?></span>
+                        </header>
+                        <section class="admin-card-body">
+                            <p><strong>Email:</strong> <?php echo htmlspecialchars($brocanteur['courriel']); ?></p>
+                        </section>
+                        <footer class="admin-card-actions">
+                            <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
+                            <a href="validerInscription.php?id=<?php echo $brocanteur['bid']; ?>&action=valider" class="btn-small">Valider & Attribuer</a>
+                            <a href="validerInscription.php?id=<?php echo $brocanteur['bid']; ?>&action=refuser" class="btn-small" style="background-color: #cc3333;">Refuser</a>
+                        </footer>
+                    </article>
+                <?php endforeach; ?>
+            </section>
         <?php endif; ?>
     </section>
     
@@ -158,35 +148,24 @@ $stats['emplacements_attribues'] = $result['count'];
         <?php if (empty($brocanteurs_valides)): ?>
             <p class="center">Aucun brocanteur validé.</p>
         <?php else: ?>
-            <div class="admin-table-container">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nom</th>
-                            <th>Prénom</th>
-                            <th>Zone</th>
-                            <th>Emplacement</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($brocanteurs_valides as $brocanteur): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($brocanteur['bid']); ?></td>
-                                <td><?php echo htmlspecialchars($brocanteur['nom']); ?></td>
-                                <td><?php echo htmlspecialchars($brocanteur['prenom']); ?></td>
-                                <td><?php echo htmlspecialchars($brocanteur['zone_nom'] ?? 'Non assigné'); ?></td>
-                                <td><?php echo htmlspecialchars($brocanteur['emplacement_code'] ?? 'Non assigné'); ?></td>
-                                <td class="actions">
-                                    <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
-                                    <a href="attribuerEmplacement.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Emplacement</a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+            <section class="admin-cards-container">
+                <?php foreach ($brocanteurs_valides as $brocanteur): ?>
+                    <article class="admin-card validated">
+                        <header class="admin-card-header">
+                            <h3><?php echo htmlspecialchars($brocanteur['prenom'] . ' ' . $brocanteur['nom']); ?></h3>
+                            <span class="admin-card-id">ID: <?php echo htmlspecialchars($brocanteur['bid']); ?></span>
+                        </header>
+                        <section class="admin-card-body">
+                            <p><strong>Zone:</strong> <?php echo htmlspecialchars($brocanteur['zone_nom'] ?? 'Non assigné'); ?></p>
+                            <p><strong>Emplacement:</strong> <?php echo htmlspecialchars($brocanteur['emplacement_code'] ?? 'Non assigné'); ?></p>
+                        </section>
+                        <footer class="admin-card-actions">
+                            <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
+                            <a href="attribuerEmplacement.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Emplacement</a>
+                        </footer>
+                    </article>
+                <?php endforeach; ?>
+            </section>
         <?php endif; ?>
     </section>
 </main>
