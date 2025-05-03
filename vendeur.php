@@ -11,23 +11,23 @@ use Brocante\Modele\Brocanteur;
 use Brocante\Modele\Categorie;
 use Brocante\Modele\Zone;
 
-// Récupérer le brocanteur demandé
+// Récupère le brocanteur demandé
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $brocanteur = Brocanteur::obtenirParId($id);
 
-// Si le brocanteur n'existe pas, redirection vers la page d'accueil
+// Redirige si le brocanteur n'existe pas
 if (!$brocanteur) {
     header('Location: index.php');
     exit;
 }
 
-// Récupérer la zone du brocanteur
+// Récupère la zone du brocanteur
 $zone = $brocanteur->obtenirZone();
 
-// Récupérer l'emplacement du brocanteur
+// Récupère l'emplacement du brocanteur
 $emplacement = $brocanteur->obtenirEmplacement();
 
-// Récupérer les objets du brocanteur
+// Récupère les objets du brocanteur
 $objets = $brocanteur->obtenirObjets();
 ?>
 <!DOCTYPE html>

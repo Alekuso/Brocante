@@ -5,17 +5,10 @@ require_once __DIR__ . '/Database.php';
 use Brocante\Base\Database;
 require_once __DIR__ . '/Objet.php';
 
-/**
- * Classe Categorie
- * Représente une catégorie d'objets
- */
 class Categorie {
     public $cid;
     public $intitule;
     
-    /**
-     * Constructeur
-     */
     public function __construct($donnees = []) {
         if (!empty($donnees)) {
             $this->cid = isset($donnees['cid']) ? $donnees['cid'] : null;
@@ -25,9 +18,6 @@ class Categorie {
     
     /**
      * Récupère une catégorie par son ID
-     * 
-     * @param int $id L'ID de la catégorie
-     * @return Categorie|null La catégorie ou null si elle n'existe pas
      */
     public static function obtenirParId($id) {
         $db = Database::getInstance();
@@ -41,8 +31,6 @@ class Categorie {
     
     /**
      * Récupère toutes les catégories
-     * 
-     * @return array Tableau de catégories
      */
     public static function obtenirToutes() {
         $db = Database::getInstance();
@@ -58,8 +46,6 @@ class Categorie {
     
     /**
      * Récupère les objets dans cette catégorie
-     * 
-     * @return array Tableau d'objets
      */
     public function obtenirObjets() {
         if (!$this->cid) {
@@ -71,8 +57,6 @@ class Categorie {
     
     /**
      * Enregistre la catégorie dans la base de données
-     * 
-     * @return bool Succès de l'opération
      */
     public function enregistrer() {
         $db = Database::getInstance();

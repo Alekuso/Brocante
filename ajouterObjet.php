@@ -9,47 +9,47 @@ use Brocante\Modele\Objet;
 use Brocante\Modele\Categorie;
 use Brocante\Base\Database;
 
-// Vérifier si l'utilisateur est connecté
+// Vérifie la connexion
 if (!Brocanteur::estConnecte()) {
     header('Location: connexion.php');
     exit;
 }
 
-// Récupérer le brocanteur connecté
+// Récupère le brocanteur connecté
 $brocanteur = Brocanteur::obtenirConnecte();
 $erreurs = [];
 $succes = '';
 
-// Récupérer toutes les catégories pour le formulaire
+// Récupère les catégories pour le formulaire
 $categories = Categorie::obtenirToutes();
 
-// Traitement du formulaire
+// Traite le formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $intitule = trim($_POST['intitule'] ?? '');
     $prix = floatval(str_replace(',', '.', $_POST['prix'] ?? 0));
     $description = trim($_POST['description'] ?? '');
     $cid = intval($_POST['categorie'] ?? 0);
     
-    // Validation des données
+    // Vérifie les données
     if (empty($intitule)) {
-        $erreurs['intitule'] = "Le titre de l'objet est requis.";
+        $erreurs['intitule'] = "Le titre de l'objet est requis";
     }
     
     if ($prix <= 0) {
-        $erreurs['prix'] = "Le prix doit être supérieur à 0.";
+        $erreurs['prix'] = "Le prix doit être supérieur à 0";
     }
     
     if (empty($description)) {
-        $erreurs['description'] = "La description est requise.";
+        $erreurs['description'] = "La description est requise";
     }
     
     if ($cid <= 0) {
-        $erreurs['categorie'] = "Veuillez sélectionner une catégorie.";
+        $erreurs['categorie'] = "Veuillez sélectionner une catégorie";
     }
     
-    // Si aucune erreur, on peut créer l'objet
+    // Crée l'objet si aucune erreur
     if (empty($erreurs)) {
-        // Créer un objet
+        // Crée un nouvel objet
         $objet = new Objet();
         $objet->intitule = $intitule;
         $objet->prix = $prix;
@@ -57,9 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $objet->cid = $cid;
         $objet->bid = $brocanteur->bid;
         
-        // Traitement de l'image si présente
+        // Traite l'image
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            // Vérifier le type MIME et l'extension
+            // Vérifie le type et l'extension
             $allowed_types = ['image/jpeg', 'image/png'];
             $allowed_extensions = ['jpg', 'jpeg', 'png'];
             
@@ -68,45 +68,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
             
             if (in_array($file_type, $allowed_types) && in_array($file_extension, $allowed_extensions)) {
-                // Créer le dossier si nécessaire
+                // Crée le dossier si nécessaire
                 $uploadDir = 'uploads/objets/';
                 if (!is_dir($uploadDir)) {
                     if (!mkdir($uploadDir, 0777, true)) {
-                        $erreurs['image'] = "Impossible de créer le répertoire d'upload.";
+                        $erreurs['image'] = "Impossible de créer le dossier";
                     }
                 }
                 
                 if (empty($erreurs['image'])) {
-                    // Générer un nom de fichier unique
+                    // Génère un nom unique
                     $filename = time() . '_' . preg_replace('/[^a-zA-Z0-9\.]/', '_', $file_name);
                     $destination = $uploadDir . $filename;
                     
-                    // Vérifier si le dossier est accessible en écriture
+                    // Vérifie les permissions
                     if (!is_writable($uploadDir)) {
-                        $erreurs['image'] = "Le dossier d'upload n'est pas accessible en écriture.";
+                        $erreurs['image'] = "Le dossier n'est pas accessible en écriture";
                     } else {
-                        // Déplacer le fichier
+                        // Déplace le fichier
                         if (move_uploaded_file($_FILES['image']['tmp_name'], $destination)) {
                             $objet->image = $filename;
                         } else {
-                            $erreurs['image'] = "Erreur lors de l'upload de l'image. Code: " . $_FILES['image']['error'];
+                            $erreurs['image'] = "Erreur lors de l'upload de l'image";
                         }
                     }
                 }
             } else {
-                $erreurs['image'] = "Le type de fichier n'est pas autorisé. Utilisez JPG ou PNG uniquement.";
+                $erreurs['image'] = "Format de fichier non accepté (JPG ou PNG uniquement)";
             }
         }
         
-        // Si toujours pas d'erreur, on enregistre l'objet
+        // Enregistre l'objet s'il n'y a pas d'erreur
         if (empty($erreurs)) {
             if ($objet->enregistrer()) {
-                $succes = "L'objet a été ajouté avec succès.";
-                // Redirection vers l'espace brocanteur
+                $succes = "L'objet a été ajouté avec succès";
+                // Redirige vers l'espace brocanteur
                 header('Location: espaceBrocanteur.php');
                 exit;
             } else {
-                $erreurs['general'] = "Une erreur est survenue lors de l'enregistrement de l'objet.";
+                $erreurs['general'] = "Erreur lors de l'enregistrement de l'objet";
             }
         }
     }
@@ -134,25 +134,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($erreurs as $champ => $message) {
             echo "<p>" . htmlspecialchars($message) . "</p>";
         }
-        
-        // Informations de debug pour les erreurs d'upload
-        if (isset($erreurs['image']) && isset($_FILES['image']) && $_FILES['image']['error'] != 0) { 
-            $upload_errors = [
-                0 => "Aucune erreur, le téléchargement est réussi.",
-                1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
-                2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
-                3 => "Le fichier n'a été que partiellement téléchargé.",
-                4 => "Aucun fichier n'a été téléchargé.",
-                6 => "Dossier temporaire manquant.",
-                7 => "Échec d'écriture du fichier sur le disque.",
-                8 => "Une extension PHP a arrêté le téléchargement du fichier."
-            ];
-            echo "<p>Code d'erreur PHP: " . htmlspecialchars($_FILES['image']['error']);
-            if (isset($upload_errors[$_FILES['image']['error']])) {
-                echo " - " . htmlspecialchars($upload_errors[$_FILES['image']['error']]);
-            }
-            echo "</p>";
-        }
         echo "</section>";
     }
     
@@ -170,7 +151,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section id="contactFormContainer" class="container">
         <article class="contactForm">
             <form method="POST" action="ajouterObjet.php" enctype="multipart/form-data" class="bg-darkgray desk-pad-2 rounded-sm">
-                <!-- Champ caché pour limiter la taille des fichiers -->
+                <!-- Limite la taille des fichiers -->
                 <input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
 
                 <section class="form-group">

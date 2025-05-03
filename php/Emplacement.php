@@ -6,19 +6,12 @@ use Brocante\Base\Database;
 require_once __DIR__ . '/Zone.php';
 require_once __DIR__ . '/Brocanteur.php';
 
-/**
- * Classe Emplacement
- * Représente un emplacement dans une zone de la brocante
- */
 class Emplacement {
     public $eid;
     public $code;
     public $zid;
     public $bid;
     
-    /**
-     * Constructeur
-     */
     public function __construct($donnees = []) {
         if (!empty($donnees)) {
             $this->eid = isset($donnees['eid']) ? $donnees['eid'] : null;
@@ -30,9 +23,6 @@ class Emplacement {
     
     /**
      * Récupère un emplacement par son ID
-     * 
-     * @param int $id L'ID de l'emplacement
-     * @return Emplacement|null L'emplacement ou null s'il n'existe pas
      */
     public static function obtenirParId($id) {
         $db = Database::getInstance();
@@ -46,8 +36,6 @@ class Emplacement {
     
     /**
      * Récupère tous les emplacements
-     * 
-     * @return array Tableau d'emplacements
      */
     public static function obtenirTous() {
         $db = Database::getInstance();
@@ -63,8 +51,6 @@ class Emplacement {
     
     /**
      * Récupère la zone de cet emplacement
-     * 
-     * @return Zone|null La zone ou null en cas d'erreur
      */
     public function obtenirZone() {
         if (!$this->zid) {
@@ -76,8 +62,6 @@ class Emplacement {
     
     /**
      * Récupère le brocanteur de cet emplacement
-     * 
-     * @return Brocanteur|null Le brocanteur ou null en cas d'erreur
      */
     public function obtenirBrocanteur() {
         if (!$this->bid) {
@@ -89,8 +73,6 @@ class Emplacement {
     
     /**
      * Enregistre l'emplacement dans la base de données
-     * 
-     * @return bool Succès de l'opération
      */
     public function enregistrer() {
         $db = Database::getInstance();

@@ -9,24 +9,24 @@ use Brocante\Base\Database;
 use Brocante\Modele\Emplacement;
 use Brocante\Modele\Zone;
 
-// Vérifier si l'utilisateur est connecté et est admin
+// Vérifie si l'utilisateur est connecté et est admin
 if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
     header('Location: index.php');
     exit;
 }
 
-// Récupérer l'admin connecté
+// Récupère l'admin connecté
 $admin = Brocanteur::obtenirConnecte();
 
 // Messages
 $message = isset($_GET['message']) ? $_GET['message'] : '';
 $erreur = isset($_GET['erreur']) ? $_GET['erreur'] : '';
 
-// Récupérer les brocanteurs à valider (non visibles)
+// Récupère les brocanteurs à valider
 $db = Database::getInstance();
 $brocanteurs_attente = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 0 AND est_administrateur = 0 ORDER BY nom ASC");
 
-// Récupérer les brocanteurs validés
+// Récupère les brocanteurs validés
 $brocanteurs_valides = $db->obtenirTous("
     SELECT b.*, e.code as emplacement_code, z.nom as zone_nom
     FROM Brocanteur b 
@@ -36,7 +36,7 @@ $brocanteurs_valides = $db->obtenirTous("
     ORDER BY b.nom ASC
 ");
 
-// Compter les zones et emplacements
+// Compte les zones et emplacements
 $stats = [
     'total_brocanteurs' => count($brocanteurs_attente) + count($brocanteurs_valides),
     'attente' => count($brocanteurs_attente),
@@ -44,7 +44,6 @@ $stats = [
     'emplacements_attribues' => 0
 ];
 
-// Requête directe pour compter les emplacements attribués
 $query_emplacements = "SELECT COUNT(*) as count FROM Emplacement WHERE bid IS NOT NULL";
 $result = $db->obtenirUn($query_emplacements);
 $stats['emplacements_attribues'] = $result['count'];

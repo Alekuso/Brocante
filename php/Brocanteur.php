@@ -4,10 +4,6 @@ namespace Brocante\Modele;
 require_once __DIR__ . '/Database.php';
 use Brocante\Base\Database;
 
-/**
- * Classe Brocanteur
- * Représente un brocanteur dans le système
- */
 class Brocanteur {
     public $bid;
     public $nom;
@@ -18,9 +14,6 @@ class Brocanteur {
     public $visible;
     public $est_administrateur;
     
-    /**
-     * Constructeur
-     */
     public function __construct($donnees = []) {
         if (!empty($donnees)) {
             $this->bid = isset($donnees['bid']) ? $donnees['bid'] : null;
@@ -36,9 +29,6 @@ class Brocanteur {
     
     /**
      * Récupère un brocanteur par son ID
-     * 
-     * @param int $id L'ID du brocanteur
-     * @return Brocanteur|null Le brocanteur ou null s'il n'existe pas
      */
     public static function obtenirParId($id) {
         $db = Database::getInstance();
@@ -52,8 +42,6 @@ class Brocanteur {
     
     /**
      * Récupère tous les brocanteurs visibles
-     * 
-     * @return array Tableau de brocanteurs
      */
     public static function obtenirTousVisibles() {
         $db = Database::getInstance();
@@ -69,8 +57,6 @@ class Brocanteur {
     
     /**
      * Récupère tous les objets de ce brocanteur
-     * 
-     * @return array Tableau d'objets
      */
     public function obtenirObjets() {
         if (!$this->bid) {
@@ -91,8 +77,6 @@ class Brocanteur {
     
     /**
      * Récupère l'emplacement du brocanteur
-     * 
-     * @return Emplacement|null L'emplacement ou null s'il n'existe pas
      */
     public function obtenirEmplacement() {
         if (!$this->bid) {
@@ -115,8 +99,6 @@ class Brocanteur {
     
     /**
      * Récupère la zone du brocanteur via son emplacement
-     * 
-     * @return Zone|null La zone ou null s'il n'existe pas
      */
     public function obtenirZone() {
         $emplacement = $this->obtenirEmplacement();
@@ -130,13 +112,11 @@ class Brocanteur {
     
     /**
      * Enregistre le brocanteur dans la base de données
-     * 
-     * @return bool Succès de l'opération
      */
     public function enregistrer() {
         $db = Database::getInstance();
         
-        // Sécurité: Filtrer les données
+        // Filtre les données
         $nom = htmlspecialchars($this->nom);
         $prenom = htmlspecialchars($this->prenom);
         $courriel = filter_var($this->courriel, FILTER_SANITIZE_EMAIL);
@@ -172,20 +152,14 @@ class Brocanteur {
     
     /**
      * Vérifie les identifiants d'un brocanteur
-     * 
-     * @param string $courriel Le courriel du brocanteur
-     * @param string $motDePasse Le mot de passe du brocanteur
-     * @return Brocanteur|null Le brocanteur connecté ou null si échec
      */
     public static function connecter($courriel, $motDePasse) {
         $db = Database::getInstance();
-        // Sécurité: sanitize l'email
         $courriel = filter_var($courriel, FILTER_SANITIZE_EMAIL);
         $donnees = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
         if ($donnees && password_verify($motDePasse, $donnees['mot_passe'])) {
-            // Si l'utilisateur est un admin, il peut toujours se connecter
-            // Sinon, il doit être visible (validé par un admin)
+            // Si admin, peut toujours se connecter, sinon doit être visible
             if ($donnees['est_administrateur'] || $donnees['visible']) {
                 return new Brocanteur($donnees);
             }
@@ -196,10 +170,6 @@ class Brocanteur {
     
     /**
      * Recherche des brocanteurs selon leur nom et prénom
-     * 
-     * @param string $nom Partie du nom à rechercher (optionnel)
-     * @param string $prenom Partie du prénom à rechercher (optionnel)
-     * @return array Tableau de brocanteurs correspondant aux critères
      */
     public static function rechercher($nom = '', $prenom = '') {
         $db = Database::getInstance();
@@ -248,8 +218,8 @@ class Brocanteur {
     public static function connecterUtilisateur($brocanteur) {
         self::demarrerSession();
         $_SESSION['bid'] = $brocanteur->bid;
-        $_SESSION['prenom'] = $brocanteur->prenom;
         $_SESSION['nom'] = $brocanteur->nom;
+        $_SESSION['prenom'] = $brocanteur->prenom;
         $_SESSION['est_admin'] = $brocanteur->est_administrateur;
     }
     
@@ -258,72 +228,114 @@ class Brocanteur {
         session_unset();
         session_destroy();
     }
-
+    
     public static function obtenirConnecte() {
-        if (self::estConnecte()) {
-            return self::obtenirParId($_SESSION['bid']);
+        if (!self::estConnecte()) {
+            return null;
         }
-        return null;
+        return self::obtenirParId($_SESSION['bid']);
     }
     
     public static function validerInscription($donnees) {
         $erreurs = [];
         
-        // Validation du nom
+        // Vérification des champs obligatoires
         if (empty($donnees['nom'])) {
             $erreurs['nom'] = "Le nom est obligatoire";
         }
         
-        // Validation du prénom
         if (empty($donnees['prenom'])) {
             $erreurs['prenom'] = "Le prénom est obligatoire";
         }
         
-        // Validation du courriel
-        if (empty($donnees['courriel'])) {
-            $erreurs['courriel'] = "Le courriel est obligatoire";
-        } elseif (!filter_var($donnees['courriel'], FILTER_VALIDATE_EMAIL)) {
-            $erreurs['courriel'] = "Format de courriel invalide";
+        if (empty($donnees['email'])) {
+            $erreurs['email'] = "L'email est obligatoire";
+        } elseif (!filter_var($donnees['email'], FILTER_VALIDATE_EMAIL)) {
+            $erreurs['email'] = "L'email n'est pas valide";
         } else {
-            // Vérifier si le courriel existe déjà
+            // Vérification si l'email existe déjà
             $db = Database::getInstance();
-            $existant = $db->obtenirUn("SELECT bid FROM Brocanteur WHERE courriel = ?", [$donnees['courriel']]);
+            $existant = $db->obtenirUn("SELECT courriel FROM Brocanteur WHERE courriel = ?", [$donnees['email']]);
             if ($existant) {
-                $erreurs['courriel'] = "Ce courriel est déjà utilisé";
+                $erreurs['email'] = "Cet email est déjà utilisé";
             }
         }
         
-        // Validation du mot de passe
-        if (empty($donnees['mot_passe'])) {
-            $erreurs['mot_passe'] = "Le mot de passe est obligatoire";
-        } elseif (strlen($donnees['mot_passe']) < 6) {
-            $erreurs['mot_passe'] = "Le mot de passe doit contenir au moins 6 caractères";
+        if (empty($donnees['password'])) {
+            $erreurs['password'] = "Le mot de passe est obligatoire";
+        } elseif (strlen($donnees['password']) < 6) {
+            $erreurs['password'] = "Le mot de passe doit contenir au moins 6 caractères";
         }
         
-        // Validation de la confirmation du mot de passe
-        if (empty($donnees['confirmation_mot_passe'])) {
-            $erreurs['confirmation_mot_passe'] = "La confirmation du mot de passe est obligatoire";
-        } elseif ($donnees['mot_passe'] !== $donnees['confirmation_mot_passe']) {
-            $erreurs['confirmation_mot_passe'] = "Les mots de passe ne correspondent pas";
+        if ($donnees['password'] !== $donnees['password_confirm']) {
+            $erreurs['password_confirm'] = "Les mots de passe ne correspondent pas";
         }
         
-        // Validation de la description
         if (empty($donnees['description'])) {
             $erreurs['description'] = "La description est obligatoire";
         }
         
-        // Validation de la photo si présente
-        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === 0) {
-            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-            $extension = strtolower(pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION));
-            
-            if (!in_array($extension, $allowed)) {
-                $erreurs['photo'] = "Format de fichier non autorisé. Utilisez JPG, PNG ou GIF";
-            } elseif ($_FILES['photo']['size'] > 5000000) { // 5MB
-                $erreurs['photo'] = "Le fichier est trop volumineux (max 5MB)";
-            }
+        return $erreurs;
+    }
+    
+    public static function inscrire($donnees, $photo = null) {
+        $db = Database::getInstance();
+        
+        // Création du nouvel utilisateur
+        $hashedPassword = password_hash($donnees['password'], PASSWORD_DEFAULT);
+        
+        $db->executer(
+            "INSERT INTO Brocanteur (nom, prenom, courriel, mot_passe, description, photo, visible, est_administrateur) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            [
+                htmlspecialchars($donnees['nom']),
+                htmlspecialchars($donnees['prenom']),
+                filter_var($donnees['email'], FILTER_SANITIZE_EMAIL),
+                $hashedPassword,
+                htmlspecialchars($donnees['description']),
+                $photo,
+                0, // Non visible par défaut, en attente de validation admin
+                0  // Non admin par défaut
+            ]
+        );
+        
+        return $db->dernierIdInsere();
+    }
+    
+    /**
+     * Récupère les brocanteurs en attente de validation
+     */
+    public static function obtenirEnAttente() {
+        $db = Database::getInstance();
+        $resultats = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 0 ORDER BY nom, prenom");
+        
+        $brocanteurs = [];
+        foreach ($resultats as $donnees) {
+            $brocanteurs[] = new Brocanteur($donnees);
         }
         
-        return $erreurs;
+        return $brocanteurs;
+    }
+    
+    /**
+     * Approuve un brocanteur (le rend visible)
+     */
+    public function approuver() {
+        if (!$this->bid) return false;
+        
+        $this->visible = true;
+        
+        $db = Database::getInstance();
+        return $db->executer("UPDATE Brocanteur SET visible = 1 WHERE bid = ?", [$this->bid]);
+    }
+    
+    /**
+     * Rejette un brocanteur (le supprime)
+     */
+    public function rejeter() {
+        if (!$this->bid) return false;
+        
+        $db = Database::getInstance();
+        return $db->executer("DELETE FROM Brocanteur WHERE bid = ?", [$this->bid]);
     }
 } 

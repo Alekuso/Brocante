@@ -5,7 +5,7 @@ include_once 'php/Brocanteur.php';
 use Brocante\Modele\Brocanteur;
 use Brocante\Base\Database;
 
-// Rediriger si déjà connecté
+// Redirige si déjà connecté
 if (Brocanteur::estConnecte()) {
     header('Location: espaceBrocanteur.php');
     exit;
@@ -20,19 +20,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($courriel) || empty($motDePasse)) {
         $erreur = 'Tous les champs sont obligatoires';
     } else {
-        // Vérifie d'abord si le compte existe, même s'il n'est pas encore visible
+        // Vérifie le compte
         $db = Database::getInstance();
         $brocanteur_data = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
         if ($brocanteur_data && !$brocanteur_data['visible'] && password_verify($motDePasse, $brocanteur_data['mot_passe'])) {
-            $erreur = 'Votre compte est en attente de validation par un administrateur.';
+            $erreur = 'Compte en attente de validation';
         } else {
             $brocanteur = Brocanteur::connecter($courriel, $motDePasse);
             
             if ($brocanteur) {
                 Brocanteur::connecterUtilisateur($brocanteur);
                 
-                // Rediriger selon le rôle
+                // Redirige selon le rôle
                 if ($brocanteur->est_administrateur) {
                     header('Location: espaceAdministrateur.php');
                 } else {

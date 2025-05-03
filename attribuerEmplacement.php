@@ -9,13 +9,13 @@ use Brocante\Modele\Zone;
 use Brocante\Modele\Emplacement;
 use Brocante\Base\Database;
 
-// Vérifier si l'utilisateur est connecté et est admin
+// Vérifie les droits
 if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
     header('Location: index.php');
     exit;
 }
 
-// Récupérer le brocanteur à modifier
+// Récupère le brocanteur
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $isValidating = isset($_GET['validate']) && $_GET['validate'] == 1;
 $brocanteur = null;
@@ -24,26 +24,23 @@ if ($id > 0) {
     $brocanteur = Brocanteur::obtenirParId($id);
 }
 
-// Récupérer toutes les zones
 $zones = Zone::obtenirToutes();
-
 $message = '';
 $erreur = '';
 
-// Si l'utilisateur arrive de la validation d'inscription
+// Cas validation d'inscription
 if ($isValidating) {
     $db = Database::getInstance();
-    // Vérifier que le brocanteur n'est pas déjà visible
     $isVisible = $db->obtenirUn("SELECT visible FROM Brocanteur WHERE bid = ?", [$id])['visible'] ?? 0;
     
     if ($isVisible) {
-        $message = "Ce brocanteur est déjà validé. Vous pouvez modifier son emplacement.";
+        $message = "Ce brocanteur est déjà validé. Vous pouvez modifier son emplacement";
     } else {
-        $message = "Pour valider l'inscription de ce brocanteur, vous devez lui attribuer un emplacement.";
+        $message = "Pour valider l'inscription, attribuez un emplacement";
     }
 }
 
-// Traitement du formulaire
+// Traite le formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $zoneId = $_POST['zone'] ?? '';
     $brocanteurId = $_POST['brocanteur_id'] ?? $id;
@@ -51,37 +48,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($zoneId) || empty($brocanteurId)) {
         $erreur = 'Veuillez sélectionner une zone';
     } else {
-        // Attribution de la zone
         $db = Database::getInstance();
-        // Vérifier si un emplacement existe déjà
         $emplacement = $db->obtenirUn("SELECT * FROM Emplacement WHERE bid = ?", [$brocanteurId]);
-        
-        // Obtenir la zone
         $zone = Zone::obtenirParId($zoneId);
         
         if ($zone) {
-            // Trouver le prochain numéro disponible pour cette zone
-            $lettre = substr($zone->nom, -1); // Prend la dernière lettre de la zone (ex: 'Zone A' => 'A')
-            
-            // Compter combien d'emplacements existent déjà dans cette zone
+            // Génère le code
+            $lettre = substr($zone->nom, -1);
             $emplacements = $db->obtenirTous("SELECT * FROM Emplacement WHERE zid = ?", [$zoneId]);
             $numero = count($emplacements) + 1;
-            
-            // Générer le code (ex: A1, A2, etc.)
             $code = $lettre . $numero;
             
             if ($emplacement) {
-                // Mise à jour avec le nouveau code
                 $db->executer("UPDATE Emplacement SET zid = ?, code = ? WHERE bid = ?", [$zoneId, $code, $brocanteurId]);
-                $message = 'Emplacement mis à jour avec succès';
+                $message = 'Emplacement mis à jour';
             } else {
-                // Insertion avec le nouveau code
                 $db->executer("INSERT INTO Emplacement (code, zid, bid) VALUES (?, ?, ?)", [$code, $zoneId, $brocanteurId]);
-                $message = 'Emplacement attribué avec succès';
+                $message = 'Emplacement attribué';
             }
         } else {
-            $message = "Erreur: Zone non trouvée";
-            // Génération de code par défaut au cas où
+            $message = "Zone non trouvée";
             $code = 'E-' . $brocanteurId;
             
             if ($emplacement) {
@@ -91,12 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // Rendre le brocanteur visible
+        // Valide le brocanteur
         $db->executer("UPDATE Brocanteur SET visible = 1 WHERE bid = ?", [$brocanteurId]);
         
-        // Rediriger vers l'espace administrateur avec un message de succès
         if ($isValidating) {
-            header('Location: espaceAdministrateur.php?message=' . urlencode("L'inscription du brocanteur a été validée et l'emplacement attribué avec succès."));
+            header('Location: espaceAdministrateur.php?message=' . urlencode("Brocanteur validé et emplacement attribué"));
             exit;
         }
     }

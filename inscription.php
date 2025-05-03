@@ -7,7 +7,7 @@ use Brocante\Modele\Brocanteur;
 use Brocante\Modele\Emplacement;
 use Brocante\Base\Database;
 
-// Rediriger si déjà connecté
+// Redirige si déjà connecté
 if (Brocanteur::estConnecte()) {
     header('Location: espaceBrocanteur.php');
     exit;
@@ -24,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $passwordConfirm = $_POST["passwordConfirm"];
     $description = filter_var($_POST["description"], FILTER_SANITIZE_STRING);
     
-    // Vérifications des champs
+    // Vérifie les champs
     if (empty($nom)) {
         $erreurs['nom'] = 'Le nom est obligatoire';
     }
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (!filter_var($courriel, FILTER_VALIDATE_EMAIL)) {
         $erreurs['email'] = 'Format d\'email invalide';
     } else {
-        // Vérifier si l'email existe déjà
+        // Vérifie si l'email existe déjà
         $db = Database::getInstance();
         $existe = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
@@ -61,10 +61,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $erreurs['description'] = 'La description est obligatoire';
     }
     
-    // Vérification de la photo
+    // Vérifie la photo
     $photo_filename = null;
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-        // Vérifier le type MIME et l'extension
         $allowed_types = ['image/jpeg', 'image/png'];
         $allowed_extensions = ['jpg', 'jpeg', 'png'];
         
@@ -73,34 +72,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
         
         if (!in_array($file_type, $allowed_types) || !in_array($file_extension, $allowed_extensions)) {
-            $erreurs['photo'] = 'Le format de fichier n\'est pas autorisé. Utilisez JPG ou PNG uniquement.';
-        } elseif ($_FILES['photo']['size'] > 20000000) { // 20MB
-            $erreurs['photo'] = 'Le fichier est trop volumineux (max 20MB)';
+            $erreurs['photo'] = 'Format de fichier non accepté (JPG ou PNG uniquement)';
+        } elseif ($_FILES['photo']['size'] > 20000000) {
+            $erreurs['photo'] = 'Fichier trop volumineux (max 20MB)';
         } else {
-            // Créer le dossier uploads/brocanteurs s'il n'existe pas
             $uploadDir = 'uploads/brocanteurs/';
             if (!is_dir($uploadDir)) {
                 if (!mkdir($uploadDir, 0777, true)) {
-                    $erreurs['photo'] = 'Impossible de créer le répertoire d\'upload';
+                    $erreurs['photo'] = 'Impossible de créer le dossier';
                 }
             }
             
             if (!isset($erreurs['photo'])) {
-                // Générer un nom de fichier unique temporaire
                 $temp_filename = time() . '_' . preg_replace('/[^a-zA-Z0-9\.]/', '_', $file_name);
-                // Le nom de fichier final sera défini après l'enregistrement du brocanteur (format NOMPRENOM.extension)
             }
         }
     }
 
     if (empty($erreurs)) {
-        // Créer le nouveau brocanteur
+        // Crée le brocanteur
         $brocanteur = new Brocanteur([
             'nom' => $nom,
             'prenom' => $prenom,
             'courriel' => $courriel,
             'description' => $description,
-            'visible' => 0,  // Non visible par défaut jusqu'à validation
+            'visible' => 0,
             'est_administrateur' => 0
         ]);
         
@@ -120,38 +116,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]
         );
         
-        // Récupérer l'ID du brocanteur créé
         $brocanteur_id = $db->dernierIdInsere();
         
-        // Traiter la photo si présente et valide
+        // Traite la photo si présente
         if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0 && !isset($erreurs['photo'])) {
-            // Définir le nom final au format NOMPRENOM.extension
             $photo_filename = strtoupper($nom . $prenom) . '.' . $file_extension;
             $destination = $uploadDir . $photo_filename;
             
-            // Déplacer le fichier
             if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
-                // Mettre à jour la BD avec le nom de la photo
                 $db->executer("UPDATE Brocanteur SET photo = ? WHERE bid = ?", [$photo_filename, $brocanteur_id]);
             } else {
-                // La photo n'a pas pu être déplacée, mais l'inscription est quand même valide
-                $erreurs['photo'] = 'Erreur lors de l\'upload de la photo, mais votre inscription a été enregistrée';
+                $erreurs['photo'] = 'Erreur lors de l\'upload de la photo';
             }
         }
         
         if ($brocanteur_id) {
-            $montant = 20.00; // Frais d'inscription
+            $montant = 20.00;
             
             $succes = '<p>Inscription réussie! Vous devez maintenant payer 20€ pour finaliser votre inscription.</p>' .
                       '<p>Montant à payer: ' . $montant . ' €</p>' .
                       '<p>IBAN: BE68 5390 0754 7034</p>' .
                       '<p>Communication: "Brocante - ' . strtoupper($nom) . ' ' . strtoupper($prenom) . '"</p>' .
                       '<p>Un administrateur validera votre compte après réception du paiement.</p>';
-            
-            // Ne plus rediriger vers la page de confirmation
-            // On affiche directement le message de succès sur cette page
         } else {
-            $erreurs['general'] = 'Erreur lors de l\'inscription. Veuillez réessayer.';
+            $erreurs['general'] = 'Erreur lors de l\'inscription';
         }
     }
 }

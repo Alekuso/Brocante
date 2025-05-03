@@ -512,30 +512,30 @@ h3.prix {
 
 /* Message */
 .erreur {
-    color: #ff0000;
-    font-size: 14px;
-    margin-top: 5px;
-    display: block;
+    color: white;
+    background-color: #f44336;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 5px;
+    text-align: center;
 }
 
 .message-erreur {
-    background-color: #ffcccc;
-    color: #cc0000;
-    padding: 15px;
-    margin: 20px auto;
+    color: white;
+    background-color: #f44336;
+    padding: 10px;
+    margin-bottom: 15px;
     border-radius: 5px;
     text-align: center;
-    width: 80%;
 }
 
 .message-succes {
-    background-color: #ccffcc;
-    color: #006600;
-    padding: 15px;
-    margin: 20px auto;
+    color: white;
+    background-color: #4CAF50;
+    padding: 10px;
+    margin-bottom: 15px;
     border-radius: 5px;
     text-align: center;
-    width: 80%;
 }
 
 .form-group {

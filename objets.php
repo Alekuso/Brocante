@@ -9,15 +9,15 @@ use Brocante\Modele\Objet;
 use Brocante\Modele\Brocanteur;
 use Brocante\Modele\Categorie;
 
-// Initialisation des paramètres de recherche
+// Initialise les paramètres de recherche
 $nom = isset($_GET['nom']) ? trim($_GET['nom']) : '';
 $categorieId = isset($_GET['category']) && $_GET['category'] !== '*' ? $_GET['category'] : null;
 $prixFiltre = isset($_GET['price']) ? $_GET['price'] : 'asc';
 
-// Récupération des catégories pour le formulaire
+// Récupère les catégories pour le formulaire
 $categories = Categorie::obtenirToutes();
 
-// Optimisation: récupérer tous les objets avec leurs brocanteurs et catégories en une seule requête
+// Récupère tous les objets
 $db = Database::getInstance();
 $params = [];
 
@@ -46,7 +46,7 @@ $sql .= " ORDER BY o.prix " . ($prixFiltre === 'desc' ? 'DESC' : 'ASC');
 
 $resultats = $db->obtenirTous($sql, $params);
 
-// Transformer les résultats en objets avec leurs données liées
+// Transforme les résultats
 $objets_data = [];
 foreach ($resultats as $row) {
     $objet = new Objet($row);

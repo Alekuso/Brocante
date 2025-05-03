@@ -9,6 +9,7 @@ use Brocante\Modele\Objet;
 use Brocante\Modele\Brocanteur;
 use Brocante\Modele\Categorie;
 
+// Récupère des objets aléatoires
 $objets = Objet::obtenirAleatoires();
 ?>
 
@@ -47,7 +48,7 @@ $objets = Objet::obtenirAleatoires();
                 </li>
             </ul>
         </article>
-        <img class="zone" src="images/zone_A.png" alt="Photo représentative de l'endroit où se trouve la zone A de la brocante" />
+        <img class="zone" src="images/zone_A.png" alt="Photo de la zone A de la brocante" />
     </section>
     <section id="brocanteurs">
         <article class="center">
@@ -55,7 +56,7 @@ $objets = Objet::obtenirAleatoires();
         </article>
     </section>
     <section class="articles articles-grow">
-        <?php 
+        <?php
         foreach ($objets as $article) {
             $brocanteur = $article->obtenirBrocanteur();
             $categorie = $article->obtenirCategorie();

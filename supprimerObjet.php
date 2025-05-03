@@ -7,28 +7,28 @@ use Brocante\Modele\Brocanteur;
 use Brocante\Base\Database;
 use Brocante\Modele\Objet;
 
-// Vérifier si l'utilisateur est connecté
+// Vérifie la connexion
 if (!Brocanteur::estConnecte()) {
     header('Location: connexion.php');
     exit;
 }
 
-// Récupérer le brocanteur connecté
+// Récupère le brocanteur
 $brocanteur = Brocanteur::obtenirConnecte();
 
-// Récupérer l'ID de l'objet depuis l'URL
+// Récupère l'ID de l'objet
 $oid = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Récupérer l'objet
+// Récupère l'objet
 $objet = Objet::obtenirParId($oid);
 
-// Vérifier si l'objet existe et appartient au brocanteur connecté
+// Vérifie la propriété
 if (!$objet || $objet->bid !== $brocanteur->bid) {
     header('Location: espaceBrocanteur.php');
     exit;
 }
 
-// Supprimer l'image si elle existe
+// Supprime l'image
 if ($objet->image) {
     $uploadDir = 'uploads/objets/';
     $imagePath = $uploadDir . $objet->image;
@@ -37,12 +37,10 @@ if ($objet->image) {
     }
 }
 
-// Supprimer l'objet
+// Supprime l'objet
 if ($objet->supprimer()) {
-    // Redirection avec un message de succès
     header('Location: espaceBrocanteur.php?message=suppression_reussie');
 } else {
-    // Redirection avec un message d'erreur
     header('Location: espaceBrocanteur.php?message=erreur_suppression');
 }
 exit;

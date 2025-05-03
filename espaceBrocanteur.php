@@ -5,27 +5,27 @@ include_once 'php/Database.php';
 use Brocante\Base\Database;
 use Brocante\Modele\Brocanteur;
 
-// Vérifier si l'utilisateur est connecté
+// Vérifie la connexion
 if (!Brocanteur::estConnecte()) {
     header('Location: connexion.php');
     exit;
 }
 
-// Récupérer le brocanteur connecté
+// Récupère le brocanteur
 $brocanteur = Brocanteur::obtenirConnecte();
 
-// Traiter les messages
+// Traite les messages
 $message = isset($_GET['message']) ? $_GET['message'] : '';
 $succes = '';
 $erreur = '';
 
 if ($message === 'suppression_reussie') {
-    $succes = "L'objet a été supprimé avec succès.";
+    $succes = "L'objet a été supprimé avec succès";
 } elseif ($message === 'erreur_suppression') {
-    $erreur = "Une erreur est survenue lors de la suppression de l'objet.";
+    $erreur = "Une erreur est survenue lors de la suppression";
 }
 
-// Récupérer la zone et l'emplacement
+// Récupère la zone et l'emplacement
 $zone = $brocanteur->obtenirZone();
 $emplacement = $brocanteur->obtenirEmplacement();
 ?>
@@ -101,7 +101,7 @@ $emplacement = $brocanteur->obtenirEmplacement();
         <?php 
         $objets = $brocanteur->obtenirObjets();
         if (empty($objets)) {
-            echo "<p class=\"center\">Vous n'avez pas encore d'articles à vendre.</p>";
+            echo "<p class=\"center\">Vous n'avez pas encore d'articles à vendre</p>";
         } else {
             foreach ($objets as $objet) {
                 echo "<article class=\"objet-card\">";

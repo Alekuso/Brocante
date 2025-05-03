@@ -9,17 +9,17 @@ use Brocante\Modele\Objet;
 use Brocante\Modele\Brocanteur;
 use Brocante\Modele\Categorie;
 
-// Récupérer l'objet demandé
+// Récupère l'objet
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 $objet = Objet::obtenirParId($id);
 
-// Si l'objet n'existe pas, redirection vers la page d'accueil
+// Redirige si l'objet n'existe pas
 if (!$objet) {
     header('Location: index.php');
     exit;
 }
 
-// Récupérer le brocanteur et la catégorie
+// Récupère les informations associées
 $brocanteur = $objet->obtenirBrocanteur();
 $categorie = $objet->obtenirCategorie();
 $zone = $brocanteur ? $brocanteur->obtenirZone() : null;

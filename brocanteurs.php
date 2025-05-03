@@ -7,14 +7,13 @@ use Brocante\Base\Database;
 use Brocante\Modele\Brocanteur;
 use Brocante\Modele\Zone;
 
-// Initialisation des paramètres de recherche
+// Récupère les paramètres de recherche
 $nom = isset($_GET['nom']) ? trim($_GET['nom']) : '';
 $prenom = isset($_GET['prenom']) ? trim($_GET['prenom']) : '';
 
-// Optimisation: récupérer tous les brocanteurs avec leurs zones et emplacements en une seule requête
 $db = Database::getInstance();
 
-// Si la recherche est active, récupérer les brocanteurs correspondants
+// Traite la recherche
 if (!empty($nom) || !empty($prenom)) {
     $params = [];
     $sql = "SELECT b.*, e.code as emplacement_code, z.nom as zone_nom, z.zid as zone_id 
@@ -36,7 +35,7 @@ if (!empty($nom) || !empty($prenom)) {
     $sql .= " ORDER BY b.nom ASC, b.prenom ASC";
     $resultats = $db->obtenirTous($sql, $params);
     
-    // Organiser les résultats
+    // Organise les résultats
     $brocanteurs_data = [];
     foreach ($resultats as $row) {
         $brocanteurs_data[] = [
@@ -45,12 +44,10 @@ if (!empty($nom) || !empty($prenom)) {
             'emplacement_code' => $row['emplacement_code']
         ];
     }
-    $zones = []; // Pas besoin de zones car on affiche juste les résultats de recherche
+    $zones = [];
 } else {
-    // Récupérer toutes les zones
+    // Récupère par zones
     $zones = Zone::obtenirToutes();
-    
-    // Pour chaque zone, récupérer les brocanteurs en une seule requête
     $brocanteurs_par_zone = [];
     
     foreach ($zones as $zone) {
@@ -111,12 +108,12 @@ if (!empty($nom) || !empty($prenom)) {
     <section>
         <?php 
         if ($brocanteurs_data !== null) {
-            // Affichage des résultats de recherche
+            // Affiche les résultats de recherche
             echo "<h3 class=\"flex center\">Résultats de recherche</h3>";
             echo "<article class=\"articles articles-grow brocanteurs-grid\">";
             
             if (empty($brocanteurs_data)) {
-                echo "<p class=\"center\">Aucun brocanteur ne correspond à votre recherche.</p>";
+                echo "<p class=\"center\">Aucun brocanteur ne correspond à votre recherche</p>";
             } else {
                 foreach ($brocanteurs_data as $data) {
                     $brocanteur = $data['brocanteur'];
@@ -147,7 +144,7 @@ if (!empty($nom) || !empty($prenom)) {
             
             echo "</article>";
         } else {
-            // Affichage par zones
+            // Affiche par zones
             foreach ($zones as $zone) {
                 $brocanteurs_zone = $brocanteurs_par_zone[$zone->zid] ?? [];
                 if (empty($brocanteurs_zone)) continue;

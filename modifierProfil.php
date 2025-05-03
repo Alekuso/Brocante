@@ -5,18 +5,18 @@ include_once 'php/Database.php';
 use Brocante\Modele\Brocanteur;
 use Brocante\Base\Database;
 
-// Vérifier si l'utilisateur est connecté
+// Vérifie la connexion
 if (!Brocanteur::estConnecte()) {
     header('Location: connexion.php');
     exit;
 }
 
-// Récupérer l'utilisateur connecté
+// Récupère l'utilisateur
 $utilisateur = Brocanteur::obtenirConnecte();
 $erreur = '';
 $succes = '';
 
-// Traiter la modification des données personnelles
+// Traite les modifications de données
 if (isset($_POST['modifier_donnees'])) {
     $nom = trim($_POST['nom']);
     $prenom = trim($_POST['prenom']);
@@ -27,23 +27,22 @@ if (isset($_POST['modifier_donnees'])) {
         $db->executer("UPDATE Brocanteur SET nom = ?, prenom = ?, description = ? WHERE bid = ?", 
             [$nom, $prenom, $description, $utilisateur->bid]);
         
-        // Mettre à jour l'objet utilisateur
+        // Met à jour en mémoire
         $utilisateur->nom = $nom;
         $utilisateur->prenom = $prenom;
         $utilisateur->description = $description;
-        $succes = "Informations mises à jour avec succès.";
+        $succes = "Informations mises à jour";
         
-        // Rediriger vers la page appropriée
+        // Redirige
         header('Location: ' . ($utilisateur->est_administrateur ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'));
         exit;
     } else {
-        $erreur = "Tous les champs sont obligatoires.";
+        $erreur = "Tous les champs sont obligatoires";
     }
 }
 
-// Traiter l'upload de photo
+// Traite la photo
 if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
-    // Vérifier le type MIME et l'extension
     $allowed_types = ['image/jpeg', 'image/png'];
     $allowed_extensions = ['jpg', 'jpeg', 'png'];
     
@@ -52,53 +51,50 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
     $file_extension = strtolower(pathinfo($file_name, PATHINFO_EXTENSION));
     
     if (in_array($file_type, $allowed_types) && in_array($file_extension, $allowed_extensions)) {
-        // Créer le dossier si nécessaire
         $uploadDir = 'uploads/brocanteurs/';
         if (!is_dir($uploadDir)) {
             if (!mkdir($uploadDir, 0777, true)) {
-                $erreur = "Impossible de créer le répertoire d'upload.";
+                $erreur = "Impossible de créer le dossier";
             }
         }
         
         if (empty($erreur)) {
-            // Générer un nom de fichier au format NOMPRENOM.extension
+            // Génère le nom de fichier
             $filename = strtoupper($utilisateur->nom . $utilisateur->prenom) . '.' . $file_extension;
             $destination = $uploadDir . $filename;
             
-            // Vérifier si le dossier est accessible en écriture
             if (!is_writable($uploadDir)) {
-                $erreur = "Le dossier d'upload n'est pas accessible en écriture.";
+                $erreur = "Le dossier n'est pas accessible en écriture";
             } else {
-                // Déplacer le fichier
                 if (move_uploaded_file($_FILES['photo']['tmp_name'], $destination)) {
-                    // Supprimer l'ancienne photo si elle existe
+                    // Supprime l'ancienne photo
                     if ($utilisateur->photo && file_exists($uploadDir . $utilisateur->photo) && is_file($uploadDir . $utilisateur->photo)) {
                         @unlink($uploadDir . $utilisateur->photo);
                     }
                     
-                    // Mettre à jour la base de données
+                    // Met à jour la BD
                     $db = Database::getInstance();
                     $db->executer("UPDATE Brocanteur SET photo = ? WHERE bid = ?", 
                         [$filename, $utilisateur->bid]);
                     
-                    // Mettre à jour l'objet utilisateur
+                    // Met à jour en mémoire
                     $utilisateur->photo = $filename;
-                    $succes = "Photo de profil mise à jour avec succès.";
+                    $succes = "Photo de profil mise à jour";
                     
-                    // Rediriger vers la page appropriée
+                    // Redirige
                     header('Location: ' . ($utilisateur->est_administrateur ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'));
                     exit;
                 } else {
-                    $erreur = "Erreur lors de l'upload de la photo. Code: " . $_FILES['photo']['error'];
+                    $erreur = "Erreur lors de l'upload de la photo";
                 }
             }
         }
     } else {
-        $erreur = "Le type de fichier n'est pas autorisé. Utilisez JPG ou PNG uniquement.";
+        $erreur = "Format de fichier non accepté (JPG ou PNG uniquement)";
     }
 }
 
-// Récupérer la zone et l'emplacement si c'est un brocanteur
+// Récupère données
 $zone = $utilisateur->obtenirZone();
 $emplacement = $utilisateur->obtenirEmplacement();
 ?>
@@ -122,23 +118,6 @@ $emplacement = $utilisateur->obtenirEmplacement();
     if (!empty($erreur)) {
         echo "<section class=\"message-erreur\">";
         echo htmlspecialchars($erreur);
-        if (isset($_FILES['photo']) && $_FILES['photo']['error'] != 0) {
-            echo "<p>Code d'erreur PHP: " . htmlspecialchars($_FILES['photo']['error']);
-            $upload_errors = [
-                0 => "Aucune erreur, le téléchargement est réussi.",
-                1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
-                2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
-                3 => "Le fichier n'a été que partiellement téléchargé.",
-                4 => "Aucun fichier n'a été téléchargé.",
-                6 => "Dossier temporaire manquant.",
-                7 => "Échec d'écriture du fichier sur le disque.",
-                8 => "Une extension PHP a arrêté le téléchargement du fichier."
-            ];
-            if (isset($upload_errors[$_FILES['photo']['error']])) {
-                echo " - " . htmlspecialchars($upload_errors[$_FILES['photo']['error']]);
-            }
-            echo "</p>";
-        }
         echo "</section>";
     }
     
@@ -164,7 +143,7 @@ $emplacement = $utilisateur->obtenirEmplacement();
             ?>
             <img class="size-full" src="<?php echo $image; ?>" alt="Photo de profil" />
             
-            <!-- Formulaire pour changer la photo de profil -->
+            <!-- Formulaire photo -->
             <form method="POST" action="modifierProfil.php" enctype="multipart/form-data" class="photo-form">
                 <input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
                 <section class="file-input-wrapper">
@@ -190,7 +169,7 @@ $emplacement = $utilisateur->obtenirEmplacement();
             }
             ?>
             
-            <!-- Formulaire pour modifier les informations -->
+            <!-- Formulaire infos -->
             <form method="POST" action="modifierProfil.php" class="profile-form">
                 <section class="form-group">
                     <label for="nom">Nom:</label>

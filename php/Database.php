@@ -1,17 +1,10 @@
 <?php
 namespace Brocante\Base;
 
-/**
- * Database
- * Gère les connexions à la base de données
- */
 class Database {
     private $connexion;
     private static $instance = null;
     
-    /**
-     * Constructor - private to enforce singleton pattern
-     */
     private function __construct() {
         try {
             $serveur = "192.168.132.203:3306";
@@ -26,19 +19,18 @@ class Database {
                 [
                     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
                     \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-                    \PDO::ATTR_EMULATE_PREPARES => false, // Use real prepared statements
+                    \PDO::ATTR_EMULATE_PREPARES => false,
                     \PDO::MYSQL_ATTR_FOUND_ROWS => true,
-                    \PDO::ATTR_PERSISTENT => true // Use persistent connections
+                    \PDO::ATTR_PERSISTENT => true
                 ]
             );
         } catch (\PDOException $e) {
-            die('Erreur connexion BD: ' . $e->getMessage());
+            die('Erreur de connexion à la base de données');
         }
     }
     
     /**
-     * Get database instance (singleton pattern)
-     * @return Database The singleton instance
+     * Récupère l'instance de la base de données
      */
     public static function getInstance() {
         if (self::$instance === null) {
@@ -48,10 +40,7 @@ class Database {
     }
     
     /**
-     * Get one record from the database
-     * @param string $requete SQL query with placeholders
-     * @param array $params Parameters for the query
-     * @return array|false Single record as associative array or false if no record found
+     * Récupère un enregistrement de la base de données
      */
     public function obtenirUn($requete, $params = []) {
         $stmt = $this->connexion->prepare($requete);
@@ -60,10 +49,7 @@ class Database {
     }
     
     /**
-     * Get all records from the database
-     * @param string $requete SQL query with placeholders
-     * @param array $params Parameters for the query
-     * @return array Array of records as associative arrays
+     * Récupère tous les enregistrements de la base de données
      */
     public function obtenirTous($requete, $params = []) {
         $stmt = $this->connexion->prepare($requete);
@@ -72,10 +58,7 @@ class Database {
     }
     
     /**
-     * Count records from the database
-     * @param string $requete SQL query with placeholders
-     * @param array $params Parameters for the query
-     * @return int Count of records
+     * Compte les enregistrements
      */
     public function compter($requete, $params = []) {
         $stmt = $this->connexion->prepare($requete);
@@ -84,10 +67,7 @@ class Database {
     }
     
     /**
-     * Execute a query
-     * @param string $requete SQL query with placeholders
-     * @param array $params Parameters for the query
-     * @return bool True on success, false on failure
+     * Exécute une requête
      */
     public function executer($requete, $params = []) {
         $stmt = $this->connexion->prepare($requete);
@@ -95,32 +75,28 @@ class Database {
     }
     
     /**
-     * Get the last inserted ID
-     * @return string Last inserted ID
+     * Récupère le dernier ID inséré
      */
     public function dernierIdInsere() {
         return $this->connexion->lastInsertId();
     }
     
     /**
-     * Begin a transaction
-     * @return bool True on success, false on failure
+     * Démarre une transaction
      */
     public function beginTransaction() {
         return $this->connexion->beginTransaction();
     }
     
     /**
-     * Commit a transaction
-     * @return bool True on success, false on failure
+     * Valide une transaction
      */
     public function commit() {
         return $this->connexion->commit();
     }
     
     /**
-     * Rollback a transaction
-     * @return bool True on success, false on failure
+     * Annule une transaction
      */
     public function rollback() {
         return $this->connexion->rollback();

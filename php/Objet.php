@@ -6,10 +6,6 @@ use Brocante\Base\Database;
 require_once __DIR__ . '/Brocanteur.php';
 require_once __DIR__ . '/Categorie.php';
 
-/**
- * Classe Objet
- * Représente un objet à vendre dans la brocante
- */
 class Objet {
     public $oid;
     public $intitule;
@@ -18,10 +14,7 @@ class Objet {
     public $image;
     public $bid;
     public $cid;
-    
-    /**
-     * Constructeur
-     */
+
     public function __construct($donnees = []) {
         if (!empty($donnees)) {
             $this->oid = isset($donnees['oid']) ? $donnees['oid'] : null;
@@ -36,9 +29,6 @@ class Objet {
     
     /**
      * Récupère un objet par son ID
-     * 
-     * @param int $id L'ID de l'objet
-     * @return Objet|null L'objet ou null s'il n'existe pas
      */
     public static function obtenirParId($id) {
         $db = Database::getInstance();
@@ -52,8 +42,6 @@ class Objet {
     
     /**
      * Récupère tous les objets
-     * 
-     * @return array Tableau d'objets
      */
     public static function obtenirTous() {
         $db = Database::getInstance();
@@ -76,9 +64,6 @@ class Objet {
     
     /**
      * Récupère des objets aléatoires
-     * 
-     * @param int $nombre Le nombre d'objets à récupérer
-     * @return array Tableau d'objets
      */
     public static function obtenirAleatoires($nombre = 3) {
         $db = Database::getInstance();
@@ -94,9 +79,6 @@ class Objet {
     
     /**
      * Récupère tous les objets d'une catégorie
-     * 
-     * @param int $categorieId L'ID de la catégorie
-     * @return array Tableau d'objets
      */
     public static function obtenirParCategorie($categorieId) {
         $db = Database::getInstance();
@@ -112,8 +94,6 @@ class Objet {
     
     /**
      * Récupère le brocanteur de cet objet
-     * 
-     * @return Brocanteur|null Le brocanteur ou null en cas d'erreur
      */
     public function obtenirBrocanteur() {
         if (!$this->bid) {
@@ -125,8 +105,6 @@ class Objet {
     
     /**
      * Récupère la catégorie de cet objet
-     * 
-     * @return Categorie|null La catégorie ou null en cas d'erreur
      */
     public function obtenirCategorie() {
         if (!$this->cid) {
@@ -138,8 +116,6 @@ class Objet {
     
     /**
      * Formate le prix pour l'affichage
-     * 
-     * @return string Le prix formaté avec le symbole €
      */
     public function prixFormate() {
         return number_format($this->prix, 2, ',', ' ') . ' €';
@@ -147,24 +123,19 @@ class Objet {
     
     /**
      * Enregistre l'objet dans la base de données
-     * 
-     * @return bool Succès de l'opération
      */
     public function enregistrer() {
         $db = Database::getInstance();
         
-        // Filtrer les données
         $intitule = htmlspecialchars($this->intitule);
         $description = htmlspecialchars($this->description);
         
         if ($this->oid) {
-            // Mise à jour
             $success = $db->executer(
                 "UPDATE Objet SET intitule = ?, prix = ?, description = ?, image = ?, bid = ?, cid = ? WHERE oid = ?",
                 [$intitule, $this->prix, $description, $this->image, $this->bid, $this->cid, $this->oid]
             );
         } else {
-            // Insertion
             $success = $db->executer(
                 "INSERT INTO Objet (intitule, prix, description, image, bid, cid) VALUES (?, ?, ?, ?, ?, ?)",
                 [$intitule, $this->prix, $description, $this->image, $this->bid, $this->cid]
@@ -180,8 +151,6 @@ class Objet {
     
     /**
      * Supprime l'objet de la base de données
-     * 
-     * @return bool Succès de l'opération
      */
     public function supprimer() {
         if (!$this->oid) {
@@ -194,11 +163,6 @@ class Objet {
     
     /**
      * Recherche des objets selon différents critères
-     * 
-     * @param string $nom Partie du nom à rechercher (optionnel)
-     * @param int $categorieId ID de la catégorie (optionnel)
-     * @param string $prixFiltre Ordre de tri par prix ('asc' ou 'desc')
-     * @return array Tableau d'objets correspondant aux critères
      */
     public static function rechercher($nom = '', $categorieId = null, $prixFiltre = 'asc') {
         $db = Database::getInstance();
@@ -230,7 +194,6 @@ class Objet {
             $objets[] = new Objet($donnees);
         }
         
-        // Sauvegarder les critères de recherche dans un cookie (valable 30 jours)
         setcookie('recherche_objet_nom', $nom, time() + 30 * 24 * 3600, '/');
         setcookie('recherche_objet_categorie', $categorieId, time() + 30 * 24 * 3600, '/');
         setcookie('recherche_objet_prix', $prixFiltre, time() + 30 * 24 * 3600, '/');
@@ -241,38 +204,22 @@ class Objet {
     public static function validerFormulaire($donnees) {
         $erreurs = [];
         
-        // Validation de l'intitulé
         if (empty($donnees['intitule'])) {
             $erreurs['intitule'] = "L'intitulé est obligatoire";
         }
         
-        // Validation du prix
         if (empty($donnees['prix'])) {
             $erreurs['prix'] = "Le prix est obligatoire";
-        } elseif (!is_numeric($donnees['prix']) || $donnees['prix'] < 0) {
+        } elseif (!is_numeric($donnees['prix']) || $donnees['prix'] <= 0) {
             $erreurs['prix'] = "Le prix doit être un nombre positif";
         }
         
-        // Validation de la description
         if (empty($donnees['description'])) {
             $erreurs['description'] = "La description est obligatoire";
         }
         
-        // Validation de la catégorie
         if (empty($donnees['categorie'])) {
             $erreurs['categorie'] = "La catégorie est obligatoire";
-        }
-        
-        // Validation de l'image
-        if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
-            $allowed = ['jpg', 'jpeg', 'png', 'gif'];
-            $extension = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
-            
-            if (!in_array($extension, $allowed)) {
-                $erreurs['image'] = "Format de fichier non autorisé. Utilisez JPG, PNG ou GIF";
-            } elseif ($_FILES['image']['size'] > 5000000) { // 5MB
-                $erreurs['image'] = "Le fichier est trop volumineux (max 5MB)";
-            }
         }
         
         return $erreurs;

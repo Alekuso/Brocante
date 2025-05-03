@@ -3,9 +3,9 @@ include_once 'php/Brocanteur.php';
 
 use Brocante\Modele\Brocanteur;
 
-// Déconnecter l'utilisateur
+// Déconnecte l'utilisateur
 Brocanteur::deconnecter();
 
-// Rediriger vers la page d'accueil
+// Redirige vers la page d'accueil
 header('Location: index.php');
 exit; 

@@ -6,18 +6,11 @@ use Brocante\Base\Database;
 require_once __DIR__ . '/Emplacement.php';
 require_once __DIR__ . '/Brocanteur.php';
 
-/**
- * Classe Zone
- * Représente une zone de la brocante
- */
 class Zone {
     public $zid;
     public $nom;
     public $description;
-    
-    /**
-     * Constructeur
-     */
+
     public function __construct($donnees = []) {
         if (!empty($donnees)) {
             $this->zid = isset($donnees['zid']) ? $donnees['zid'] : null;
@@ -28,9 +21,6 @@ class Zone {
     
     /**
      * Récupère une zone par son ID
-     * 
-     * @param int $id L'ID de la zone
-     * @return Zone|null La zone ou null si elle n'existe pas
      */
     public static function obtenirParId($id) {
         $db = Database::getInstance();
@@ -44,8 +34,6 @@ class Zone {
     
     /**
      * Récupère toutes les zones
-     * 
-     * @return array Tableau de zones
      */
     public static function obtenirToutes() {
         $db = Database::getInstance();
@@ -61,8 +49,6 @@ class Zone {
     
     /**
      * Récupère les emplacements dans cette zone
-     * 
-     * @return array Tableau d'emplacements
      */
     public function obtenirEmplacements() {
         if (!$this->zid) {
@@ -82,8 +68,6 @@ class Zone {
     
     /**
      * Récupère les brocanteurs dans cette zone
-     * 
-     * @return array Tableau de brocanteurs
      */
     public function obtenirBrocanteurs() {
         if (!$this->zid) {
@@ -108,8 +92,6 @@ class Zone {
     
     /**
      * Enregistre la zone dans la base de données
-     * 
-     * @return bool Succès de l'opération
      */
     public function enregistrer() {
         $db = Database::getInstance();

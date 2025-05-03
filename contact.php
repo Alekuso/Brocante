@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = $_POST["email"] ?? '';
     $message = $_POST["message"] ?? '';
     
-    // Validation du formulaire
+    // Vérifie le formulaire
     if (empty($nom)) {
         $erreurs['nom'] = "Le nom est obligatoire";
     }
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $erreurs['message'] = "Le message est obligatoire";
     }
     
-    // Si pas d'erreurs, traiter le formulaire
+    // Traite le formulaire si pas d'erreurs
     if (empty($erreurs)) {
         $alexEmail = "a.olemans@student.helmo.be";
         $nomFiltre = htmlspecialchars($nom);
@@ -46,15 +46,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $headers .= "Reply-To: $emailFiltre\r\n";
         $headers .= "Content-Type: text/plain; charset=UTF-8";
 
-        // Sur serveur de production
         mail($alexEmail, $sujet, $contenu, $headers);
-        // Copie nécessaire pour test prof
         mail($emailFiltre, $sujet, $contenu, $headers);
         $succes = true;
-
         
-        
-        // Vider les champs après envoi réussi
+        // Vide les champs après envoi
         $prenom = $email = $nom = $message = '';
     }
 }
