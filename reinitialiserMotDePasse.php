@@ -66,15 +66,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="form-container">
         <h1>Réinitialiser votre mot de passe</h1>
         
-        <?php if (!empty($message)): ?>
+        <?php if (!empty($message)) { ?>
             <section class="message-succes"><?php echo $message; ?></section>
-        <?php endif; ?>
+        <?php } ?>
         
-        <?php if (!empty($erreur)): ?>
+        <?php if (!empty($erreur)) { ?>
             <section class="message-erreur"><?php echo htmlspecialchars($erreur); ?></section>
-        <?php endif; ?>
+        <?php } ?>
         
-        <?php if (empty($message)): // N'affiche le formulaire que si pas de message de succès ?>
+        <?php if (empty($message)) { // N'affiche le formulaire que si pas de message de succès ?>
             <form method="post" action="reinitialiserMotDePasse.php" class="form">
                 <section class="form-group">
                     <label for="courriel">Adresse e-mail</label>
@@ -85,22 +85,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                 <section class="form-actions">
                     <button type="submit" class="btn">Réinitialiser mon mot de passe</button>
-                    <?php if ($utilisateurConnecte): ?>
+                    <?php if ($utilisateurConnecte) { ?>
                         <a href="modifierProfil.php" class="btn-link">Retour au profil</a>
-                    <?php else: ?>
+                    <?php } else { ?>
                         <a href="connexion.php" class="btn-link">Retour à la connexion</a>
-                    <?php endif; ?>
+                    <?php } ?>
                 </section>
             </form>
-        <?php else: ?>
+        <?php } else { ?>
             <section class="form-actions center">
-                <?php if ($utilisateurConnecte): ?>
+                <?php if ($utilisateurConnecte) { ?>
                     <a href="modifierProfil.php" class="btn">Retour au profil</a>
-                <?php else: ?>
+                <?php } else { ?>
                     <a href="connexion.php" class="btn">Retour à la connexion</a>
-                <?php endif; ?>
+                <?php } ?>
             </section>
-        <?php endif; ?>
+        <?php } ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>

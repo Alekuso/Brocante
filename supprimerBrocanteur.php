@@ -63,13 +63,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'confirmer') {
     <section class="form-container">
         <h1>Supprimer un brocanteur</h1>
         
-        <?php if (!empty($message)): ?>
+        <?php if (!empty($message)) { ?>
             <section class="message-succes"><?php echo htmlspecialchars($message); ?></section>
-        <?php endif; ?>
+        <?php } ?>
         
-        <?php if (!empty($erreur)): ?>
+        <?php if (!empty($erreur)) { ?>
             <section class="message-erreur"><?php echo htmlspecialchars($erreur); ?></section>
-        <?php endif; ?>
+        <?php } ?>
         
         <section class="confirmation-box">
             <h2>Êtes-vous sûr de vouloir supprimer ce brocanteur ?</h2>

@@ -184,7 +184,7 @@ if ($aleatoire) {
         </article>
     </section>
 
-    <?php if ($mode_affichage === 'aleatoire'): ?>
+    <?php if ($mode_affichage === 'aleatoire') { ?>
     <section class="presentation center">
         <h2>3 objets choisis aléatoirement</h2>
     </section>
@@ -229,7 +229,7 @@ if ($aleatoire) {
         ?>
     </section>
     
-    <?php elseif ($mode_affichage === 'recherche'): ?>
+    <?php } elseif ($mode_affichage === 'recherche') { ?>
     <section class="presentation center">
         <h2>Résultats de recherche</h2>
     </section>
@@ -278,7 +278,7 @@ if ($aleatoire) {
         ?>
     </section>
     
-    <?php else: ?>
+    <?php } else { ?>
     <!-- Mode par catégories -->
     <?php
     if (empty($objets_par_categories)) {
@@ -332,7 +332,7 @@ if ($aleatoire) {
         }
     }
     ?>
-    <?php endif; ?>
+    <?php } ?>
 </main>
 <?php include 'inc/footer.php'; ?>
 </body>
