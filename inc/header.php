@@ -23,38 +23,31 @@ use Brocante\Modele\Brocanteur;
                     Contacter
                 </a>
             </li>
-            <?php if (Brocanteur::estConnecte()): ?>
-                <li class="btn">
-                    <a href="<?php echo Brocanteur::estAdmin() ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'; ?>">
-                        <?php echo Brocanteur::estAdmin() ? 'Espace Administrateur' : 'Espace Brocanteur'; ?>
-                    </a>
-                </li>
-                <li class="btn">
-                    <a href="logout.php">
-                        Déconnexion
-                    </a>
-                </li>
-            <?php else: ?>
-                <li class="btn">
-                    <a href="connexion.php">
-                        Connexion
-                    </a>
-                </li>
-                <li class="btn">
-                    <a href="inscription.php">
-                        S'inscrire
-                    </a>
-                </li>
-            <?php endif; ?>
+            <?php 
+            if (Brocanteur::estConnecte()) {
+                echo "<li class=\"btn\">";
+                echo "<a href=\"" . (Brocanteur::estAdmin() ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php') . "\">";
+                echo Brocanteur::estAdmin() ? 'Espace Administrateur' : 'Espace Brocanteur';
+                echo "</a>";
+                echo "</li>";
+                echo "<li class=\"btn\">";
+                echo "<a href=\"logout.php\">";
+                echo "Déconnexion";
+                echo "</a>";
+                echo "</li>";
+            } else {
+                echo "<li class=\"btn\">";
+                echo "<a href=\"connexion.php\">";
+                echo "Connexion";
+                echo "</a>";
+                echo "</li>";
+                echo "<li class=\"btn\">";
+                echo "<a href=\"inscription.php\">";
+                echo "S'inscrire";
+                echo "</a>";
+                echo "</li>";
+            }
+            ?>
         </ul>
     </nav>
 </header>
-
-<?php
-// These includes aren't needed in the header since they should be included in the pages that use them
-/* 
-include_once 'php/Database.php';
-include_once 'php/Objet.php';
-include_once 'php/Categorie.php';
-*/
-?>

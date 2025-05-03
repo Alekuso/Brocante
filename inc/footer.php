@@ -8,8 +8,8 @@
     </ul>
     <p class="footer-addresse">Du 10 au 12 mars - Rue Grand Pré, Flémalle 4400</p>
     <?php 
-    if (class_exists('Brocanteur') && Brocanteur::estConnecte()): 
+    if (class_exists('Brocanteur') && Brocanteur::estConnecte()) {
+        echo "<p class=\"footer-user\">Connecté: " . htmlspecialchars($_SESSION['prenom'] . ' ' . $_SESSION['nom']) . "</p>";
+    }
     ?>
-        <p class="footer-user">Connecté: <?php echo htmlspecialchars($_SESSION['prenom'] . ' ' . $_SESSION['nom']); ?></p>
-    <?php endif; ?>
 </footer>
