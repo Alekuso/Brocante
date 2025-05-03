@@ -93,11 +93,13 @@ foreach ($resultats as $row) {
                 <label for="categorie">Catégorie</label>
                 <select id="categorie" name="category">
                     <option value="*">Toutes les catégories</option>
-                    <?php foreach ($categories as $categorie): ?>
-                        <option value="<?php echo htmlspecialchars($categorie->cid); ?>" <?php echo ($categorieId == $categorie->cid) ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($categorie->intitule); ?>
-                        </option>
-                    <?php endforeach; ?>
+                    <?php 
+                    foreach ($categories as $categorie) {
+                        echo '<option value="' . htmlspecialchars($categorie->cid) . '" ' . (($categorieId == $categorie->cid) ? 'selected' : '') . '>';
+                        echo htmlspecialchars($categorie->intitule);
+                        echo '</option>';
+                    }
+                    ?>
                 </select>
 
                 <label for="prix-filtre">Filtre</label>
@@ -111,46 +113,47 @@ foreach ($resultats as $row) {
     </section>
 
     <section class="articles articles-grow objets-grid">
-        <?php if (empty($objets_data)): ?>
-            <p class="center">Aucun objet ne correspond à votre recherche.</p>
-        <?php else: ?>
-            <?php foreach ($objets_data as $data):
+        <?php 
+        if (empty($objets_data)) {
+            echo '<p class="center">Aucun objet ne correspond à votre recherche.</p>';
+        } else {
+            foreach ($objets_data as $data) {
                 $article = $data['objet'];
-            ?>
-                <a href="produit.php?id=<?php echo htmlspecialchars($article->oid); ?>" class="objet-card">
-                    <?php
-                    if ($article->image === null) {
-                        $image = "images/placeholder.png";
-                    } else {
-                        $image = "uploads/objets/" . htmlspecialchars($article->image);
-                    }
-                    ?>
-                    <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($article->intitule); ?>" />
-                    <h4><?php echo htmlspecialchars($article->intitule); ?></h4>
-                    
-                    <?php if (!empty($data['brocanteur_nom'])): ?>
-                        <p>
-                            <?php echo htmlspecialchars($data['brocanteur_prenom'] . ' ' . $data['brocanteur_nom']); ?>
-                            <?php echo !empty($data['zone_nom']) ? ' - ' . htmlspecialchars($data['zone_nom']) : ''; ?>
-                        </p>
-                    <?php endif; ?>
-                    
-                    <p><?php echo htmlspecialchars($article->description); ?></p>
-                    
-                    <?php if (!empty($data['categorie_nom'])): ?>
-                        <ul>
-                            <li class="pad-lr-1 flex">
-                                <p class="center">
-                                    <?php echo htmlspecialchars($data['categorie_nom']); ?>
-                                </p>
-                            </li>
-                        </ul>
-                    <?php endif; ?>
-                    
-                    <h3 class="prix"><?php echo htmlspecialchars($article->prix); ?>€</h3>
-                </a>
-            <?php endforeach; ?>
-        <?php endif; ?>
+                echo '<a href="produit.php?id=' . htmlspecialchars($article->oid) . '" class="objet-card">';
+                
+                if ($article->image === null) {
+                    $image = "images/placeholder.png";
+                } else {
+                    $image = "uploads/objets/" . htmlspecialchars($article->image);
+                }
+                
+                echo '<img src="' . $image . '" alt="' . htmlspecialchars($article->intitule) . '" />';
+                echo '<h4>' . htmlspecialchars($article->intitule) . '</h4>';
+                
+                if (!empty($data['brocanteur_nom'])) {
+                    echo '<p>';
+                    echo htmlspecialchars($data['brocanteur_prenom'] . ' ' . $data['brocanteur_nom']);
+                    echo !empty($data['zone_nom']) ? ' - ' . htmlspecialchars($data['zone_nom']) : '';
+                    echo '</p>';
+                }
+                
+                echo '<p>' . htmlspecialchars($article->description) . '</p>';
+                
+                if (!empty($data['categorie_nom'])) {
+                    echo '<ul>';
+                    echo '<li class="pad-lr-1 flex">';
+                    echo '<p class="center">';
+                    echo htmlspecialchars($data['categorie_nom']);
+                    echo '</p>';
+                    echo '</li>';
+                    echo '</ul>';
+                }
+                
+                echo '<h3 class="prix">' . htmlspecialchars($article->prix) . '€</h3>';
+                echo '</a>';
+            }
+        }
+        ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>

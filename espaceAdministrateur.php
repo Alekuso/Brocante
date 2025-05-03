@@ -65,12 +65,15 @@ $stats['emplacements_attribues'] = $result['count'];
 <body>
 <?php include 'inc/header.php'; ?>
 <main>
-    <?php if (!empty($message)): ?>
-        <div class="message-succes"><?php echo htmlspecialchars($message); ?></div>
-    <?php endif; ?>
-    <?php if (!empty($erreur)): ?>
-        <div class="message-erreur"><?php echo htmlspecialchars($erreur); ?></div>
-    <?php endif; ?>
+    <?php 
+    if (!empty($message)) {
+        echo "<section class=\"message-succes\">" . htmlspecialchars($message) . "</section>";
+    }
+    
+    if (!empty($erreur)) {
+        echo "<section class=\"message-erreur\">" . htmlspecialchars($erreur) . "</section>";
+    }
+    ?>
     
     <section class="articles size-half presentation">
         <article>
@@ -93,80 +96,84 @@ $stats['emplacements_attribues'] = $result['count'];
     
     <!-- Statistiques -->
     <section class="stats-container bg-darkgray">
-        <div class="stats-grid">
-            <div class="stat-box">
+        <section class="stats-grid">
+            <article class="stat-box">
                 <h3>Total des brocanteurs</h3>
                 <p class="stat-number"><?php echo $stats['total_brocanteurs']; ?></p>
-            </div>
-            <div class="stat-box">
+            </article>
+            <article class="stat-box">
                 <h3>En attente</h3>
                 <p class="stat-number"><?php echo $stats['attente']; ?></p>
-            </div>
-            <div class="stat-box">
+            </article>
+            <article class="stat-box">
                 <h3>Validés</h3>
                 <p class="stat-number"><?php echo $stats['valides']; ?></p>
-            </div>
-            <div class="stat-box">
+            </article>
+            <article class="stat-box">
                 <h3>Emplacements attribués</h3>
                 <p class="stat-number"><?php echo $stats['emplacements_attribues']; ?></p>
-            </div>
-        </div>
+            </article>
+        </section>
     </section>
     
     <!-- Inscriptions en attente -->
     <section class="presentation">
         <h2 class="center">Inscriptions en attente</h2>
         
-        <?php if (empty($brocanteurs_attente)): ?>
-            <p class="center">Aucune inscription en attente.</p>
-        <?php else: ?>
-            <section class="admin-cards-container">
-                <?php foreach ($brocanteurs_attente as $brocanteur): ?>
-                    <article class="admin-card waiting">
-                        <header class="admin-card-header">
-                            <h3><?php echo htmlspecialchars($brocanteur['prenom'] . ' ' . $brocanteur['nom']); ?></h3>
-                            <span class="admin-card-id">ID: <?php echo htmlspecialchars($brocanteur['bid']); ?></span>
-                        </header>
-                        <section class="admin-card-body">
-                            <p><strong>Email:</strong> <?php echo htmlspecialchars($brocanteur['courriel']); ?></p>
-                        </section>
-                        <footer class="admin-card-actions">
-                            <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
-                            <a href="validerInscription.php?id=<?php echo $brocanteur['bid']; ?>&action=valider" class="btn-small">Valider & Attribuer</a>
-                            <a href="validerInscription.php?id=<?php echo $brocanteur['bid']; ?>&action=refuser" class="btn-small" style="background-color: #cc3333;">Refuser</a>
-                        </footer>
-                    </article>
-                <?php endforeach; ?>
-            </section>
-        <?php endif; ?>
+        <?php 
+        if (empty($brocanteurs_attente)) {
+            echo "<p class=\"center\">Aucune inscription en attente.</p>";
+        } else {
+            echo "<section class=\"admin-cards-container\">";
+            foreach ($brocanteurs_attente as $brocanteur) {
+                echo "<article class=\"admin-card waiting\">";
+                echo "<header class=\"admin-card-header\">";
+                echo "<h3>" . htmlspecialchars($brocanteur['prenom'] . ' ' . $brocanteur['nom']) . "</h3>";
+                echo "<span class=\"admin-card-id\">ID: " . htmlspecialchars($brocanteur['bid']) . "</span>";
+                echo "</header>";
+                echo "<section class=\"admin-card-body\">";
+                echo "<p><strong>Email:</strong> " . htmlspecialchars($brocanteur['courriel']) . "</p>";
+                echo "</section>";
+                echo "<footer class=\"admin-card-actions\">";
+                echo "<a href=\"vendeur.php?id=" . $brocanteur['bid'] . "\" class=\"btn-small\">Voir</a>";
+                echo "<a href=\"validerInscription.php?id=" . $brocanteur['bid'] . "&action=valider\" class=\"btn-small\">Valider & Attribuer</a>";
+                echo "<a href=\"validerInscription.php?id=" . $brocanteur['bid'] . "&action=refuser\" class=\"btn-small\" style=\"background-color: #cc3333;\">Refuser</a>";
+                echo "</footer>";
+                echo "</article>";
+            }
+            echo "</section>";
+        }
+        ?>
     </section>
     
     <!-- Brocanteurs validés -->
     <section class="presentation">
         <h2 class="center">Brocanteurs validés</h2>
         
-        <?php if (empty($brocanteurs_valides)): ?>
-            <p class="center">Aucun brocanteur validé.</p>
-        <?php else: ?>
-            <section class="admin-cards-container">
-                <?php foreach ($brocanteurs_valides as $brocanteur): ?>
-                    <article class="admin-card validated">
-                        <header class="admin-card-header">
-                            <h3><?php echo htmlspecialchars($brocanteur['prenom'] . ' ' . $brocanteur['nom']); ?></h3>
-                            <span class="admin-card-id">ID: <?php echo htmlspecialchars($brocanteur['bid']); ?></span>
-                        </header>
-                        <section class="admin-card-body">
-                            <p><strong>Zone:</strong> <?php echo htmlspecialchars($brocanteur['zone_nom'] ?? 'Non assigné'); ?></p>
-                            <p><strong>Emplacement:</strong> <?php echo htmlspecialchars($brocanteur['emplacement_code'] ?? 'Non assigné'); ?></p>
-                        </section>
-                        <footer class="admin-card-actions">
-                            <a href="vendeur.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Voir</a>
-                            <a href="attribuerEmplacement.php?id=<?php echo $brocanteur['bid']; ?>" class="btn-small">Emplacement</a>
-                        </footer>
-                    </article>
-                <?php endforeach; ?>
-            </section>
-        <?php endif; ?>
+        <?php 
+        if (empty($brocanteurs_valides)) {
+            echo "<p class=\"center\">Aucun brocanteur validé.</p>";
+        } else {
+            echo "<section class=\"admin-cards-container\">";
+            foreach ($brocanteurs_valides as $brocanteur) {
+                echo "<article class=\"admin-card validated\">";
+                echo "<header class=\"admin-card-header\">";
+                echo "<h3>" . htmlspecialchars($brocanteur['prenom'] . ' ' . $brocanteur['nom']) . "</h3>";
+                echo "<span class=\"admin-card-id\">ID: " . htmlspecialchars($brocanteur['bid']) . "</span>";
+                echo "</header>";
+                echo "<section class=\"admin-card-body\">";
+                echo "<p><strong>Zone:</strong> " . htmlspecialchars($brocanteur['zone_nom'] ?? 'Non assigné') . "</p>";
+                echo "<p><strong>Emplacement:</strong> " . htmlspecialchars($brocanteur['emplacement_code'] ?? 'Non assigné') . "</p>";
+                echo "</section>";
+                echo "<footer class=\"admin-card-actions\">";
+                echo "<a href=\"vendeur.php?id=" . $brocanteur['bid'] . "\" class=\"btn-small\">Voir</a>";
+                echo "<a href=\"attribuerEmplacement.php?id=" . $brocanteur['bid'] . "\" class=\"btn-small\">Emplacement</a>";
+                echo "</footer>";
+                echo "</article>";
+            }
+            echo "</section>";
+        }
+        ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>

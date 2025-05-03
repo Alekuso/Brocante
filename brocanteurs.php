@@ -109,68 +109,79 @@ if (!empty($nom) || !empty($prenom)) {
         </article>
     </section>
     <section>
-        <?php if ($brocanteurs_data !== null): ?>
-            <!-- Affichage des résultats de recherche -->
-            <h3 class="flex center">Résultats de recherche</h3>
-            <article class="articles articles-grow brocanteurs-grid">
-                <?php if (empty($brocanteurs_data)): ?>
-                    <p class="center">Aucun brocanteur ne correspond à votre recherche.</p>
-                <?php else: ?>
-                    <?php foreach ($brocanteurs_data as $data): 
-                        $brocanteur = $data['brocanteur'];
-                    ?>
-                        <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>" class="center brocanteur-card">
-                            <?php
-                            if ($brocanteur->photo === null) {
-                                $image = "images/placeholder.png";
-                            } else {
-                                $image = "uploads/brocanteurs/" . htmlspecialchars($brocanteur->photo);
-                            }
-                            ?>
-                            <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
-                            <h4><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h4>
-                            <?php if (!empty($data['zone_nom'])): ?>
-                                <p><?php echo htmlspecialchars($data['zone_nom']); ?></p>
-                            <?php endif; ?>
-                            <?php if (!empty($data['emplacement_code'])): ?>
-                                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($data['emplacement_code']); ?></p>
-                            <?php endif; ?>
-                            <p><?php echo htmlspecialchars($brocanteur->description); ?></p>
-                        </a>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </article>
-        <?php else: ?>
-            <!-- Affichage par zones -->
-            <?php foreach ($zones as $zone): 
+        <?php 
+        if ($brocanteurs_data !== null) {
+            // Affichage des résultats de recherche
+            echo "<h3 class=\"flex center\">Résultats de recherche</h3>";
+            echo "<article class=\"articles articles-grow brocanteurs-grid\">";
+            
+            if (empty($brocanteurs_data)) {
+                echo "<p class=\"center\">Aucun brocanteur ne correspond à votre recherche.</p>";
+            } else {
+                foreach ($brocanteurs_data as $data) {
+                    $brocanteur = $data['brocanteur'];
+                    
+                    echo "<a href=\"vendeur.php?id=" . htmlspecialchars($brocanteur->bid) . "\" class=\"center brocanteur-card\">";
+                    
+                    if ($brocanteur->photo === null) {
+                        $image = "images/placeholder.png";
+                    } else {
+                        $image = "uploads/brocanteurs/" . htmlspecialchars($brocanteur->photo);
+                    }
+                    
+                    echo "<img src=\"" . $image . "\" alt=\"" . htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom) . "\" />";
+                    echo "<h4>" . htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom) . "</h4>";
+                    
+                    if (!empty($data['zone_nom'])) {
+                        echo "<p>" . htmlspecialchars($data['zone_nom']) . "</p>";
+                    }
+                    
+                    if (!empty($data['emplacement_code'])) {
+                        echo "<p class=\"emplacement\">Emplacement: " . htmlspecialchars($data['emplacement_code']) . "</p>";
+                    }
+                    
+                    echo "<p>" . htmlspecialchars($brocanteur->description) . "</p>";
+                    echo "</a>";
+                }
+            }
+            
+            echo "</article>";
+        } else {
+            // Affichage par zones
+            foreach ($zones as $zone) {
                 $brocanteurs_zone = $brocanteurs_par_zone[$zone->zid] ?? [];
                 if (empty($brocanteurs_zone)) continue;
-            ?>
-                <h3 class="flex center"><?php echo htmlspecialchars($zone->nom); ?></h3>
-                <article class="articles articles-grow brocanteurs-grid">
-                    <?php foreach ($brocanteurs_zone as $data): 
-                        $brocanteur = $data['brocanteur'];
-                    ?>
-                        <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>" class="center brocanteur-card">
-                            <?php
-                            if ($brocanteur->photo === null) {
-                                $image = "images/placeholder.png";
-                            } else {
-                                $image = "uploads/brocanteurs/" . htmlspecialchars($brocanteur->photo);
-                            }
-                            ?>
-                            <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
-                            <h4><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h4>
-                            <p><?php echo htmlspecialchars($zone->nom); ?></p>
-                            <?php if (!empty($data['emplacement_code'])): ?>
-                                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($data['emplacement_code']); ?></p>
-                            <?php endif; ?>
-                            <p><?php echo htmlspecialchars($brocanteur->description); ?></p>
-                        </a>
-                    <?php endforeach; ?>
-                </article>
-            <?php endforeach; ?>
-        <?php endif; ?>
+                
+                echo "<h3 class=\"flex center\">" . htmlspecialchars($zone->nom) . "</h3>";
+                echo "<article class=\"articles articles-grow brocanteurs-grid\">";
+                
+                foreach ($brocanteurs_zone as $data) {
+                    $brocanteur = $data['brocanteur'];
+                    
+                    echo "<a href=\"vendeur.php?id=" . htmlspecialchars($brocanteur->bid) . "\" class=\"center brocanteur-card\">";
+                    
+                    if ($brocanteur->photo === null) {
+                        $image = "images/placeholder.png";
+                    } else {
+                        $image = "uploads/brocanteurs/" . htmlspecialchars($brocanteur->photo);
+                    }
+                    
+                    echo "<img src=\"" . $image . "\" alt=\"" . htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom) . "\" />";
+                    echo "<h4>" . htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom) . "</h4>";
+                    echo "<p>" . htmlspecialchars($zone->nom) . "</p>";
+                    
+                    if (!empty($data['emplacement_code'])) {
+                        echo "<p class=\"emplacement\">Emplacement: " . htmlspecialchars($data['emplacement_code']) . "</p>";
+                    }
+                    
+                    echo "<p>" . htmlspecialchars($brocanteur->description) . "</p>";
+                    echo "</a>";
+                }
+                
+                echo "</article>";
+            }
+        }
+        ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>

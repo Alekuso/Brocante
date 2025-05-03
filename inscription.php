@@ -142,11 +142,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($brocanteur_id) {
             $montant = 20.00; // Frais d'inscription
             
-            $succes = 'Inscription réussie! Vous devez maintenant payer 20€ pour finaliser votre inscription.<br>' .
-                      'Montant à payer: ' . $montant . ' €<br>' .
-                      'IBAN: BE68 5390 0754 7034<br>' .
-                      'Communication: "Brocante - ' . strtoupper($nom) . ' ' . strtoupper($prenom) . '"<br>' .
-                      'Un administrateur validera votre compte après réception du paiement.';
+            $succes = '<p>Inscription réussie! Vous devez maintenant payer 20€ pour finaliser votre inscription.</p>' .
+                      '<p>Montant à payer: ' . $montant . ' €</p>' .
+                      '<p>IBAN: BE68 5390 0754 7034</p>' .
+                      '<p>Communication: "Brocante - ' . strtoupper($nom) . ' ' . strtoupper($prenom) . '"</p>' .
+                      '<p>Un administrateur validera votre compte après réception du paiement.</p>';
             
             // Ne plus rediriger vers la page de confirmation
             // On affiche directement le message de succès sur cette page
@@ -181,47 +181,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
-            <?php if (!empty($erreurs)): ?>
-                <div class="message-erreur">
-                    <?php foreach ($erreurs as $champ => $message): ?>
-                        <p><?php echo htmlspecialchars($message); ?></p>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <?php 
+            if (!empty($erreurs)) {
+                echo "<section class=\"message-erreur\">";
+                foreach ($erreurs as $champ => $message) {
+                    echo "<p>" . htmlspecialchars($message) . "</p>";
+                }
+                echo "</section>";
+            }
             
-            <?php if (!empty($succes)): ?>
-                <div class="message-succes">
-                    <p><?php echo $succes; ?></p>
-                </div>
-                <p class="center"><a href="connexion.php" class="underline">Se connecter</a></p>
-            <?php else: ?>
-                <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" enctype="multipart/form-data" class="column">
-                    <label for="nom">Nom*</label>
-                    <input class="size-full" type="text" id="nom" name="nom" value="<?php echo isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : ''; ?>" required>
-                    
-                    <label for="prenom">Prénom*</label>
-                    <input class="size-full" type="text" id="prenom" name="prenom" value="<?php echo isset($_POST['prenom']) ? htmlspecialchars($_POST['prenom']) : ''; ?>" required>
-                    
-                    <label for="email">Email*</label>
-                    <input class="size-full" type="email" id="email" name="email" value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>" required>
-                    
-                    <label for="password">Mot de passe*</label>
-                    <input class="size-full" type="password" id="password" name="password" required>
-                    
-                    <label for="passwordConfirm">Confirmer le mot de passe*</label>
-                    <input class="size-full" type="password" id="passwordConfirm" name="passwordConfirm" required>
-                    
-                    <label for="description">Description* (présentez votre stand et les objets que vous vendez)</label>
-                    <textarea class="size-full" id="description" name="description" rows="5"><?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; ?></textarea>
-                    
-                    <label for="photo">Photo (optionnelle)</label>
-                    <input class="size-full" type="file" id="photo" name="photo" accept="image/jpeg, image/png">
-                    <p class="small-text">Formats acceptés: JPG, PNG - Max 20 MB</p>
-                    
-                    <button type="submit" class="size-half">Créer un compte</button>
-                    <p class="small-text">* Champs obligatoires</p>
-                </form>
-            <?php endif; ?>
+            if (!empty($succes)) {
+                echo "<section class=\"message-succes\">";
+                echo $succes;
+                echo "</section>";
+                echo "<p class=\"center\"><a href=\"connexion.php\" class=\"underline\">Se connecter</a></p>";
+            } else {
+                echo "<form method=\"POST\" action=\"" . htmlspecialchars($_SERVER["PHP_SELF"]) . "\" enctype=\"multipart/form-data\" class=\"column\">";
+                echo "<label for=\"nom\">Nom*</label>";
+                echo "<input class=\"size-full\" type=\"text\" id=\"nom\" name=\"nom\" value=\"" . (isset($_POST['nom']) ? htmlspecialchars($_POST['nom']) : '') . "\" required>";
+                
+                echo "<label for=\"prenom\">Prénom*</label>";
+                echo "<input class=\"size-full\" type=\"text\" id=\"prenom\" name=\"prenom\" value=\"" . (isset($_POST['prenom']) ? htmlspecialchars($_POST['prenom']) : '') . "\" required>";
+                
+                echo "<label for=\"email\">Email*</label>";
+                echo "<input class=\"size-full\" type=\"email\" id=\"email\" name=\"email\" value=\"" . (isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '') . "\" required>";
+                
+                echo "<label for=\"password\">Mot de passe*</label>";
+                echo "<input class=\"size-full\" type=\"password\" id=\"password\" name=\"password\" required>";
+                
+                echo "<label for=\"passwordConfirm\">Confirmer le mot de passe*</label>";
+                echo "<input class=\"size-full\" type=\"password\" id=\"passwordConfirm\" name=\"passwordConfirm\" required>";
+                
+                echo "<label for=\"description\">Description* (présentez votre stand et les objets que vous vendez)</label>";
+                echo "<textarea class=\"size-full\" id=\"description\" name=\"description\" rows=\"5\">" . (isset($_POST['description']) ? htmlspecialchars($_POST['description']) : '') . "</textarea>";
+                
+                echo "<label for=\"photo\">Photo (optionnelle)</label>";
+                echo "<input class=\"size-full\" type=\"file\" id=\"photo\" name=\"photo\" accept=\"image/jpeg, image/png\">";
+                echo "<p class=\"small-text\">Formats acceptés: JPG, PNG - Max 20 MB</p>";
+                
+                echo "<button type=\"submit\" class=\"size-half\">Créer un compte</button>";
+                echo "<p class=\"small-text\">* Champs obligatoires</p>";
+                echo "</form>";
+            }
+            ?>
         </article>
     </section>
     

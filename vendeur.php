@@ -59,15 +59,17 @@ $objets = $brocanteur->obtenirObjets();
         </article>
         <article>
             <h1><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h1>
-            <?php if ($zone): ?>
-                <h3><?php echo htmlspecialchars($zone->nom); ?></h3>
-            <?php endif; ?>
+            <?php 
+            if ($zone) {
+                echo '<h3>' . htmlspecialchars($zone->nom) . '</h3>';
+            }
             
-            <?php if ($emplacement): ?>
-                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
-            <?php else: ?>
-                <p class="emplacement">Emplacement non attribué</p>
-            <?php endif; ?>
+            if ($emplacement) {
+                echo '<p class="emplacement">Emplacement: ' . htmlspecialchars($emplacement->code) . '</p>';
+            } else {
+                echo '<p class="emplacement">Emplacement non attribué</p>';
+            }
+            ?>
             
             <p class="mar-tb-1"><?php echo htmlspecialchars($brocanteur->description); ?></p>
         </article>
@@ -76,37 +78,43 @@ $objets = $brocanteur->obtenirObjets();
         <h2 class="center">Articles de <?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h2>
     </section>
     <section class="articles articles-grow">
-        <?php if (empty($objets)): ?>
-            <p class="center">Ce brocanteur n'a pas encore d'objets à vendre.</p>
-        <?php else: ?>
-            <?php foreach ($objets as $article): 
+        <?php 
+        if (empty($objets)) {
+            echo '<p class="center">Ce brocanteur n\'a pas encore d\'objets à vendre.</p>';
+        } else {
+            foreach ($objets as $article) {
                 $categorie = $article->obtenirCategorie();
-            ?>
-                <a href="produit.php?id=<?php echo htmlspecialchars($article->oid); ?>">
-                    <?php
-                    if ($article->image === null) {
-                        $image = "images/placeholder.png";
-                    } else {
-                        $image = "uploads/objets/" . htmlspecialchars($article->image);
-                    }
-                    ?>
-                    <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($article->intitule); ?>" />
-                    <h4><?php echo htmlspecialchars($article->intitule); ?></h4>
-                    <p><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?><?php echo $zone ? ' - ' . htmlspecialchars($zone->nom) : ''; ?></p>
-                    <p><?php echo htmlspecialchars($article->description); ?></p>
-                    <?php if ($categorie): ?>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                                    <?php echo htmlspecialchars($categorie->intitule); ?>
-                    </p>
-                </li>
-            </ul>
-                    <?php endif; ?>
-                    <h3 class="prix"><?php echo htmlspecialchars($article->prix); ?>€</h3>
-        </a>
-            <?php endforeach; ?>
-        <?php endif; ?>
+                
+                echo '<a href="produit.php?id=' . htmlspecialchars($article->oid) . '">';
+                
+                if ($article->image === null) {
+                    $image = "images/placeholder.png";
+                } else {
+                    $image = "uploads/objets/" . htmlspecialchars($article->image);
+                }
+                
+                echo '<img src="' . $image . '" alt="' . htmlspecialchars($article->intitule) . '" />';
+                echo '<h4>' . htmlspecialchars($article->intitule) . '</h4>';
+                echo '<p>' . htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom);
+                echo $zone ? ' - ' . htmlspecialchars($zone->nom) : '';
+                echo '</p>';
+                echo '<p>' . htmlspecialchars($article->description) . '</p>';
+                
+                if ($categorie) {
+                    echo '<ul>';
+                    echo '<li class="pad-lr-1 flex">';
+                    echo '<p class="center">';
+                    echo htmlspecialchars($categorie->intitule);
+                    echo '</p>';
+                    echo '</li>';
+                    echo '</ul>';
+                }
+                
+                echo '<h3 class="prix">' . htmlspecialchars($article->prix) . '€</h3>';
+                echo '</a>';
+            }
+        }
+        ?>
     </section>
 </main>
 <?php include 'inc/footer.php'; ?>

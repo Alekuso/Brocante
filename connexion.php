@@ -69,9 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </section>
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
-            <?php if (!empty($erreur)): ?>
-                <p class="erreur"><?php echo htmlspecialchars($erreur); ?></p>
-            <?php endif; ?>
+            <?php 
+            if (!empty($erreur)) {
+                echo "<p class=\"erreur\">" . htmlspecialchars($erreur) . "</p>";
+            }
+            ?>
             
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
                 <label for="email">Email</label>

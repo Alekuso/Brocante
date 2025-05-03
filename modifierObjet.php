@@ -133,32 +133,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <?php include 'inc/header.php'; ?>
 <main>
-    <?php if (!empty($erreur)): ?>
-        <div class="message-erreur">
-            <?php echo htmlspecialchars($erreur); ?>
-            <?php if (isset($_FILES['image']) && $_FILES['image']['error'] != 0): ?>
-                <br>Code d'erreur PHP: <?php echo htmlspecialchars($_FILES['image']['error']); ?>
-                <?php 
-                    $upload_errors = [
-                        0 => "Aucune erreur, le téléchargement est réussi.",
-                        1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
-                        2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
-                        3 => "Le fichier n'a été que partiellement téléchargé.",
-                        4 => "Aucun fichier n'a été téléchargé.",
-                        6 => "Dossier temporaire manquant.",
-                        7 => "Échec d'écriture du fichier sur le disque.",
-                        8 => "Une extension PHP a arrêté le téléchargement du fichier."
-                    ];
-                    if (isset($upload_errors[$_FILES['image']['error']])) {
-                        echo " - " . htmlspecialchars($upload_errors[$_FILES['image']['error']]);
-                    }
-                ?>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-    <?php if (!empty($succes)): ?>
-        <div class="message-succes"><?php echo htmlspecialchars($succes); ?></div>
-    <?php endif; ?>
+    <?php 
+    if (!empty($erreur)) {
+        echo "<section class=\"message-erreur\">";
+        echo htmlspecialchars($erreur);
+        if (isset($_FILES['image']) && $_FILES['image']['error'] != 0) {
+            echo "<p>Code d'erreur PHP: " . htmlspecialchars($_FILES['image']['error']);
+            $upload_errors = [
+                0 => "Aucune erreur, le téléchargement est réussi.",
+                1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
+                2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
+                3 => "Le fichier n'a été que partiellement téléchargé.",
+                4 => "Aucun fichier n'a été téléchargé.",
+                6 => "Dossier temporaire manquant.",
+                7 => "Échec d'écriture du fichier sur le disque.",
+                8 => "Une extension PHP a arrêté le téléchargement du fichier."
+            ];
+            if (isset($upload_errors[$_FILES['image']['error']])) {
+                echo " - " . htmlspecialchars($upload_errors[$_FILES['image']['error']]);
+            }
+            echo "</p>";
+        }
+        echo "</section>";
+    }
+    
+    if (!empty($succes)) {
+        echo "<section class=\"message-succes\">" . htmlspecialchars($succes) . "</section>";
+    }
+    ?>
 
     <section class="presentation">
         <article class="center">
@@ -179,43 +181,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </article>
         <article>
             <form method="POST" action="modifierObjet.php?id=<?php echo $objet->oid; ?>" enctype="multipart/form-data" class="profile-form">
-                <div class="form-group">
+                <section class="form-group">
                     <label for="intitule">Titre de l'objet:</label>
                     <input type="text" id="intitule" name="intitule" value="<?php echo htmlspecialchars($objet->intitule); ?>" required class="size-full">
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="prix">Prix (€):</label>
                     <input type="number" id="prix" name="prix" step="0.01" min="0.01" value="<?php echo htmlspecialchars($objet->prix); ?>" required class="size-full">
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="categorie">Catégorie:</label>
                     <select id="categorie" name="categorie" required class="size-full">
-                        <?php foreach ($categories as $categorie): ?>
-                            <option value="<?php echo htmlspecialchars($categorie->cid); ?>" <?php echo ($categorie->cid == $objet->cid) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($categorie->intitule); ?>
-                            </option>
-                        <?php endforeach; ?>
+                        <?php 
+                        foreach ($categories as $categorie) {
+                            echo "<option value=\"" . htmlspecialchars($categorie->cid) . "\"";
+                            if ($categorie->cid == $objet->cid) {
+                                echo " selected";
+                            }
+                            echo ">" . htmlspecialchars($categorie->intitule) . "</option>";
+                        }
+                        ?>
                     </select>
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="description">Description:</label>
                     <textarea id="description" name="description" rows="6" required class="size-full"><?php echo htmlspecialchars($objet->description); ?></textarea>
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="image">Changer l'image:</label>
                     <input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
                     <input type="file" id="image" name="image" accept="image/jpeg, image/png" class="size-full">
-                </div>
+                </section>
                 
-                <div class="form-actions">
+                <section class="form-actions">
                     <input type="submit" value="Enregistrer" class="btn mar-2">
                     <a href="espaceBrocanteur.php" class="btn mar-2">Annuler</a>
                     <a href="supprimerObjet.php?id=<?php echo $objet->oid; ?>" class="btn btn-danger mar-2">Supprimer</a>
-                </div>
+                </section>
             </form>
         </article>
     </section>

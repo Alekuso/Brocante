@@ -125,49 +125,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </section>
     <section class="contactFormContainer bg-darkgray container">
         <article class="contactForm">
-            <?php if (!empty($message)): ?>
-                <p class="message-succes center"><?php echo htmlspecialchars($message); ?></p>
-            <?php endif; ?>
+            <?php 
+            if (!empty($message)) {
+                echo '<p class="message-succes center">' . htmlspecialchars($message) . '</p>';
+            }
             
-            <?php if (!empty($erreur)): ?>
-                <p class="message-erreur center"><?php echo htmlspecialchars($erreur); ?></p>
-            <?php endif; ?>
+            if (!empty($erreur)) {
+                echo '<p class="message-erreur center">' . htmlspecialchars($erreur) . '</p>';
+            }
+            ?>
             
             <form method="POST" action="attribuerEmplacement.php<?php echo $id ? '?id=' . $id . ($isValidating ? '&validate=1' : '') : ''; ?>" class="column">
-                <?php if ($brocanteur): ?>
-                    <input type="hidden" name="brocanteur_id" value="<?php echo htmlspecialchars($brocanteur->bid); ?>">
-                    <label for="nom">Nom</label>
-                    <input class="size-full" type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($brocanteur->nom); ?>" readonly>
-                    <label for="prenom">Prénom</label>
-                    <input class="size-full" type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($brocanteur->prenom); ?>" readonly>
-                <?php else: ?>
-                    <label for="brocanteur">Brocanteur</label>
-                    <select class="size-full" id="brocanteur" name="brocanteur_id" required>
-                        <option value="">-- Sélectionnez un brocanteur --</option>
-                        <?php 
-                        $brocanteurs = Brocanteur::obtenirTousVisibles();
-                        foreach ($brocanteurs as $b): 
-                        ?>
-                            <option value="<?php echo htmlspecialchars($b->bid); ?>"><?php echo htmlspecialchars($b->prenom . ' ' . $b->nom); ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                <?php endif; ?>
+                <?php 
+                if ($brocanteur) {
+                    echo '<input type="hidden" name="brocanteur_id" value="' . htmlspecialchars($brocanteur->bid) . '">';
+                    echo '<label for="nom">Nom</label>';
+                    echo '<input class="size-full" type="text" id="nom" name="nom" value="' . htmlspecialchars($brocanteur->nom) . '" readonly>';
+                    echo '<label for="prenom">Prénom</label>';
+                    echo '<input class="size-full" type="text" id="prenom" name="prenom" value="' . htmlspecialchars($brocanteur->prenom) . '" readonly>';
+                } else {
+                    echo '<label for="brocanteur">Brocanteur</label>';
+                    echo '<select class="size-full" id="brocanteur" name="brocanteur_id" required>';
+                    echo '<option value="">-- Sélectionnez un brocanteur --</option>';
+                    
+                    $brocanteurs = Brocanteur::obtenirTousVisibles();
+                    foreach ($brocanteurs as $b) {
+                        echo '<option value="' . htmlspecialchars($b->bid) . '">' . htmlspecialchars($b->prenom . ' ' . $b->nom) . '</option>';
+                    }
+                    
+                    echo '</select>';
+                }
+                ?>
 
                 <label for="zone">Zone</label>
                 <select class="size-full" id="zone" name="zone" required>
                     <option value="">-- Sélectionnez une zone --</option>
-                    <?php foreach ($zones as $zone): ?>
-                        <option value="<?php echo htmlspecialchars($zone->zid); ?>"><?php echo htmlspecialchars($zone->nom); ?></option>
-                    <?php endforeach; ?>
+                    <?php 
+                    foreach ($zones as $zone) {
+                        echo '<option value="' . htmlspecialchars($zone->zid) . '">' . htmlspecialchars($zone->nom) . '</option>';
+                    }
+                    ?>
                 </select>
 
                 <button type="submit" class="size-half">Attribuer</button>
                 
-                <?php if ($isValidating): ?>
-                    <p class="mar-tb-1 center">
-                        <a href="espaceAdministrateur.php" class="btn-small">Annuler et retourner à l'espace administrateur</a>
-                    </p>
-                <?php endif; ?>
+                <?php 
+                if ($isValidating) {
+                    echo '<p class="mar-tb-1 center">';
+                    echo '<a href="espaceAdministrateur.php" class="btn-small">Annuler et retourner à l\'espace administrateur</a>';
+                    echo '</p>';
+                }
+                ?>
             </form>
         </article>
     </section>

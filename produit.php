@@ -54,27 +54,31 @@ $emplacement = $brocanteur ? $brocanteur->obtenirEmplacement() : null;
         </article>
         <article>
             <h1><?php echo htmlspecialchars($objet->intitule); ?></h1>
-            <?php if ($brocanteur && $zone): ?>
-                <h3 class="mar-O pad-0">
-                    <a class="mar-0 pad-0" href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>">
-                        <?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?> 
-                        - <?php echo htmlspecialchars($zone->nom); ?>
-                    </a>
-                </h3>
-                <?php if ($emplacement): ?>
-                    <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
-                <?php endif; ?>
-            <?php endif; ?>
+            <?php 
+            if ($brocanteur && $zone) {
+                echo '<h3 class="mar-O pad-0">';
+                echo '<a class="mar-0 pad-0" href="vendeur.php?id=' . htmlspecialchars($brocanteur->bid) . '">';
+                echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom) . ' - ' . htmlspecialchars($zone->nom);
+                echo '</a>';
+                echo '</h3>';
+                
+                if ($emplacement) {
+                    echo '<p class="emplacement">Emplacement: ' . htmlspecialchars($emplacement->code) . '</p>';
+                }
+            }
+            ?>
             <h4><?php echo htmlspecialchars($objet->prix); ?>€</h4>
-            <?php if ($categorie): ?>
-            <ul>
-                <li class="pad-lr-1 flex">
-                    <p class="center">
-                        <?php echo htmlspecialchars($categorie->intitule); ?>
-                    </p>
-                </li>
-            </ul>
-            <?php endif; ?>
+            <?php 
+            if ($categorie) {
+                echo '<ul>';
+                echo '<li class="pad-lr-1 flex">';
+                echo '<p class="center">';
+                echo htmlspecialchars($categorie->intitule);
+                echo '</p>';
+                echo '</li>';
+                echo '</ul>';
+            }
+            ?>
             <p><?php echo htmlspecialchars($objet->description); ?></p>
         </article>
     </section>

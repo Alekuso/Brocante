@@ -84,11 +84,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <h3>Vous avez une question ?</h3>
             <h3>Remplissez ce formulaire et on vous répondra dans le plus bref délais !</h3>
             
-            <?php if ($succes): ?>
-                <div class="message-succes">
-                    <p>Votre message a été envoyé avec succès !</p>
-                </div>
-            <?php endif; ?>
+            <?php
+            if ($succes) {
+                echo "<section class=\"message-succes\">";
+                echo "<p>Votre message a été envoyé avec succès !</p>";
+                echo "</section>";
+            }
+            ?>
         </article>
     </section>
     <section class="contactFormContainer bg-darkgray container">
@@ -96,27 +98,35 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
                 <label for="nom">Nom</label>
                 <input class="size-full" type="text" id="nom" name="nom" value="" required>
-                <?php if (isset($erreurs['nom'])): ?>
-                    <p class="erreur"><?php echo $erreurs['nom']; ?></p>
-                <?php endif; ?>
+                <?php
+                if (isset($erreurs['nom'])) {
+                    echo "<p class=\"erreur\">" . $erreurs['nom'] . "</p>";
+                }
+                ?>
                 
                 <label for="prenom">Prénom</label>
                 <input class="size-full" type="text" id="prenom" name="prenom" value="" required>
-                <?php if (isset($erreurs['prenom'])): ?>
-                    <p class="erreur"><?php echo $erreurs['prenom']; ?></p>
-                <?php endif; ?>
+                <?php
+                if (isset($erreurs['prenom'])) {
+                    echo "<p class=\"erreur\">" . $erreurs['prenom'] . "</p>";
+                }
+                ?>
                 
                 <label for="email">Email</label>
                 <input class="size-full" type="email" id="email" name="email" value="" required>
-                <?php if (isset($erreurs['email'])): ?>
-                    <p class="erreur"><?php echo $erreurs['email']; ?></p>
-                <?php endif; ?>
+                <?php
+                if (isset($erreurs['email'])) {
+                    echo "<p class=\"erreur\">" . $erreurs['email'] . "</p>";
+                }
+                ?>
                 
                 <label for="message">Message</label>
                 <textarea id="message" name="message" required></textarea>
-                <?php if (isset($erreurs['message'])): ?>
-                    <p class="erreur"><?php echo $erreurs['message']; ?></p>
-                <?php endif; ?>
+                <?php
+                if (isset($erreurs['message'])) {
+                    echo "<p class=\"erreur\">" . $erreurs['message'] . "</p>";
+                }
+                ?>
                 
                 <button type="submit" class="size-half">Envoyer</button>
             </form>

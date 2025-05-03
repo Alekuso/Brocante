@@ -128,36 +128,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
 <?php include 'inc/header.php'; ?>
 <main>
-    <?php if (!empty($erreurs)): ?>
-        <div class="message-erreur">
-            <?php 
-            foreach ($erreurs as $champ => $message) {
-                echo htmlspecialchars($message) . "<br>";
+    <?php 
+    if (!empty($erreurs)) {
+        echo "<section class=\"message-erreur\">";
+        foreach ($erreurs as $champ => $message) {
+            echo "<p>" . htmlspecialchars($message) . "</p>";
+        }
+        
+        // Informations de debug pour les erreurs d'upload
+        if (isset($erreurs['image']) && isset($_FILES['image']) && $_FILES['image']['error'] != 0) { 
+            $upload_errors = [
+                0 => "Aucune erreur, le téléchargement est réussi.",
+                1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
+                2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
+                3 => "Le fichier n'a été que partiellement téléchargé.",
+                4 => "Aucun fichier n'a été téléchargé.",
+                6 => "Dossier temporaire manquant.",
+                7 => "Échec d'écriture du fichier sur le disque.",
+                8 => "Une extension PHP a arrêté le téléchargement du fichier."
+            ];
+            echo "<p>Code d'erreur PHP: " . htmlspecialchars($_FILES['image']['error']);
+            if (isset($upload_errors[$_FILES['image']['error']])) {
+                echo " - " . htmlspecialchars($upload_errors[$_FILES['image']['error']]);
             }
-            
-            // Informations de debug pour les erreurs d'upload
-            if (isset($erreurs['image']) && isset($_FILES['image']) && $_FILES['image']['error'] != 0): 
-                $upload_errors = [
-                    0 => "Aucune erreur, le téléchargement est réussi.",
-                    1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
-                    2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
-                    3 => "Le fichier n'a été que partiellement téléchargé.",
-                    4 => "Aucun fichier n'a été téléchargé.",
-                    6 => "Dossier temporaire manquant.",
-                    7 => "Échec d'écriture du fichier sur le disque.",
-                    8 => "Une extension PHP a arrêté le téléchargement du fichier."
-                ];
-                echo "Code d'erreur PHP: " . htmlspecialchars($_FILES['image']['error']);
-                if (isset($upload_errors[$_FILES['image']['error']])) {
-                    echo " - " . htmlspecialchars($upload_errors[$_FILES['image']['error']]);
-                }
-            endif;
-            ?>
-        </div>
-    <?php endif; ?>
-    <?php if (!empty($succes)): ?>
-        <div class="message-succes"><?php echo htmlspecialchars($succes); ?></div>
-    <?php endif; ?>
+            echo "</p>";
+        }
+        echo "</section>";
+    }
+    
+    if (!empty($succes)) {
+        echo "<section class=\"message-succes\">" . htmlspecialchars($succes) . "</section>";
+    }
+    ?>
 
     <section class="presentation">
         <article class="center">
@@ -171,37 +173,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <!-- Champ caché pour limiter la taille des fichiers -->
                 <input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="intitule">Titre de l'objet:</label>
                     <input type="text" id="intitule" name="intitule" value="<?php echo isset($_POST['intitule']) ? htmlspecialchars($_POST['intitule']) : ''; ?>" required>
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="prix">Prix (€):</label>
                     <input type="number" id="prix" name="prix" step="0.01" min="0.01" value="<?php echo isset($_POST['prix']) ? htmlspecialchars($_POST['prix']) : ''; ?>" required>
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="categorie">Catégorie:</label>
                     <select id="categorie" name="categorie" required>
                         <option value="">Sélectionnez une catégorie</option>
-                        <?php foreach ($categories as $categorie): ?>
-                            <option value="<?php echo htmlspecialchars($categorie->cid); ?>" <?php echo (isset($_POST['categorie']) && $_POST['categorie'] == $categorie->cid) ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($categorie->intitule); ?>
-                            </option>
-                        <?php endforeach; ?>
+                        <?php 
+                        foreach ($categories as $categorie) {
+                            echo "<option value=\"" . htmlspecialchars($categorie->cid) . "\"";
+                            if (isset($_POST['categorie']) && $_POST['categorie'] == $categorie->cid) {
+                                echo " selected";
+                            }
+                            echo ">" . htmlspecialchars($categorie->intitule) . "</option>";
+                        }
+                        ?>
                     </select>
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="description">Description:</label>
                     <textarea id="description" name="description" rows="6" required><?php echo isset($_POST['description']) ? htmlspecialchars($_POST['description']) : ''; ?></textarea>
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="image">Image (facultatif):</label>
                     <input type="file" id="image" name="image" accept="image/jpeg, image/png">
-                </div>
+                </section>
                 
                 <button type="submit">Ajouter l'objet</button>
             </form>

@@ -118,32 +118,34 @@ $emplacement = $utilisateur->obtenirEmplacement();
 <body>
 <?php include 'inc/header.php'; ?>
 <main>
-    <?php if (!empty($erreur)): ?>
-        <div class="message-erreur">
-            <?php echo htmlspecialchars($erreur); ?>
-            <?php if (isset($_FILES['photo']) && $_FILES['photo']['error'] != 0): ?>
-                <br>Code d'erreur PHP: <?php echo htmlspecialchars($_FILES['photo']['error']); ?>
-                <?php 
-                    $upload_errors = [
-                        0 => "Aucune erreur, le téléchargement est réussi.",
-                        1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
-                        2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
-                        3 => "Le fichier n'a été que partiellement téléchargé.",
-                        4 => "Aucun fichier n'a été téléchargé.",
-                        6 => "Dossier temporaire manquant.",
-                        7 => "Échec d'écriture du fichier sur le disque.",
-                        8 => "Une extension PHP a arrêté le téléchargement du fichier."
-                    ];
-                    if (isset($upload_errors[$_FILES['photo']['error']])) {
-                        echo " - " . htmlspecialchars($upload_errors[$_FILES['photo']['error']]);
-                    }
-                ?>
-            <?php endif; ?>
-        </div>
-    <?php endif; ?>
-    <?php if (!empty($succes)): ?>
-        <div class="message-succes"><?php echo htmlspecialchars($succes); ?></div>
-    <?php endif; ?>
+    <?php 
+    if (!empty($erreur)) {
+        echo "<section class=\"message-erreur\">";
+        echo htmlspecialchars($erreur);
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] != 0) {
+            echo "<p>Code d'erreur PHP: " . htmlspecialchars($_FILES['photo']['error']);
+            $upload_errors = [
+                0 => "Aucune erreur, le téléchargement est réussi.",
+                1 => "Le fichier dépasse la taille maximale définie dans php.ini (upload_max_filesize).",
+                2 => "Le fichier dépasse la taille maximale spécifiée dans le formulaire HTML (MAX_FILE_SIZE).",
+                3 => "Le fichier n'a été que partiellement téléchargé.",
+                4 => "Aucun fichier n'a été téléchargé.",
+                6 => "Dossier temporaire manquant.",
+                7 => "Échec d'écriture du fichier sur le disque.",
+                8 => "Une extension PHP a arrêté le téléchargement du fichier."
+            ];
+            if (isset($upload_errors[$_FILES['photo']['error']])) {
+                echo " - " . htmlspecialchars($upload_errors[$_FILES['photo']['error']]);
+            }
+            echo "</p>";
+        }
+        echo "</section>";
+    }
+    
+    if (!empty($succes)) {
+        echo "<section class=\"message-succes\">" . htmlspecialchars($succes) . "</section>";
+    }
+    ?>
 
     <section class="presentation">
         <article class="center">
@@ -165,48 +167,50 @@ $emplacement = $utilisateur->obtenirEmplacement();
             <!-- Formulaire pour changer la photo de profil -->
             <form method="POST" action="modifierProfil.php" enctype="multipart/form-data" class="photo-form">
                 <input type="hidden" name="MAX_FILE_SIZE" value="20000000" />
-                <div class="file-input-wrapper">
+                <section class="file-input-wrapper">
                     <input type="file" name="photo" id="photo" accept="image/jpeg, image/png" class="file-input">
                     <button type="submit" class="btn mar-2">Changer photo de profil</button>
-                </div>
+                </section>
             </form>
         </article>
         <article>
             <h1><?php echo htmlspecialchars($utilisateur->prenom . ' ' . $utilisateur->nom); ?></h1>
             
-            <?php if ($utilisateur->est_administrateur): ?>
-                <h3>Administrateur</h3>
-            <?php endif; ?>
+            <?php 
+            if ($utilisateur->est_administrateur) {
+                echo "<h3>Administrateur</h3>";
+            }
             
-            <?php if ($zone): ?>
-                <h3><?php echo htmlspecialchars($zone->nom); ?></h3>
-            <?php endif; ?>
+            if ($zone) {
+                echo "<h3>" . htmlspecialchars($zone->nom) . "</h3>";
+            }
             
-            <?php if ($emplacement): ?>
-                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
-            <?php endif; ?>
+            if ($emplacement) {
+                echo "<p class=\"emplacement\">Emplacement: " . htmlspecialchars($emplacement->code) . "</p>";
+            }
+            ?>
             
             <!-- Formulaire pour modifier les informations -->
             <form method="POST" action="modifierProfil.php" class="profile-form">
-                <div class="form-group">
+                <section class="form-group">
                     <label for="nom">Nom:</label>
                     <input type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($utilisateur->nom); ?>" class="size-full" required>
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="prenom">Prénom:</label>
                     <input type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($utilisateur->prenom); ?>" class="size-full" required>
-                </div>
+                </section>
                 
-                <div class="form-group">
+                <section class="form-group">
                     <label for="description">Description:</label>
                     <textarea id="description" name="description" rows="4" class="size-full" required><?php echo htmlspecialchars($utilisateur->description); ?></textarea>
-                </div>
+                </section>
                 
-                <div class="form-actions">
+                <section class="form-actions">
                     <input type="submit" name="modifier_donnees" value="Enregistrer" class="btn mar-2">
                     <a href="<?php echo $utilisateur->est_administrateur ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'; ?>" class="btn mar-2">Annuler</a>
-                </div>
+                </section>
             </form>
         </article>
     </section>
