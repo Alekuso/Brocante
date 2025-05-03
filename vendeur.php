@@ -95,16 +95,16 @@ $objets = $brocanteur->obtenirObjets();
                     <p><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?><?php echo $zone ? ' - ' . htmlspecialchars($zone->nom) : ''; ?></p>
                     <p><?php echo htmlspecialchars($article->description); ?></p>
                     <?php if ($categorie): ?>
-                        <ul>
-                            <li class="pad-lr-1 flex">
-                                <p class="center">
+            <ul>
+                <li class="pad-lr-1 flex">
+                    <p class="center">
                                     <?php echo htmlspecialchars($categorie->intitule); ?>
-                                </p>
-                            </li>
-                        </ul>
+                    </p>
+                </li>
+            </ul>
                     <?php endif; ?>
                     <h3 class="prix"><?php echo htmlspecialchars($article->prix); ?>€</h3>
-                </a>
+        </a>
             <?php endforeach; ?>
         <?php endif; ?>
     </section>

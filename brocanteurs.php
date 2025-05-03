@@ -11,14 +11,68 @@ use Brocante\Modele\Zone;
 $nom = isset($_GET['nom']) ? trim($_GET['nom']) : '';
 $prenom = isset($_GET['prenom']) ? trim($_GET['prenom']) : '';
 
+// Optimisation: récupérer tous les brocanteurs avec leurs zones et emplacements en une seule requête
+$db = Database::getInstance();
+
 // Si la recherche est active, récupérer les brocanteurs correspondants
 if (!empty($nom) || !empty($prenom)) {
-    $brocanteurs = Brocanteur::rechercher($nom, $prenom);
+    $params = [];
+    $sql = "SELECT b.*, e.code as emplacement_code, z.nom as zone_nom, z.zid as zone_id 
+            FROM Brocanteur b
+            LEFT JOIN Emplacement e ON b.bid = e.bid
+            LEFT JOIN Zone z ON e.zid = z.zid
+            WHERE b.visible = 1";
+    
+    if (!empty($nom)) {
+        $sql .= " AND b.nom LIKE ?";
+        $params[] = "%$nom%";
+    }
+    
+    if (!empty($prenom)) {
+        $sql .= " AND b.prenom LIKE ?";
+        $params[] = "%$prenom%";
+    }
+    
+    $sql .= " ORDER BY b.nom ASC, b.prenom ASC";
+    $resultats = $db->obtenirTous($sql, $params);
+    
+    // Organiser les résultats
+    $brocanteurs_data = [];
+    foreach ($resultats as $row) {
+        $brocanteurs_data[] = [
+            'brocanteur' => new Brocanteur($row),
+            'zone_nom' => $row['zone_nom'],
+            'emplacement_code' => $row['emplacement_code']
+        ];
+    }
     $zones = []; // Pas besoin de zones car on affiche juste les résultats de recherche
 } else {
-    // Sinon, récupérer toutes les zones avec leurs brocanteurs
+    // Récupérer toutes les zones
     $zones = Zone::obtenirToutes();
-    $brocanteurs = null;
+    
+    // Pour chaque zone, récupérer les brocanteurs en une seule requête
+    $brocanteurs_par_zone = [];
+    
+    foreach ($zones as $zone) {
+        $sql = "SELECT b.*, e.code as emplacement_code
+                FROM Brocanteur b
+                JOIN Emplacement e ON b.bid = e.bid
+                WHERE e.zid = ? AND b.visible = 1
+                ORDER BY b.nom ASC, b.prenom ASC";
+        $resultats = $db->obtenirTous($sql, [$zone->zid]);
+        
+        $brocanteurs_zone = [];
+        foreach ($resultats as $row) {
+            $brocanteurs_zone[] = [
+                'brocanteur' => new Brocanteur($row),
+                'emplacement_code' => $row['emplacement_code']
+            ];
+        }
+        
+        $brocanteurs_par_zone[$zone->zid] = $brocanteurs_zone;
+    }
+    
+    $brocanteurs_data = null;
 }
 ?>
 <!DOCTYPE html>
@@ -55,16 +109,15 @@ if (!empty($nom) || !empty($prenom)) {
         </article>
     </section>
     <section>
-        <?php if ($brocanteurs !== null): ?>
+        <?php if ($brocanteurs_data !== null): ?>
             <!-- Affichage des résultats de recherche -->
             <h3 class="flex center">Résultats de recherche</h3>
             <article class="articles articles-grow brocanteurs-grid">
-                <?php if (empty($brocanteurs)): ?>
+                <?php if (empty($brocanteurs_data)): ?>
                     <p class="center">Aucun brocanteur ne correspond à votre recherche.</p>
                 <?php else: ?>
-                    <?php foreach ($brocanteurs as $brocanteur): 
-                        $zone = $brocanteur->obtenirZone();
-                        $emplacement = $brocanteur->obtenirEmplacement();
+                    <?php foreach ($brocanteurs_data as $data): 
+                        $brocanteur = $data['brocanteur'];
                     ?>
                         <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>" class="center brocanteur-card">
                             <?php
@@ -76,11 +129,11 @@ if (!empty($nom) || !empty($prenom)) {
                             ?>
                             <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
                             <h4><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h4>
-                            <?php if ($zone): ?>
-                                <p><?php echo htmlspecialchars($zone->nom); ?></p>
+                            <?php if (!empty($data['zone_nom'])): ?>
+                                <p><?php echo htmlspecialchars($data['zone_nom']); ?></p>
                             <?php endif; ?>
-                            <?php if ($emplacement): ?>
-                                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
+                            <?php if (!empty($data['emplacement_code'])): ?>
+                                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($data['emplacement_code']); ?></p>
                             <?php endif; ?>
                             <p><?php echo htmlspecialchars($brocanteur->description); ?></p>
                         </a>
@@ -90,13 +143,13 @@ if (!empty($nom) || !empty($prenom)) {
         <?php else: ?>
             <!-- Affichage par zones -->
             <?php foreach ($zones as $zone): 
-                $brocanteurs = $zone->obtenirBrocanteurs();
-                if (empty($brocanteurs)) continue;
+                $brocanteurs_zone = $brocanteurs_par_zone[$zone->zid] ?? [];
+                if (empty($brocanteurs_zone)) continue;
             ?>
                 <h3 class="flex center"><?php echo htmlspecialchars($zone->nom); ?></h3>
                 <article class="articles articles-grow brocanteurs-grid">
-                    <?php foreach ($brocanteurs as $brocanteur): 
-                        $emplacement = $brocanteur->obtenirEmplacement();
+                    <?php foreach ($brocanteurs_zone as $data): 
+                        $brocanteur = $data['brocanteur'];
                     ?>
                         <a href="vendeur.php?id=<?php echo htmlspecialchars($brocanteur->bid); ?>" class="center brocanteur-card">
                             <?php
@@ -109,8 +162,8 @@ if (!empty($nom) || !empty($prenom)) {
                             <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>" />
                             <h4><?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?></h4>
                             <p><?php echo htmlspecialchars($zone->nom); ?></p>
-                            <?php if ($emplacement): ?>
-                                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($emplacement->code); ?></p>
+                            <?php if (!empty($data['emplacement_code'])): ?>
+                                <p class="emplacement">Emplacement: <?php echo htmlspecialchars($data['emplacement_code']); ?></p>
                             <?php endif; ?>
                             <p><?php echo htmlspecialchars($brocanteur->description); ?></p>
                         </a>

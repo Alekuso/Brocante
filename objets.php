@@ -17,8 +17,50 @@ $prixFiltre = isset($_GET['price']) ? $_GET['price'] : 'asc';
 // Récupération des catégories pour le formulaire
 $categories = Categorie::obtenirToutes();
 
-// Récupération des objets avec les filtres
-$objets = Objet::rechercher($nom, $categorieId, $prixFiltre);
+// Optimisation: récupérer tous les objets avec leurs brocanteurs et catégories en une seule requête
+$db = Database::getInstance();
+$params = [];
+
+$sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom, 
+               b.description as brocanteur_description, b.photo as brocanteur_photo, b.bid as brocanteur_id, 
+               z.nom as zone_nom, e.code as emplacement_code
+        FROM Objet o
+        LEFT JOIN Categorie c ON o.cid = c.cid
+        LEFT JOIN Brocanteur b ON o.bid = b.bid
+        LEFT JOIN Emplacement e ON b.bid = e.bid
+        LEFT JOIN Zone z ON e.zid = z.zid
+        WHERE b.visible = 1";
+
+if (!empty($nom)) {
+    $sql .= " AND (o.intitule LIKE ? OR o.description LIKE ?)";
+    $params[] = "%$nom%";
+    $params[] = "%$nom%";
+}
+
+if (!empty($categorieId)) {
+    $sql .= " AND o.cid = ?";
+    $params[] = $categorieId;
+}
+
+$sql .= " ORDER BY o.prix " . ($prixFiltre === 'desc' ? 'DESC' : 'ASC');
+
+$resultats = $db->obtenirTous($sql, $params);
+
+// Transformer les résultats en objets avec leurs données liées
+$objets_data = [];
+foreach ($resultats as $row) {
+    $objet = new Objet($row);
+    
+    $objets_data[] = [
+        'objet' => $objet,
+        'categorie_nom' => $row['categorie_nom'],
+        'brocanteur_nom' => $row['brocanteur_nom'],
+        'brocanteur_prenom' => $row['brocanteur_prenom'],
+        'brocanteur_id' => $row['brocanteur_id'],
+        'zone_nom' => $row['zone_nom'],
+        'emplacement_code' => $row['emplacement_code']
+    ];
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -69,12 +111,11 @@ $objets = Objet::rechercher($nom, $categorieId, $prixFiltre);
     </section>
 
     <section class="articles articles-grow objets-grid">
-        <?php if (empty($objets)): ?>
+        <?php if (empty($objets_data)): ?>
             <p class="center">Aucun objet ne correspond à votre recherche.</p>
         <?php else: ?>
-            <?php foreach ($objets as $article):
-                $brocanteur = $article->obtenirBrocanteur();
-                $categorie = $article->obtenirCategorie();
+            <?php foreach ($objets_data as $data):
+                $article = $data['objet'];
             ?>
                 <a href="produit.php?id=<?php echo htmlspecialchars($article->oid); ?>" class="objet-card">
                     <?php
@@ -87,21 +128,20 @@ $objets = Objet::rechercher($nom, $categorieId, $prixFiltre);
                     <img src="<?php echo $image; ?>" alt="<?php echo htmlspecialchars($article->intitule); ?>" />
                     <h4><?php echo htmlspecialchars($article->intitule); ?></h4>
                     
-                    <?php if ($brocanteur): ?>
-                        <?php $zone = $brocanteur->obtenirZone(); ?>
+                    <?php if (!empty($data['brocanteur_nom'])): ?>
                         <p>
-                            <?php echo htmlspecialchars($brocanteur->prenom . ' ' . $brocanteur->nom); ?>
-                            <?php echo $zone ? ' - ' . htmlspecialchars($zone->nom) : ''; ?>
+                            <?php echo htmlspecialchars($data['brocanteur_prenom'] . ' ' . $data['brocanteur_nom']); ?>
+                            <?php echo !empty($data['zone_nom']) ? ' - ' . htmlspecialchars($data['zone_nom']) : ''; ?>
                         </p>
                     <?php endif; ?>
                     
                     <p><?php echo htmlspecialchars($article->description); ?></p>
                     
-                    <?php if ($categorie): ?>
+                    <?php if (!empty($data['categorie_nom'])): ?>
                         <ul>
                             <li class="pad-lr-1 flex">
                                 <p class="center">
-                                    <?php echo htmlspecialchars($categorie->intitule); ?>
+                                    <?php echo htmlspecialchars($data['categorie_nom']); ?>
                                 </p>
                             </li>
                         </ul>
