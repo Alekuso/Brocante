@@ -139,9 +139,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$maxBrocanteursAtteint) {
             
             $succes = '<p>Inscription réussie! Vous devez maintenant payer 20€ pour finaliser votre inscription.</p>' .
                       '<p>Montant à payer: ' . $montant . ' €</p>' .
-                      '<p>IBAN: BE68 5390 0754 7034</p>' .
-                      '<p>Communication: "Brocante - ' . strtoupper($nom) . ' ' . strtoupper($prenom) . '"</p>' .
-                      '<p>Un administrateur validera votre compte après réception du paiement.</p>';
+                      '<p>IBAN: BEXXXXXXXXXXXXXX</p>' .
+                      '<p>Communication: "Foire aux puces - réservation n°' . $brocanteur_id . '"</p>';
         } else {
             $erreurs['general'] = 'Erreur lors de l\'inscription';
         }

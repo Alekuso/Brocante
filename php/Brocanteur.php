@@ -123,7 +123,7 @@ class Brocanteur {
         $description = htmlspecialchars($this->description);
         
         if ($this->bid) {
-            // Mise à jour
+            // Update
             $db->executer(
                 "UPDATE Brocanteur SET nom = ?, prenom = ?, courriel = ?, description = ?, 
                 photo = ?, visible = ?, est_administrateur = ? WHERE bid = ?",
@@ -392,21 +392,21 @@ class Brocanteur {
             return false;
         }
         
-        // Commence une transaction
+
         $db->beginTransaction();
         
         try {
+            
             // Supprime tous les objets du brocanteur
             $db->executer("DELETE FROM Objet WHERE bid = ?", [$this->bid]);
             
             // Supprime le brocanteur
             $db->executer("DELETE FROM Brocanteur WHERE bid = ?", [$this->bid]);
             
-            // Valide la transaction
+
             $db->commit();
             return true;
         } catch (Exception $e) {
-            // Annule la transaction en cas d'erreur
             $db->rollback();
             return false;
         }

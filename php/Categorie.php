@@ -62,7 +62,7 @@ class Categorie {
         $db = Database::getInstance();
         
         if ($this->cid) {
-            // Mise à jour
+            // Update
             $db->executer(
                 "UPDATE Categorie SET intitule = ? WHERE cid = ?",
                 [$this->intitule, $this->cid]

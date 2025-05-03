@@ -97,7 +97,7 @@ class Zone {
         $db = Database::getInstance();
         
         if ($this->zid) {
-            // Mise à jour
+            // Update
             $db->executer(
                 "UPDATE Zone SET nom = ?, description = ? WHERE zid = ?",
                 [$this->nom, $this->description, $this->zid]

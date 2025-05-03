@@ -78,7 +78,7 @@ class Emplacement {
         $db = Database::getInstance();
         
         if ($this->eid) {
-            // Mise à jour
+            // Update
             $db->executer(
                 "UPDATE Emplacement SET code = ?, zid = ?, bid = ? WHERE eid = ?",
                 [$this->code, $this->zid, $this->bid, $this->eid]
