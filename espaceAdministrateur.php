@@ -22,25 +22,20 @@ $admin = Brocanteur::obtenirConnecte();
 $message = isset($_GET['message']) ? $_GET['message'] : '';
 $erreur = isset($_GET['erreur']) ? $_GET['erreur'] : '';
 
-// Récupère les brocanteurs à valider
+// Récupère tous les brocanteurs (non administrateurs)
 $db = Database::getInstance();
-$brocanteurs_attente = $db->obtenirTous("SELECT * FROM Brocanteur WHERE visible = 0 AND est_administrateur = 0 ORDER BY nom ASC");
-
-// Récupère les brocanteurs validés
-$brocanteurs_valides = $db->obtenirTous("
+$brocanteurs = $db->obtenirTous("
     SELECT b.*, e.code as emplacement_code, z.nom as zone_nom
     FROM Brocanteur b 
     LEFT JOIN Emplacement e ON b.bid = e.bid
     LEFT JOIN Zone z ON e.zid = z.zid
-    WHERE b.visible = 1 AND b.est_administrateur = 0
+    WHERE b.est_administrateur = 0
     ORDER BY b.nom ASC
 ");
 
-// Compte les zones et emplacements
+// Compte les emplacements
 $stats = [
-    'total_brocanteurs' => count($brocanteurs_attente) + count($brocanteurs_valides),
-    'attente' => count($brocanteurs_attente),
-    'valides' => count($brocanteurs_valides),
+    'total_brocanteurs' => count($brocanteurs),
     'emplacements_attribues' => 0
 ];
 
@@ -98,75 +93,57 @@ $stats['emplacements_attribues'] = $result['count'];
         <section class="stats-grid">
             <article class="stat-box">
                 <h3>Total des brocanteurs</h3>
-                <p class="stat-number"><?php echo $stats['total_brocanteurs']; ?></p>
-            </article>
-            <article class="stat-box">
-                <h3>En attente</h3>
-                <p class="stat-number"><?php echo $stats['attente']; ?></p>
-            </article>
-            <article class="stat-box">
-                <h3>Validés</h3>
-                <p class="stat-number"><?php echo $stats['valides']; ?></p>
+                <p class="stat-number"><?php echo $stats['total_brocanteurs']; ?> / 15</p>
+                <p class="stat-note">Maximum: 15 brocanteurs</p>
             </article>
             <article class="stat-box">
                 <h3>Emplacements attribués</h3>
                 <p class="stat-number"><?php echo $stats['emplacements_attribues']; ?></p>
             </article>
+            <article class="stat-box">
+                <h3>Emplacements restants</h3>
+                <p class="stat-number"><?php echo $stats['total_brocanteurs'] - $stats['emplacements_attribues']; ?></p>
+            </article>
+            <article class="stat-box">
+                <h3>Places disponibles</h3>
+                <p class="stat-number"><?php echo max(0, 15 - $stats['total_brocanteurs']); ?></p>
+                <p class="stat-note">Pour nouveaux brocanteurs</p>
+            </article>
         </section>
     </section>
     
-    <!-- Inscriptions en attente -->
+    <!-- Liste des brocanteurs -->
     <section class="presentation">
-        <h2 class="center">Inscriptions en attente</h2>
+        <h2 class="center">Brocanteurs</h2>
         
         <?php 
-        if (empty($brocanteurs_attente)) {
-            echo "<p class=\"center\">Aucune inscription en attente.</p>";
+        if (empty($brocanteurs)) {
+            echo "<p class=\"center\">Aucun brocanteur inscrit.</p>";
         } else {
             echo "<section class=\"admin-cards-container\">";
-            foreach ($brocanteurs_attente as $brocanteur) {
-                echo "<article class=\"admin-card waiting\">";
+            foreach ($brocanteurs as $brocanteur) {
+                $hasEmplacement = !empty($brocanteur['emplacement_code']);
+                $cardClass = $hasEmplacement ? "validated" : "waiting";
+                
+                echo "<article class=\"admin-card $cardClass\">";
                 echo "<header class=\"admin-card-header\">";
                 echo "<h3>" . htmlspecialchars($brocanteur['prenom'] . ' ' . $brocanteur['nom']) . "</h3>";
                 echo "<span class=\"admin-card-id\">ID: " . htmlspecialchars($brocanteur['bid']) . "</span>";
                 echo "</header>";
                 echo "<section class=\"admin-card-body\">";
                 echo "<p><strong>Email:</strong> " . htmlspecialchars($brocanteur['courriel']) . "</p>";
-                echo "</section>";
-                echo "<footer class=\"admin-card-actions\">";
-                echo "<a href=\"vendeur.php?id=" . $brocanteur['bid'] . "\" class=\"btn-small\">Voir</a>";
-                echo "<a href=\"validerInscription.php?id=" . $brocanteur['bid'] . "&action=valider\" class=\"btn-small\">Valider & Attribuer</a>";
-                echo "<a href=\"validerInscription.php?id=" . $brocanteur['bid'] . "&action=refuser\" class=\"btn-small\" style=\"background-color: #cc3333;\">Refuser</a>";
-                echo "</footer>";
-                echo "</article>";
-            }
-            echo "</section>";
-        }
-        ?>
-    </section>
-    
-    <!-- Brocanteurs validés -->
-    <section class="presentation">
-        <h2 class="center">Brocanteurs validés</h2>
-        
-        <?php 
-        if (empty($brocanteurs_valides)) {
-            echo "<p class=\"center\">Aucun brocanteur validé.</p>";
-        } else {
-            echo "<section class=\"admin-cards-container\">";
-            foreach ($brocanteurs_valides as $brocanteur) {
-                echo "<article class=\"admin-card validated\">";
-                echo "<header class=\"admin-card-header\">";
-                echo "<h3>" . htmlspecialchars($brocanteur['prenom'] . ' ' . $brocanteur['nom']) . "</h3>";
-                echo "<span class=\"admin-card-id\">ID: " . htmlspecialchars($brocanteur['bid']) . "</span>";
-                echo "</header>";
-                echo "<section class=\"admin-card-body\">";
                 echo "<p><strong>Zone:</strong> " . htmlspecialchars($brocanteur['zone_nom'] ?? 'Non assigné') . "</p>";
                 echo "<p><strong>Emplacement:</strong> " . htmlspecialchars($brocanteur['emplacement_code'] ?? 'Non assigné') . "</p>";
                 echo "</section>";
                 echo "<footer class=\"admin-card-actions\">";
                 echo "<a href=\"vendeur.php?id=" . $brocanteur['bid'] . "\" class=\"btn-small\">Voir</a>";
                 echo "<a href=\"attribuerEmplacement.php?id=" . $brocanteur['bid'] . "\" class=\"btn-small\">Emplacement</a>";
+                
+                // Afficher l'option de suppression si pas d'emplacement attribué
+                if (!$hasEmplacement) {
+                    echo "<a href=\"supprimerBrocanteur.php?id=" . $brocanteur['bid'] . "\" class=\"btn-small\" style=\"background-color: #cc3333;\">Supprimer</a>";
+                }
+                
                 echo "</footer>";
                 echo "</article>";
             }

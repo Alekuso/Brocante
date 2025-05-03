@@ -24,24 +24,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $db = Database::getInstance();
         $brocanteur_data = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
-        if ($brocanteur_data && !$brocanteur_data['visible'] && password_verify($motDePasse, $brocanteur_data['mot_passe'])) {
-            $erreur = 'Compte en attente de validation';
-        } else {
-            $brocanteur = Brocanteur::connecter($courriel, $motDePasse);
+        $brocanteur = Brocanteur::connecter($courriel, $motDePasse);
+        
+        if ($brocanteur) {
+            Brocanteur::connecterUtilisateur($brocanteur);
             
-            if ($brocanteur) {
-                Brocanteur::connecterUtilisateur($brocanteur);
-                
-                // Redirige selon le rôle
-                if ($brocanteur->est_administrateur) {
-                    header('Location: espaceAdministrateur.php');
-                } else {
-                    header('Location: espaceBrocanteur.php');
-                }
-                exit;
+            // Redirige selon le rôle
+            if ($brocanteur->est_administrateur) {
+                header('Location: espaceAdministrateur.php');
             } else {
-                $erreur = 'Email ou mot de passe incorrect';
+                header('Location: espaceBrocanteur.php');
             }
+            exit;
+        } else {
+            $erreur = 'Email ou mot de passe incorrect';
         }
     }
 }
@@ -81,6 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="password">Mot de passe</label>
                 <input class="size-full" type="password" id="password" name="password" required>
                 <button type="submit" class="size-half">Se connecter</button>
+                <p class="center"><a href="reinitialiserMotDePasse.php">Mot de passe oublié ?</a></p>
             </form>
         </article>
     </section>

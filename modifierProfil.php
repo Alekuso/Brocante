@@ -21,21 +21,38 @@ if (isset($_POST['modifier_donnees'])) {
     $nom = trim($_POST['nom']);
     $prenom = trim($_POST['prenom']);
     $description = trim($_POST['description']);
+    $courriel = trim($_POST['courriel']);
     
-    if (!empty($nom) && !empty($prenom) && !empty($description)) {
-        $db = Database::getInstance();
-        $db->executer("UPDATE Brocanteur SET nom = ?, prenom = ?, description = ? WHERE bid = ?", 
-            [$nom, $prenom, $description, $utilisateur->bid]);
+    if (!empty($nom) && !empty($prenom) && !empty($description) && !empty($courriel)) {
+        // Vérifier si l'email a changé et s'il n'est pas déjà utilisé
+        if ($courriel !== $utilisateur->courriel) {
+            $db = Database::getInstance();
+            $emailExistant = $db->obtenirUn("SELECT bid FROM Brocanteur WHERE courriel = ? AND bid != ?", 
+                [$courriel, $utilisateur->bid]);
+                
+            if ($emailExistant) {
+                $erreur = "Cette adresse email est déjà utilisée par un autre compte";
+
+                $courriel = $utilisateur->courriel;
+            }
+        }
         
-        // Met à jour en mémoire
-        $utilisateur->nom = $nom;
-        $utilisateur->prenom = $prenom;
-        $utilisateur->description = $description;
-        $succes = "Informations mises à jour";
-        
-        // Redirige
-        header('Location: ' . ($utilisateur->est_administrateur ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'));
-        exit;
+        if (empty($erreur)) {
+            $db = Database::getInstance();
+            $db->executer("UPDATE Brocanteur SET nom = ?, prenom = ?, description = ?, courriel = ? WHERE bid = ?", 
+                [$nom, $prenom, $description, $courriel, $utilisateur->bid]);
+            
+
+            $utilisateur->nom = $nom;
+            $utilisateur->prenom = $prenom;
+            $utilisateur->description = $description;
+            $utilisateur->courriel = $courriel;
+            $succes = "Informations mises à jour";
+            
+            // Redirige
+            header('Location: ' . ($utilisateur->est_administrateur ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'));
+            exit;
+        }
     } else {
         $erreur = "Tous les champs sont obligatoires";
     }
@@ -91,6 +108,30 @@ if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
         }
     } else {
         $erreur = "Format de fichier non accepté (JPG ou PNG uniquement)";
+    }
+}
+
+// Traite la réinitialisation du mot de passe
+if (isset($_POST['reinitialiser_mot_de_passe'])) {
+    $nouveauMotDePasse = Brocanteur::reinitialiserMotDePasse($utilisateur->courriel);
+    
+    if ($nouveauMotDePasse) {
+        // Préparation de l'email
+        $destinataire = $utilisateur->courriel;
+        $sujet = "Réinitialisation de votre mot de passe - Supra Brocante";
+        $contenu = "Bonjour " . $utilisateur->prenom . ",\n\n";
+        $contenu .= "Vous avez demandé la réinitialisation de votre mot de passe pour le site Supra Brocante.\n\n";
+        $contenu .= "Votre nouveau mot de passe est : $nouveauMotDePasse\n\n";
+        $contenu .= "Vous pouvez vous connecter avec ce nouveau mot de passe et le modifier dans votre profil.\n\n";
+        $contenu .= "L'équipe Supra Brocante";
+        $headers = "From: noreply@suprabrocante.com\r\n";
+        $headers .= "Content-Type: text/plain; charset=UTF-8";
+        
+        mail($destinataire, $sujet, $contenu, $headers);
+        
+        $succes = "Un nouveau mot de passe a été généré et envoyé à votre adresse e-mail.";
+    } else {
+        $erreur = "Une erreur est survenue lors de la réinitialisation du mot de passe.";
     }
 }
 
@@ -186,9 +227,25 @@ $emplacement = $utilisateur->obtenirEmplacement();
                     <textarea id="description" name="description" rows="4" class="size-full" required><?php echo htmlspecialchars($utilisateur->description); ?></textarea>
                 </section>
                 
+                <section class="form-group">
+                    <label for="courriel">Email:</label>
+                    <input type="email" id="courriel" name="courriel" value="<?php echo htmlspecialchars($utilisateur->courriel); ?>" class="size-full" required>
+                </section>
+                
                 <section class="form-actions">
                     <input type="submit" name="modifier_donnees" value="Enregistrer" class="btn mar-2">
                     <a href="<?php echo $utilisateur->est_administrateur ? 'espaceAdministrateur.php' : 'espaceBrocanteur.php'; ?>" class="btn mar-2">Annuler</a>
+                </section>
+            </form>
+            
+            <!-- Formulaire de réinitialisation de mot de passe -->
+            <section class="separator mar-tb-2"></section>
+            
+            <form method="POST" action="modifierProfil.php" class="profile-form mar-t-2">
+                <h3>Réinitialisation du mot de passe</h3>
+                <p>Cliquez sur le bouton ci-dessous pour recevoir un nouveau mot de passe par email.</p>
+                <section class="form-actions">
+                    <input type="submit" name="reinitialiser_mot_de_passe" value="Réinitialiser mon mot de passe" class="btn mar-2">
                 </section>
             </form>
         </article>

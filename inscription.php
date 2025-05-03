@@ -13,16 +13,22 @@ if (Brocanteur::estConnecte()) {
     exit;
 }
 
+// Vérifie si le nombre maximum de brocanteurs est atteint (15 max)
+$db = Database::getInstance();
+$countBrocanteurs = $db->obtenirUn("SELECT COUNT(*) as total FROM Brocanteur WHERE est_administrateur = 0");
+$maxBrocanteursAtteint = $countBrocanteurs && $countBrocanteurs['total'] >= 15;
+
 $erreurs = [];
 $succes = '';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !$maxBrocanteursAtteint) {
     $nom = filter_var($_POST["nom"], FILTER_SANITIZE_STRING);
     $prenom = filter_var($_POST["prenom"], FILTER_SANITIZE_STRING);
     $courriel = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
     $motDePasse = $_POST["password"];
     $passwordConfirm = $_POST["passwordConfirm"];
     $description = filter_var($_POST["description"], FILTER_SANITIZE_STRING);
+    $visible = isset($_POST["visible"]) ? 1 : 0; // Variable pour stocker le choix de visibilité
     
     // Vérifie les champs
     if (empty($nom)) {
@@ -39,7 +45,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $erreurs['email'] = 'Format d\'email invalide';
     } else {
         // Vérifie si l'email existe déjà
-        $db = Database::getInstance();
         $existe = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
         if ($existe) {
@@ -96,12 +101,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'prenom' => $prenom,
             'courriel' => $courriel,
             'description' => $description,
-            'visible' => 0,
+            'visible' => $visible,
             'est_administrateur' => 0
         ]);
         
         // Insertion avec mot de passe
-        $db = Database::getInstance();
         $db->executer(
             "INSERT INTO Brocanteur (nom, prenom, courriel, mot_passe, description, visible, est_administrateur) 
             VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -111,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $courriel, 
                 password_hash($motDePasse, PASSWORD_DEFAULT),
                 $description, 
-                0, 
+                $visible, 
                 0
             ]
         );
@@ -183,6 +187,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo $succes;
                 echo "</section>";
                 echo "<p class=\"center\"><a href=\"connexion.php\" class=\"underline\">Se connecter</a></p>";
+            } elseif ($maxBrocanteursAtteint) {
+                echo "<section class=\"message-erreur\">";
+                echo "<p>Désolé, le nombre maximum de brocanteurs (15) est atteint pour cette brocante.</p>";
+                echo "</section>";
+                echo "<p class=\"center\"><a href=\"index.php\" class=\"underline\">Retour à l'accueil</a></p>";
             } else {
                 echo "<form method=\"POST\" action=\"" . htmlspecialchars($_SERVER["PHP_SELF"]) . "\" enctype=\"multipart/form-data\" class=\"column\">";
                 echo "<label for=\"nom\">Nom*</label>";
@@ -203,9 +212,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "<label for=\"description\">Description* (présentez votre stand et les objets que vous vendez)</label>";
                 echo "<textarea class=\"size-full\" id=\"description\" name=\"description\" rows=\"5\">" . (isset($_POST['description']) ? htmlspecialchars($_POST['description']) : '') . "</textarea>";
                 
+                echo "<section class=\"checkbox-container\" style=\"margin: 10px 0; display: flex; align-items: center;\">";
+                echo "<input type=\"checkbox\" id=\"visible\" name=\"visible\" value=\"1\" " . (isset($_POST['visible']) ? 'checked' : '') . " style=\"margin-right: 10px; width: auto;\">";
+                echo "<label for=\"visible\">Je souhaite que mon profil et mes objets soient visibles sur le site</label>";
+                echo "</section>";
+
                 echo "<label for=\"photo\">Photo (optionnelle)</label>";
                 echo "<input class=\"size-full\" type=\"file\" id=\"photo\" name=\"photo\" accept=\"image/jpeg, image/png\">";
-                echo "<p class=\"small-text\">Formats acceptés: JPG, PNG - Max 20 MB</p>";
+                echo "<p class=\"small-text\">Formats acceptés: JPG, PNG</p>";
                 
                 echo "<button type=\"submit\" class=\"size-half\">Créer un compte</button>";
                 echo "<p class=\"small-text\">* Champs obligatoires</p>";

@@ -159,10 +159,7 @@ class Brocanteur {
         $donnees = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
         
         if ($donnees && password_verify($motDePasse, $donnees['mot_passe'])) {
-            // Si admin, peut toujours se connecter, sinon doit être visible
-            if ($donnees['est_administrateur'] || $donnees['visible']) {
-                return new Brocanteur($donnees);
-            }
+            return new Brocanteur($donnees);
         }
         
         return null;
@@ -280,9 +277,9 @@ class Brocanteur {
     
     public static function inscrire($donnees, $photo = null) {
         $db = Database::getInstance();
-        
-        // Création du nouvel utilisateur
+
         $hashedPassword = password_hash($donnees['password'], PASSWORD_DEFAULT);
+        $visible = isset($donnees['visible']) ? (int)$donnees['visible'] : 0;
         
         $db->executer(
             "INSERT INTO Brocanteur (nom, prenom, courriel, mot_passe, description, photo, visible, est_administrateur) 
@@ -294,8 +291,8 @@ class Brocanteur {
                 $hashedPassword,
                 htmlspecialchars($donnees['description']),
                 $photo,
-                0, // Non visible par défaut, en attente de validation admin
-                0  // Non admin par défaut
+                $visible,
+                0
             ]
         );
         
@@ -337,5 +334,97 @@ class Brocanteur {
         
         $db = Database::getInstance();
         return $db->executer("DELETE FROM Brocanteur WHERE bid = ?", [$this->bid]);
+    }
+    
+    /**
+     * Réinitialise le mot de passe d'un brocanteur et retourne le nouveau mot de passe
+     */
+    public static function reinitialiserMotDePasse($courriel) {
+        if (empty($courriel) || !filter_var($courriel, FILTER_VALIDATE_EMAIL)) {
+            return false;
+        }
+        
+        $db = Database::getInstance();
+        $brocanteur = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
+        
+        if (!$brocanteur) {
+            return false;
+        }
+        
+        // Génère un mot de passe aléatoire de 8 caractères
+        $caracteres = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $nouveauMotDePasse = '';
+        for ($i = 0; $i < 8; $i++) {
+            $nouveauMotDePasse .= $caracteres[rand(0, strlen($caracteres) - 1)];
+        }
+        
+        // Hache le nouveau mot de passe
+        $motDePasseHache = password_hash($nouveauMotDePasse, PASSWORD_DEFAULT);
+        
+        // Met à jour le mot de passe dans la base de données
+        $db->executer("UPDATE Brocanteur SET mot_passe = ? WHERE courriel = ?", [$motDePasseHache, $courriel]);
+        
+        return $nouveauMotDePasse;
+    }
+    
+    /**
+     * Vérifie si un brocanteur a un emplacement attribué
+     */
+    public function aEmplacementAttribue() {
+        if (!$this->bid) return false;
+        
+        $db = Database::getInstance();
+        $resultat = $db->obtenirUn("SELECT COUNT(*) as count FROM Emplacement WHERE bid = ?", [$this->bid]);
+        
+        return $resultat && $resultat['count'] > 0;
+    }
+    
+    /**
+     * Supprime un brocanteur et tous ses objets
+     */
+    public function supprimer() {
+        if (!$this->bid) return false;
+        
+        $db = Database::getInstance();
+        
+        // Vérifier si le brocanteur a un emplacement attribué
+        if ($this->aEmplacementAttribue()) {
+            return false;
+        }
+        
+        // Commence une transaction
+        $db->beginTransaction();
+        
+        try {
+            // Supprime tous les objets du brocanteur
+            $db->executer("DELETE FROM Objet WHERE bid = ?", [$this->bid]);
+            
+            // Supprime le brocanteur
+            $db->executer("DELETE FROM Brocanteur WHERE bid = ?", [$this->bid]);
+            
+            // Valide la transaction
+            $db->commit();
+            return true;
+        } catch (Exception $e) {
+            // Annule la transaction en cas d'erreur
+            $db->rollback();
+            return false;
+        }
+    }
+    
+    /**
+     * Récupère tous les administrateurs
+     * @return array Tableau d'objets Brocanteur qui sont administrateurs
+     */
+    public static function obtenirTousAdministrateurs() {
+        $db = Database::getInstance();
+        $resultats = $db->obtenirTous("SELECT * FROM Brocanteur WHERE est_administrateur = 1 ORDER BY nom, prenom");
+        
+        $admins = [];
+        foreach ($resultats as $donnees) {
+            $admins[] = new Brocanteur($donnees);
+        }
+        
+        return $admins;
     }
 } 

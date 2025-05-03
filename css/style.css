@@ -138,6 +138,20 @@ header nav ul li.btn:hover a {
     margin-bottom: 20px;
 }
 
+.mar-tb-2 {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.mar-t-2 {
+    margin-top: 30px;
+}
+
+.separator {
+    border-top: 1px solid #444;
+    width: 100%;
+}
+
 #presentation {
     display: flex;
     justify-content: space-between;
@@ -640,6 +654,13 @@ h3.prix {
 .stat-number {
     font-size: 36px;
     font-weight: bold;
+}
+
+.stat-note {
+    font-size: 14px;
+    color: #aaa;
+    margin-top: 5px;
+    text-align: center;
 }
 
 .articles-add {

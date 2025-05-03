@@ -17,7 +17,6 @@ if (!Brocanteur::estConnecte() || !Brocanteur::estAdmin()) {
 
 // Récupère le brocanteur
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-$isValidating = isset($_GET['validate']) && $_GET['validate'] == 1;
 $brocanteur = null;
 
 if ($id > 0) {
@@ -27,18 +26,6 @@ if ($id > 0) {
 $zones = Zone::obtenirToutes();
 $message = '';
 $erreur = '';
-
-// Cas validation d'inscription
-if ($isValidating) {
-    $db = Database::getInstance();
-    $isVisible = $db->obtenirUn("SELECT visible FROM Brocanteur WHERE bid = ?", [$id])['visible'] ?? 0;
-    
-    if ($isVisible) {
-        $message = "Ce brocanteur est déjà validé. Vous pouvez modifier son emplacement";
-    } else {
-        $message = "Pour valider l'inscription, attribuez un emplacement";
-    }
-}
 
 // Traite le formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -77,13 +64,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
         
-        // Valide le brocanteur
-        $db->executer("UPDATE Brocanteur SET visible = 1 WHERE bid = ?", [$brocanteurId]);
-        
-        if ($isValidating) {
-            header('Location: espaceAdministrateur.php?message=' . urlencode("Brocanteur validé et emplacement attribué"));
-            exit;
-        }
+        header('Location: espaceAdministrateur.php?message=' . urlencode("Emplacement attribué avec succès"));
+        exit;
     }
 }
 ?>
@@ -120,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             ?>
             
-            <form method="POST" action="attribuerEmplacement.php<?php echo $id ? '?id=' . $id . ($isValidating ? '&validate=1' : '') : ''; ?>" class="column">
+            <form method="POST" action="attribuerEmplacement.php<?php echo $id ? '?id=' . $id : ''; ?>" class="column">
                 <?php 
                 if ($brocanteur) {
                     echo '<input type="hidden" name="brocanteur_id" value="' . htmlspecialchars($brocanteur->bid) . '">';
@@ -133,9 +115,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo '<select class="size-full" id="brocanteur" name="brocanteur_id" required>';
                     echo '<option value="">-- Sélectionnez un brocanteur --</option>';
                     
-                    $brocanteurs = Brocanteur::obtenirTousVisibles();
+                    $db = Database::getInstance();
+                    $brocanteurs = $db->obtenirTous("SELECT * FROM Brocanteur WHERE est_administrateur = 0 ORDER BY nom");
+                    
                     foreach ($brocanteurs as $b) {
-                        echo '<option value="' . htmlspecialchars($b->bid) . '">' . htmlspecialchars($b->prenom . ' ' . $b->nom) . '</option>';
+                        echo '<option value="' . htmlspecialchars($b['bid']) . '">' . htmlspecialchars($b['prenom'] . ' ' . $b['nom']) . '</option>';
                     }
                     
                     echo '</select>';
@@ -153,14 +137,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </select>
 
                 <button type="submit" class="size-half">Attribuer</button>
-                
-                <?php 
-                if ($isValidating) {
-                    echo '<p class="mar-tb-1 center">';
-                    echo '<a href="espaceAdministrateur.php" class="btn-small">Annuler et retourner à l\'espace administrateur</a>';
-                    echo '</p>';
-                }
-                ?>
+                <p class="mar-tb-1 center">
+                    <a href="espaceAdministrateur.php" class="btn-small">Retour à l'espace administrateur</a>
+                </p>
             </form>
         </article>
     </section>

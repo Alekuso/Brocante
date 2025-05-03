@@ -33,7 +33,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
     // Traite le formulaire si pas d'erreurs
     if (empty($erreurs)) {
-        $alexEmail = "a.olemans@student.helmo.be";
+        $administrateurs = Brocanteur::obtenirTousAdministrateurs();
+        
         $nomFiltre = htmlspecialchars($nom);
         $prenomFiltre = htmlspecialchars($prenom);
         $emailFiltre = filter_var($email, FILTER_SANITIZE_EMAIL);
@@ -46,8 +47,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $headers .= "Reply-To: $emailFiltre\r\n";
         $headers .= "Content-Type: text/plain; charset=UTF-8";
 
-        mail($alexEmail, $sujet, $contenu, $headers);
+        // Envoie à tous les administrateurs
+        foreach ($administrateurs as $admin) {
+            mail($admin->courriel, $sujet, $contenu, $headers);
+        }
+        
+        // Envoie une copie à l'expéditeur (dans le cadre du cours)
+        $sujet = "[Supra Brocante] Copie de votre message";
+        $contenu = "Voici une copie de votre message : $messageFiltre";
         mail($emailFiltre, $sujet, $contenu, $headers);
+        
         $succes = true;
         
         // Vide les champs après envoi
@@ -93,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <article class="contactForm">
             <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"])?>" class="column">
                 <label for="nom">Nom</label>
-                <input class="size-full" type="text" id="nom" name="nom" value="" required>
+                <input class="size-full" type="text" id="nom" name="nom" value="<?php echo htmlspecialchars($nom); ?>" required>
                 <?php
                 if (isset($erreurs['nom'])) {
                     echo "<p class=\"erreur\">" . $erreurs['nom'] . "</p>";
@@ -101,7 +110,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ?>
                 
                 <label for="prenom">Prénom</label>
-                <input class="size-full" type="text" id="prenom" name="prenom" value="" required>
+                <input class="size-full" type="text" id="prenom" name="prenom" value="<?php echo htmlspecialchars($prenom); ?>" required>
                 <?php
                 if (isset($erreurs['prenom'])) {
                     echo "<p class=\"erreur\">" . $erreurs['prenom'] . "</p>";
@@ -109,7 +118,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ?>
                 
                 <label for="email">Email</label>
-                <input class="size-full" type="email" id="email" name="email" value="" required>
+                <input class="size-full" type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
                 <?php
                 if (isset($erreurs['email'])) {
                     echo "<p class=\"erreur\">" . $erreurs['email'] . "</p>";
@@ -117,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 ?>
                 
                 <label for="message">Message</label>
-                <textarea id="message" name="message" required></textarea>
+                <textarea id="message" name="message" required><?php echo htmlspecialchars($message); ?></textarea>
                 <?php
                 if (isset($erreurs['message'])) {
                     echo "<p class=\"erreur\">" . $erreurs['message'] . "</p>";
