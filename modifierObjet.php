@@ -195,7 +195,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <section class="form-actions">
                     <input type="submit" value="Enregistrer" class="btn mar-2">
                     <a href="espaceBrocanteur.php" class="btn mar-2">Annuler</a>
-                    <a href="supprimerObjet.php?id=<?php echo $objet->oid; ?>" class="btn btn-danger mar-2">Supprimer</a>
+                    <a href="supprimerObjet.php?id=<?php echo $objet->oid; ?>&confirme=0" class="btn btn-danger mar-2">Supprimer</a>
                 </section>
             </form>
         </article>
