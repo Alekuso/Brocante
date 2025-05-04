@@ -24,7 +24,9 @@ $succes = '';
 if ($_SERVER["REQUEST_METHOD"] == "POST" && !$maxBrocanteursAtteint) {
     $nom = filter_var($_POST["nom"], FILTER_SANITIZE_STRING);
     $prenom = filter_var($_POST["prenom"], FILTER_SANITIZE_STRING);
-    $courriel = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
+    $raw_email = $_POST["email"] ?? '';
+    $courriel = filter_var($raw_email, FILTER_SANITIZE_EMAIL);
+    
     $motDePasse = $_POST["password"];
     $passwordConfirm = $_POST["passwordConfirm"];
     $description = filter_var($_POST["description"], FILTER_SANITIZE_STRING);
@@ -39,10 +41,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !$maxBrocanteursAtteint) {
         $erreurs['prenom'] = 'Le prénom est obligatoire';
     }
     
-    if (empty($courriel)) {
+    if (empty($raw_email)) {
         $erreurs['email'] = 'L\'email est obligatoire';
     } elseif (!filter_var($courriel, FILTER_VALIDATE_EMAIL)) {
-        $erreurs['email'] = 'Format d\'email invalide';
+        $erreurs['email'] = 'email invalide';
     } else {
         // Vérifie si l'email existe déjà
         $existe = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);

@@ -15,10 +15,11 @@ if ($utilisateurConnecte) {
 
 // Si le formulaire est soumis
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $courriel = isset($_POST['courriel']) ? trim($_POST['courriel']) : '';
+    $raw_email = isset($_POST['courriel']) ? $_POST['courriel'] : '';
+    $courriel = filter_var($raw_email, FILTER_SANITIZE_EMAIL);
     
     // Validation de l'email
-    if (empty($courriel)) {
+    if (empty($raw_email)) {
         $erreur = "Veuillez entrer votre adresse e-mail.";
     } elseif (!filter_var($courriel, FILTER_VALIDATE_EMAIL)) {
         $erreur = "L'adresse e-mail n'est pas valide.";

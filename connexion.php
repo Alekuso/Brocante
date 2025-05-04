@@ -14,30 +14,38 @@ if (Brocanteur::estConnecte()) {
 $erreur = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $courriel = filter_var($_POST["email"], FILTER_SANITIZE_EMAIL);
-    $motDePasse = $_POST["password"];
-    
-    if (empty($courriel) || empty($motDePasse)) {
-        $erreur = 'Tous les champs sont obligatoires';
+
+    $raw_email = $_POST["email"] ?? '';
+
+    $courriel = filter_var($raw_email, FILTER_SANITIZE_EMAIL);    
+
+    if (!filter_var($courriel, FILTER_VALIDATE_EMAIL)) {
+        $erreur = 'email invalide';
     } else {
-        // Vérifie le compte
-        $db = Database::getInstance();
-        $brocanteur_data = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
+        $motDePasse = $_POST["password"];
         
-        $brocanteur = Brocanteur::connecter($courriel, $motDePasse);
-        
-        if ($brocanteur) {
-            Brocanteur::connecterUtilisateur($brocanteur);
-            
-            // Redirige selon le rôle
-            if ($brocanteur->est_administrateur) {
-                header('Location: espaceAdministrateur.php');
-            } else {
-                header('Location: espaceBrocanteur.php');
-            }
-            exit;
+        if (empty($motDePasse)) {
+            $erreur = 'Tous les champs sont obligatoires';
         } else {
-            $erreur = 'Email ou mot de passe incorrect';
+            // Vérifie le compte
+            $db = Database::getInstance();
+            $brocanteur_data = $db->obtenirUn("SELECT * FROM Brocanteur WHERE courriel = ?", [$courriel]);
+            
+            $brocanteur = Brocanteur::connecter($courriel, $motDePasse);
+            
+            if ($brocanteur) {
+                Brocanteur::connecterUtilisateur($brocanteur);
+                
+                // Redirige selon le rôle
+                if ($brocanteur->est_administrateur) {
+                    header('Location: espaceAdministrateur.php');
+                } else {
+                    header('Location: espaceBrocanteur.php');
+                }
+                exit;
+            } else {
+                $erreur = 'Email ou mot de passe incorrect';
+            }
         }
     }
 }
