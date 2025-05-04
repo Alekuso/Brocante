@@ -32,12 +32,28 @@ class Objet {
      */
     public static function obtenirParId($id) {
         $db = Database::getInstance();
-        $donnees = $db->obtenirUn(
-            "SELECT o.* FROM Objet o 
-             JOIN Brocanteur b ON o.bid = b.bid 
-             WHERE o.oid = ? AND b.visible = 1", 
-            [$id]
-        );
+        
+        $brocanteurConnecte = Brocanteur::estConnecte() ? Brocanteur::obtenirConnecte() : null;
+        
+        if ($brocanteurConnecte) {
+
+            // Pour brocanteur connecté (comme ça il peut voir ses propres objets)
+            $donnees = $db->obtenirUn(
+                "SELECT o.* FROM Objet o 
+                 JOIN Brocanteur b ON o.bid = b.bid 
+                 WHERE o.oid = ? AND (b.visible = 1 OR b.bid = ?)", 
+                [$id, $brocanteurConnecte->bid]
+            );
+        } else {
+
+            // Public visiblisilité
+            $donnees = $db->obtenirUn(
+                "SELECT o.* FROM Objet o 
+                 JOIN Brocanteur b ON o.bid = b.bid 
+                 WHERE o.oid = ? AND b.visible = 1", 
+                [$id]
+            );
+        }
         
         if ($donnees) {
             return new Objet($donnees);
@@ -50,14 +66,29 @@ class Objet {
      */
     public static function obtenirTous() {
         $db = Database::getInstance();
-        $sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom
-                FROM Objet o
-                LEFT JOIN Categorie c ON o.cid = c.cid
-                LEFT JOIN Brocanteur b ON o.bid = b.bid
-                WHERE b.visible = 1
-                ORDER BY o.intitule ASC";
+
+        $brocanteurConnecte = Brocanteur::estConnecte() ? Brocanteur::obtenirConnecte() : null;
         
-        $resultats = $db->obtenirTous($sql);
+        if ($brocanteurConnecte) {
+            // Pour brocanteur connecté (comme ça il peut voir ses propres objets)
+            $sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom
+                    FROM Objet o
+                    LEFT JOIN Categorie c ON o.cid = c.cid
+                    LEFT JOIN Brocanteur b ON o.bid = b.bid
+                    WHERE b.visible = 1 OR b.bid = ?
+                    ORDER BY o.intitule ASC";
+            $resultats = $db->obtenirTous($sql, [$brocanteurConnecte->bid]);
+        } else {
+
+            // Public visiblisilité
+            $sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom
+                    FROM Objet o
+                    LEFT JOIN Categorie c ON o.cid = c.cid
+                    LEFT JOIN Brocanteur b ON o.bid = b.bid
+                    WHERE b.visible = 1
+                    ORDER BY o.intitule ASC";
+            $resultats = $db->obtenirTous($sql);
+        }
         
         $objets = [];
         foreach ($resultats as $donnees) {
@@ -181,11 +212,22 @@ class Objet {
         $db = Database::getInstance();
         $params = [];
         
+        // Check if a user is logged in 
+        $brocanteurConnecte = Brocanteur::estConnecte() ? Brocanteur::obtenirConnecte() : null;
+        
         $sql = "SELECT o.*, c.intitule as categorie_nom, b.nom as brocanteur_nom, b.prenom as brocanteur_prenom
                 FROM Objet o
                 LEFT JOIN Categorie c ON o.cid = c.cid
                 LEFT JOIN Brocanteur b ON o.bid = b.bid
-                WHERE b.visible = 1";
+                WHERE ";
+        
+        if ($brocanteurConnecte) {
+            // For logged-in brocanteur, include their own objects regardless of visibility
+            $sql .= "(b.visible = 1 OR b.bid = ?)";
+            $params[] = $brocanteurConnecte->bid;
+        } else {
+            $sql .= "b.visible = 1";
+        }
         
         if (!empty($nom)) {
             $sql .= " AND (o.intitule LIKE ? OR o.description LIKE ?)";
