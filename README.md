@@ -1,6 +1,8 @@
-# Supra Brocante
+*Ce répo est le projet de fin d'année 2024-2025 pour le cours de développement web à la Haute École Libre Mosane en section Développement d'Applications pour les étudiants en B1.*
 
-Lien: https://panoramix.cg.helmo.be/~q240027/EVAL_V4/
+
+---
+# Supra Brocante
 
 La connexion à la DB est préfaite.
 
